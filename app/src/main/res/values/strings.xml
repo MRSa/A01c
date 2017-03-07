@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">A01c</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
+
+    <string name="connect_start">start</string>
+    <string name="connect_check_wifi">check WIFI</string>
+    <string name="connect_connect">connecting</string>
+    <string name="connect_connected">connected</string>
+    <string name="connect_change_run_mode">changeRunMode</string>
+    <string name="connect_restore_camera_settings">restoreCameraSettings</string>
+
+    <string name="fatal_cannot_use_camera">The CameraKit SDK can not work because the running mode of camera is UNKNOWN.   So please long press the power button of camera more than 8 seconds. (This is the camera reset operation.) After that turn on the camera power again.</string>
+    <string name="camera_reset_required">The camera reset operation is required.</string>
+
+    <string name="dialog_title_confirmation">Confirmation</string>
+    <string name="dialog_positive_execute">Execute</string>
+    <string name="dialog_negative_cancel">Cancel</string>
+
+    <string name="dialog_message_power_off">Camera power off</string>
+
+    <string name="high_temperature_warning">TEMP</string>
+    <string name="exposure_metering_warning">EXP</string>
+    <string name="iso_sensitivity_warning">ISO</string>
+
+    <string name="dialog_start_load_property_message">Please Wait</string>
+    <string name="dialog_start_load_property_title">Setting Properties&#8230;</string>
+
+    <string name="dialog_start_save_property_message">Please Wait</string>
+    <string name="dialog_start_save_property_title">Storing Properties&#8230;</string>
+
+    <string name="restored_my_props">Restored Property : </string>
+    <string name="saved_my_props">Saved Property : </string>
+
+    <string name="description_control_button">Control Button</string>
+    <string name="text_message_blank"> </string>
+
+    <string name="shoot_camera">Captured</string>
+    <string name="message_none">---</string>
+</resources>
