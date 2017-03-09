@@ -4,11 +4,11 @@
 
     <item
         android:state_selected="true"
-        android:drawable="@drawable/ic_font_download_black_18dp" />
+        android:drawable="@drawable/ic_add_box_black_18dp" />
     <item
         android:state_pressed="true"
-        android:drawable="@drawable/ic_font_download_black_18dp" />
+        android:drawable="@drawable/ic_add_box_black_18dp" />
     <item
-        android:drawable="@drawable/ic_font_download_white_18dp" />
+        android:drawable="@drawable/ic_add_box_white_18dp" />
         
 </selector>

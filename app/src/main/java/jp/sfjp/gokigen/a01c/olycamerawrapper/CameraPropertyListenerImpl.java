@@ -4,7 +4,6 @@ import android.util.Log;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraPropertyListener;
-import jp.sfjp.gokigen.a01c.liveview.ICameraStatusDisplay;
 
 /**
  *  OLYCameraPropertyListenerの実装

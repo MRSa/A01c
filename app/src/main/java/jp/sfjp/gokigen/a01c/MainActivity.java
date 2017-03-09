@@ -1,5 +1,6 @@
 package jp.sfjp.gokigen.a01c;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
@@ -17,7 +18,7 @@ import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
 
-public class MainActivity extends WearableActivity implements  IChangeScene, ICameraStatusReceiver
+public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver
 {
     private final String TAG = this.toString();
     private final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -36,7 +37,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
 
         //  画面全体の設定
         setContentView(R.layout.activity_main);
-/**/
+
         // WiFIアクセス権のオプトイン
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)||
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)||
@@ -58,12 +59,10 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
                     },
                     REQUEST_NEED_PERMISSIONS);
         }
-/**/
-        setupCameraCoodinator();
+
+        setupCameraCoordinator();
         setupActionListener();
-
     }
-
 
     /**
      *
@@ -85,7 +84,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
         Log.v(TAG, "onPause()");
 
         //coordinator.stopLiveView();
-
         //exitApplication();
     }
 
@@ -156,7 +154,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
         final ImageButton btn4 = (ImageButton) findViewById(R.id.btn_4);
         btn4.setOnClickListener(listener);
 
-       final  ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
+        final  ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
         btn5.setOnClickListener(listener);
 
         final ImageButton btn6 = (ImageButton) findViewById(R.id.btn_6);
@@ -182,14 +180,14 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
         listener.prepareInterfaces(coordinator, liveView, liveView);
     }
 
-    private void setupCameraCoodinator()
+    private void setupCameraCoordinator()
     {
         if (liveView == null)
         {
             liveView = (CameraLiveImageView) findViewById(R.id.liveview);
         }
         coordinator = null;
-        coordinator = new OlyCameraCoordinator(this, liveView, liveView, this);
+        coordinator = new OlyCameraCoordinator(this, liveView, this, this);
         liveViewListener = new CameraLiveViewListenerImpl(liveView);
         coordinator.setLiveViewListener(liveViewListener);
         Thread thread = new Thread(new Runnable()
@@ -224,7 +222,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
     @Override
     public void onStatusNotify(String message)
     {
-
+        setMessage(IShowInformation.AREA_4, Color.GRAY, message);
     }
 
     @Override
@@ -263,6 +261,90 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ICa
     @Override
     public void onCameraOccursException(String message, Exception e)
     {
+        setMessage(IShowInformation.AREA_4, Color.YELLOW, message);
+    }
 
+    /**
+     *   メッセージの表示
+     *
+     * @param area    表示エリア
+     * @param color　 表示色
+     * @param message 表示するメッセージ
+     */
+    @Override
+    public void setMessage(final int area, final int color, final String message)
+    {
+        int id;
+        switch (area)
+        {
+            case IShowInformation.AREA_1:
+                id = R.id.text_1;
+                break;
+            case IShowInformation.AREA_2:
+                id = R.id.text_2;
+                break;
+            case IShowInformation.AREA_3:
+                id = R.id.text_3;
+                break;
+            case IShowInformation.AREA_4:
+            default:
+                id = R.id.text_4;
+                break;
+        }
+
+        final int areaId = id;
+        runOnUiThread(new Runnable()
+        {
+             @Override
+             public void run() {
+                 final TextView textArea = (TextView) findViewById(areaId);
+                 textArea.setTextColor(color);
+                 textArea.setText(message);
+             }
+        });
+    }
+
+    /**
+     *   ボタンの表示イメージを変更する
+     *
+     * @param button  ボタンの場所
+     * @param labelId 変更する内容
+     */
+    @Override
+    public void setButtonDrawable(final int button, final int labelId)
+    {
+        int id;
+        switch (button)
+        {
+            case IShowInformation.BUTTON_1:
+                id = R.id.btn_1;
+                break;
+            case IShowInformation.BUTTON_2:
+                id = R.id.btn_2;
+                break;
+            case IShowInformation.BUTTON_3:
+                id = R.id.btn_3;
+                break;
+            case IShowInformation.BUTTON_4:
+                id = R.id.btn_4;
+                break;
+            case IShowInformation.BUTTON_5:
+                id = R.id.btn_5;
+                break;
+            case IShowInformation.BUTTON_6:
+            default:
+                id = R.id.btn_6;
+                break;
+        }
+
+        final int areaId = id;
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run() {
+                final ImageButton button = (ImageButton) findViewById(areaId);
+                button.setImageDrawable(getDrawable(labelId));
+            }
+        });
     }
 }

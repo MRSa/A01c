@@ -9,8 +9,8 @@ import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 
+import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
-import jp.sfjp.gokigen.a01c.liveview.ICameraStatusDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 
 /**
@@ -29,7 +29,6 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
 {
     private final String TAG = toString();
     private final IAutoFocusFrameDisplay focusFrameDisplay;
-    private final ICameraStatusDisplay cameraStatusDisplay;
     private final OLYCamera camera;
 
     // 本クラスの配下のカメラ制御クラス群
@@ -38,7 +37,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final OlyCameraPropertyProxy propertyProxy;
     private final LoadSaveCameraProperties loadSaveCameraProperties;
     private final OlyCameraConnection cameraConnection;
-
+    private final ICameraStatusDisplay cameraStatusDisplay;
 
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
@@ -47,10 +46,9 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     /**
      * コンストラクタ
      */
-    public OlyCameraCoordinator(Activity context, IAutoFocusFrameDisplay focusFrameDisplay, ICameraStatusDisplay cameraStatusDisplay, ICameraStatusReceiver receiver)
+    public OlyCameraCoordinator(Activity context, IAutoFocusFrameDisplay focusFrameDisplay, IShowInformation showInformation, ICameraStatusReceiver receiver)
     {
         this.focusFrameDisplay = focusFrameDisplay;
-        this.cameraStatusDisplay = cameraStatusDisplay;
 
         // OLYMPUS CAMERA クラスの初期化、リスナの設定
         camera = new OLYCamera();
@@ -63,6 +61,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         autoFocus = new AutoFocusControl(camera, focusFrameDisplay, this); // AF制御
         singleShot = new SingleShotControl(camera, focusFrameDisplay, this);  // 撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
+        cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
 
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
     }

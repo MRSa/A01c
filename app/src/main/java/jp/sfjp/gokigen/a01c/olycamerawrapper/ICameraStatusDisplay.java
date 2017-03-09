@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.liveview;
+package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 /**
  *

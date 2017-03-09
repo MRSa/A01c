@@ -37,7 +37,7 @@ import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
  *    (OLYMPUS の ImageCaptureSample をカスタマイズ)
  *
  */
-public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, ICameraStatusDisplay, IStatusViewDrawer
+public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, IStatusViewDrawer
 {
     private final String TAG = this.toString();
 
@@ -744,61 +744,21 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         return (messageHolder);
     }
 
-    /****************** ICameraStatusDisplayの 実装  *****************/
-
     @Override
-    public void updateTakeMode()
+    public void updateStatusView(String message)
     {
 
     }
 
     @Override
-    public void updateDriveMode() {
+    public void updateGridFrameStatus()
+    {
 
     }
 
     @Override
-    public void updateWhiteBalance() {
-
-    }
-
-    @Override
-    public void updateBatteryLevel() {
-
-    }
-
-    @Override
-    public void updateAeMode() {
-
-    }
-
-    @Override
-    public void updateAeLockState() {
-
-    }
-
-    @Override
-    public void updateCameraStatus() {
-
-    }
-
-    @Override
-    public void updateCameraStatus(String message) {
-
-    }
-
-    @Override
-    public void updateStatusView(String message) {
-
-    }
-
-    @Override
-    public void updateGridFrameStatus() {
-
-    }
-
-    @Override
-    public void showFavoriteSettingDialog() {
+    public void showFavoriteSettingDialog()
+    {
 
     }
 }

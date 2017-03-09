@@ -8,7 +8,6 @@ import java.util.TreeSet;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
-import jp.sfjp.gokigen.a01c.liveview.ICameraStatusDisplay;
 import jp.sfjp.gokigen.a01c.R;
 
 /**

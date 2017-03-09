@@ -80,7 +80,7 @@
                 android:background="@null"
                 android:clickable="true"
                 android:contentDescription="@string/description_control_button"
-                android:src="@drawable/btn_s" />
+                android:src="@drawable/btn_ic_grid_off" />
 
             <ImageButton
                 android:id="@+id/btn_2"
@@ -90,7 +90,7 @@
                 android:background="@null"
                 android:clickable="true"
                 android:contentDescription="@string/description_control_button"
-                android:src="@drawable/btn_m" />
+                android:src="@drawable/btn_ic_remove_circle_outline" />
 
             <ImageButton
                 android:id="@+id/btn_3"
@@ -100,7 +100,7 @@
                 android:background="@null"
                 android:clickable="true"
                 android:contentDescription="@string/description_control_button"
-                android:src="@drawable/btn_ic_looks_3" />
+                android:src="@drawable/btn_ic_add_circle_outline" />
 
             <ImageButton
                 android:id="@+id/btn_4"
@@ -110,7 +110,7 @@
                 android:background="@null"
                 android:clickable="true"
                 android:contentDescription="@string/description_control_button"
-                android:src="@drawable/btn_ic_looks_4" />
+                android:src="@drawable/btn_ic_remove_circle" />
 
             <ImageButton
                 android:id="@+id/btn_5"
@@ -120,7 +120,7 @@
                 android:background="@null"
                 android:clickable="true"
                 android:contentDescription="@string/description_control_button"
-                android:src="@drawable/btn_ic_looks_5" />
+                android:src="@drawable/btn_ic_add_circle" />
 
             <ImageButton
                 android:id="@+id/btn_6"
