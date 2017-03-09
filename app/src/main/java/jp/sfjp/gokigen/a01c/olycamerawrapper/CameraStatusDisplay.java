@@ -32,7 +32,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         informationObject.setMessage(IShowInformation.AREA_2, Color.WHITE, propetyValue);
 
         propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.APERTURE));
-        informationObject.setMessage(IShowInformation.AREA_3, Color.WHITE, "F" + propetyValue);
+        if (propetyValue != null)
+        {
+            informationObject.setMessage(IShowInformation.AREA_3, Color.WHITE, "F" + propetyValue);
+        }
 
         informationObject.setMessage(IShowInformation.AREA_4, Color.GRAY, "");
 
