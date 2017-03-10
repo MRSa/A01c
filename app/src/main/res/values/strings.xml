@@ -12,6 +12,7 @@
 
     <string name="fatal_cannot_use_camera">The CameraKit SDK can not work because the running mode of camera is UNKNOWN.   So please long press the power button of camera more than 8 seconds. (This is the camera reset operation.) After that turn on the camera power again.</string>
     <string name="camera_reset_required">The camera reset operation is required.</string>
+    <string name="camera_disconnected">Disconnected</string>
 
     <string name="dialog_title_confirmation">Confirmation</string>
     <string name="dialog_positive_execute">Execute</string>

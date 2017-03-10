@@ -7,7 +7,7 @@ import android.graphics.Color;
  *
  * Created by MRSa on 2017/03/01.
  */
-public class ShowMessageHolder
+class ShowMessageHolder implements IMessageDrawer
 {
     private String upperMessage = "";
     private String centerMessage = "";
@@ -21,18 +21,11 @@ public class ShowMessageHolder
     private int centerMessageTextSize = 16;
     private int lowerMessageTextSize = 8;
 
-    // フォーカスフレームの状態
-    enum MessageArea
-    {
-        UP,
-        CENTER,
-        LOW
-    };
-
     /**
      *
      *
      */
+    @Override
     public void setMessageToShow(MessageArea area, int color, int size, String message)
     {
         switch (area)

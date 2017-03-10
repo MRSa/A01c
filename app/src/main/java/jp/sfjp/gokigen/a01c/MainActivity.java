@@ -14,18 +14,23 @@ import android.support.v4.content.ContextCompat;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
+import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
 
+/**
+ *   メインのActivity
+ *
+ */
 public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver
 {
     private final String TAG = this.toString();
-    private final int REQUEST_NEED_PERMISSIONS = 1010;
+    static final int REQUEST_NEED_PERMISSIONS = 1010;
 
     private CameraLiveImageView liveView = null;
     private IOlyCameraCoordinator coordinator = null;
-    private CameraLiveViewListenerImpl liveViewListener = null;
+    private IMessageDrawer messageDrawer = null;
 
     /**
      *
@@ -138,6 +143,10 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     }
 
 
+    /**
+     *   ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
+     *
+     */
     private void setupActionListener()
     {
         final OlyCameraLiveViewOnTouchListener listener = new OlyCameraLiveViewOnTouchListener(this);
@@ -154,7 +163,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         final ImageButton btn4 = (ImageButton) findViewById(R.id.btn_4);
         btn4.setOnClickListener(listener);
 
-        final  ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
+        final ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
         btn5.setOnClickListener(listener);
 
         final ImageButton btn6 = (ImageButton) findViewById(R.id.btn_6);
@@ -177,9 +186,14 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             liveView = (CameraLiveImageView) findViewById(R.id.liveview);
         }
         liveView.setOnTouchListener(listener);
+        messageDrawer = liveView.getMessageDrawer();
         listener.prepareInterfaces(coordinator, liveView, liveView);
     }
 
+    /**
+     *   Olympus Cameraクラスとのやりとりをするクラスを準備する
+     *   （カメラとの接続も、ここでスレッドを起こして開始する）
+     */
     private void setupCameraCoordinator()
     {
         if (liveView == null)
@@ -188,8 +202,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
         coordinator = null;
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
-        liveViewListener = new CameraLiveViewListenerImpl(liveView);
-        coordinator.setLiveViewListener(liveViewListener);
+        coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
         Thread thread = new Thread(new Runnable()
         {
             @Override
@@ -208,6 +221,10 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
     }
 
+    /**
+     *   カメラの電源をOFFいして、アプリを抜ける処理
+     *
+     */
     @Override
     public void exitApplication()
     {
@@ -222,7 +239,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void onStatusNotify(String message)
     {
-        setMessage(IShowInformation.AREA_4, Color.GRAY, message);
+        setMessage(IShowInformation.AREA_C, Color.WHITE, message);
     }
 
     @Override
@@ -230,44 +247,33 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraConnected()");
         coordinator.startLiveView();
-/*
-        Thread thread = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                //coordinator.stopLiveView();
-                //coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-                coordinator.startLiveView();
-            }
-        });
-        try
-        {
-            thread.start();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-  */
-    }
-
-    @Override
-    public void onCameraDisconnected()
-    {
-
-    }
-
-    @Override
-    public void onCameraOccursException(String message, Exception e)
-    {
-        setMessage(IShowInformation.AREA_4, Color.YELLOW, message);
+        setMessage(IShowInformation.AREA_C, Color.WHITE, "");
     }
 
     /**
+     *   カメラとの接続が切れたとき...何もしない
+     *
+     */
+    @Override
+    public void onCameraDisconnected()
+    {
+        Log.v(TAG, "onCameraDisconnected()");
+        setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
+    }
+
+    /**
+     *  カメラに例外発生
+     */
+    @Override
+    public void onCameraOccursException(String message, Exception e)
+    {
+        setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
+    }
+
+    /**s
      *   メッセージの表示
      *
-     * @param area    表示エリア
+     * @param area    表示エリア (AREA_1 ～ AREA_6, AREA_C)
      * @param color　 表示色
      * @param message 表示するメッセージ
      */
@@ -290,6 +296,24 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             default:
                 id = R.id.text_4;
                 break;
+        }
+        if (messageDrawer != null)
+        {
+            if (area == IShowInformation.AREA_5)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.UP, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+            if (area == IShowInformation.AREA_6)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOW, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+            if (area == IShowInformation.AREA_C)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTER, color, IMessageDrawer.SIZE_LARGE, message);
+                return;
+            }
         }
 
         final int areaId = id;
@@ -344,6 +368,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             public void run() {
                 final ImageButton button = (ImageButton) findViewById(areaId);
                 button.setImageDrawable(getDrawable(labelId));
+                button.invalidate();
             }
         });
     }

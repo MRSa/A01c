@@ -727,11 +727,9 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         setShowGridFrame(!showGridFeature);
     }
 
-    /**
-     *
-     *
-     */
-    public boolean isShowGrid() {
+
+    public boolean isShowGrid()
+    {
         return (showGridFeature);
     }
 
@@ -739,7 +737,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      *
      *
      */
-    public ShowMessageHolder getMessageHolder()
+    public IMessageDrawer getMessageDrawer()
     {
         return (messageHolder);
     }

@@ -13,6 +13,7 @@
 
     <string name="fatal_cannot_use_camera">Olympus Camera Kitが動作しないモードのため、カメラのリセットが必要です。電源ボタンを8秒以上長押しして、カメラをリセットしてください。</string>
     <string name="camera_reset_required">カメラ側のリセット操作をお願いします。</string>
+    <string name="camera_disconnected">カメラ切断</string>
 
     <string name="dialog_title_confirmation">確認</string>
     <string name="dialog_positive_execute">実行</string>
