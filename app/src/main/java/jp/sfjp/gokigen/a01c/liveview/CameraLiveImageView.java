@@ -37,7 +37,7 @@ import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
  *    (OLYMPUS の ImageCaptureSample をカスタマイズ)
  *
  */
-public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, IStatusViewDrawer
+public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify
 {
     private final String TAG = this.toString();
 
@@ -727,7 +727,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         setShowGridFrame(!showGridFeature);
     }
 
-
+    @Override
     public boolean isShowGrid()
     {
         return (showGridFeature);
@@ -740,23 +740,5 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     public IMessageDrawer getMessageDrawer()
     {
         return (messageHolder);
-    }
-
-    @Override
-    public void updateStatusView(String message)
-    {
-
-    }
-
-    @Override
-    public void updateGridFrameStatus()
-    {
-
-    }
-
-    @Override
-    public void showFavoriteSettingDialog()
-    {
-
     }
 }

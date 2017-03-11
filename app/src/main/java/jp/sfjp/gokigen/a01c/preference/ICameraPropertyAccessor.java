@@ -53,6 +53,7 @@ public interface ICameraPropertyAccessor
     String PHONE_CAMERA_ROTATION_DEFAULT_VALUE = "90";
 
     String EXIT_APPLICATION = "exit_application";
+    String EXIT_APPLICATION_WITH_DISCONNECT = "exit_app_and_disconn";
 
     String PLAYBACK_CAMERA = "playback_camera";
     String PLAYBACK_PHONE = "playback_phone";

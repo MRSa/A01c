@@ -9,9 +9,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+
 
 /**
  *
@@ -22,32 +23,50 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     private final String TAG = toString();
     private final Context context;
     private IOlyCameraCoordinator camera = null;
-    private IStatusViewDrawer statusDrawer = null;
+    private IShowInformation statusDrawer = null;
     private ILiveImageStatusNotify liveImageView = null;
     private final SharedPreferences preferences;
 
+    private boolean prohibitOperation = true;
+
+    /**
+     *
+     */
     public OlyCameraLiveViewOnTouchListener(Context context)
     {
         this.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public void prepareInterfaces(IOlyCameraCoordinator cameraCoordinator, IStatusViewDrawer statusDrawer, ILiveImageStatusNotify liveImageView)
+    /**
+     *
+     */
+    public void prepareInterfaces(IOlyCameraCoordinator cameraCoordinator, IShowInformation statusDrawer, ILiveImageStatusNotify liveImageView)
     {
         this.camera = cameraCoordinator;
         this.statusDrawer = statusDrawer;
         this.liveImageView = liveImageView;
     }
 
+    /**
+     *
+     */
     @Override
     public void onClick(View v)
     {
         int id = v.getId();
         Log.v(TAG, "onClick() : " + id);
+        if (prohibitOperation)
+        {
+            // 操作禁止の指示がされていた場合は何もしない
+            Log.v(TAG, "onClick() : prohibit operation");
+            return;
+        }
+
         switch (id)
         {
             case R.id.btn_1:
-                //pushShutterButton();
+                changeShowGrid();
                 break;
 
             case R.id.btn_2:
@@ -93,17 +112,53 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         }
     }
 
+    /**
+     *
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event)
     {
         int id = v.getId();
         Log.v(TAG, "onTouch() : " + id);
+        if (prohibitOperation)
+        {
+            // 操作禁止の指示がされていた場合は何もしない
+            Log.v(TAG, "onTouch() : prohibit operation");
+            return (false);
+        }
+
         if (id == R.id.liveview)
         {
             return (camera.driveAutoFocus(event));
         }
         return (false);
     }
+
+    /**
+     *   操作の可否を設定する。
+     *
+     *    @param operation  true: 操作可能, false: 操作不可
+     *
+     */
+    public void setEnableOperation(boolean operation)
+    {
+        prohibitOperation = !operation;
+    }
+
+
+    /***************************************************************
+     *   ボタンが押された時の処理... あとで切り離す。
+     *
+     ***************************************************************/
+
+
+    private void changeTakeMode()
+    {
+
+
+
+    }
+
 
     /**
      *   シャッターボタンが押された！
@@ -119,4 +174,35 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     *   グリッド表示の ON/OFFを切り替える
+     *
+     */
+    private void changeShowGrid()
+    {
+        liveImageView.toggleShowGridFrame();
+        updateGridStatusButton(IShowInformation.BUTTON_1);
+    }
+
+    /**
+     *  グリッドフレームの表示・非表示ボタンを更新する
+     *
+     */
+    private void updateGridStatusButton(int buttonId)
+    {
+        int btnResId;
+        if (liveImageView.isShowGrid())
+        {
+            // グリッドがON状態、グリッドをOFFにするボタンを出す
+            btnResId = R.drawable.btn_ic_grid_off;
+        }
+        else
+        {
+            //  グリッドがOFF状態、グリッドをONにするボタンを出す
+            btnResId = R.drawable.btn_ic_grid_on;
+        }
+        statusDrawer.setButtonDrawable(buttonId, btnResId);
+    }
+
 }

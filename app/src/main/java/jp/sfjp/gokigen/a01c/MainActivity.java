@@ -1,7 +1,9 @@
 package jp.sfjp.gokigen.a01c;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -18,6 +20,7 @@ import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
+import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
 
 /**
  *   メインのActivity
@@ -31,7 +34,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private CameraLiveImageView liveView = null;
     private IOlyCameraCoordinator coordinator = null;
     private IMessageDrawer messageDrawer = null;
-
+    private OlyCameraLiveViewOnTouchListener listener = null;
     /**
      *
      */
@@ -39,6 +42,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate()");
 
         //  画面全体の設定
         setContentView(R.layout.activity_main);
@@ -65,6 +69,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                     REQUEST_NEED_PERMISSIONS);
         }
 
+        listener = new OlyCameraLiveViewOnTouchListener(this);
+
         setupCameraCoordinator();
         setupActionListener();
     }
@@ -88,8 +94,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         super.onPause();
         Log.v(TAG, "onPause()");
 
-        //coordinator.stopLiveView();
-        //exitApplication();
+
     }
 
     /**
@@ -100,6 +105,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onStart()
     {
         super.onStart();
+        Log.v(TAG, "onStart()");
     }
 
     /**
@@ -110,6 +116,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onStop()
     {
         super.onStop();
+        Log.v(TAG, "onStop()");
+        exitApplication();
     }
 
     /**
@@ -120,6 +128,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      public void onEnterAmbient(Bundle ambientDetails)
      {
          super.onEnterAmbient(ambientDetails);
+         Log.v(TAG, "onEnterAmbient()");
      }
 
     /**
@@ -130,6 +139,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onExitAmbient()
     {
         super.onExitAmbient();
+        Log.v(TAG, "onExitAmbient()");
     }
 
     /**
@@ -140,8 +150,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onUpdateAmbient()
     {
         super.onUpdateAmbient();
+        Log.v(TAG, "onUpdateAmbient()");
     }
-
 
     /**
      *   ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
@@ -149,8 +159,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private void setupActionListener()
     {
-        final OlyCameraLiveViewOnTouchListener listener = new OlyCameraLiveViewOnTouchListener(this);
-
         final ImageButton btn1 = (ImageButton) findViewById(R.id.btn_1);
         btn1.setOnClickListener(listener);
 
@@ -187,7 +195,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
         liveView.setOnTouchListener(listener);
         messageDrawer = liveView.getMessageDrawer();
-        listener.prepareInterfaces(coordinator, liveView, liveView);
+        listener.prepareInterfaces(coordinator, this, liveView);
     }
 
     /**
@@ -230,23 +238,42 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "exitApplication()");
 
-        // カメラの電源をOFFにしたうえで、アプリケーションを終了する。
-        coordinator.getConnectionInterface().disconnect(true);
-        finish();
+        // ライブビューを停止させる
+        coordinator.stopLiveView();
+
+        //  パラメータを確認し、カメラの電源を切る
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ICameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
+        {
+            Log.v(TAG, "Shutdown camera...");
+
+            // カメラの電源をOFFにする
+            coordinator.getConnectionInterface().disconnect(true);
+        }
+        //finish();
+        //finishAndRemoveTask();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
 
+    /**
+     *
+     */
     @Override
     public void onStatusNotify(String message)
     {
         setMessage(IShowInformation.AREA_C, Color.WHITE, message);
     }
 
+    /**
+     *
+     */
     @Override
     public void onCameraConnected()
     {
         Log.v(TAG, "onCameraConnected()");
+
+        // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
         coordinator.startLiveView();
+        listener.setEnableOperation(true);
         setMessage(IShowInformation.AREA_C, Color.WHITE, "");
     }
 
