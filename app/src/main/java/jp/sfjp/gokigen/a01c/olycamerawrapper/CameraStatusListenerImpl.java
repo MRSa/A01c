@@ -3,6 +3,7 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -45,10 +46,10 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
      *   コンストラクタ
      *
      */
-    public CameraStatusListenerImpl(Context context, ICameraStatusDisplay parent)
+    CameraStatusListenerImpl(Context context, ICameraStatusDisplay display)
     {
         this.context = context;
-        this.display = parent;
+        this.display = display;
     }
 
     @Override
@@ -59,26 +60,95 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
             // name がないとき、何もしない
             return;
         }
-        switch (name)
+        try
         {
-            case APERTURE_VALUE:
-            case SHUTTER_SPEED:
-            case ISO_SENSITIVITY:
-            case FOCAL_LENGTH:
-            case EXPOSURE_WARNING:
-            case EXPOSURE_METERING_WARNING:
-            case HIGH_TEMPERATURE_WARNING:
-                // ある一定の値が更新された時だけ
-                break;
+            switch (name)
+            {
+                case APERTURE_VALUE:
+                    // 絞り値の更新
+                    display.updateAperture(camera.getCameraPropertyValueTitle(camera.getActualApertureValue()));
+                    break;
 
-            default:
-                // 他の値が変わった場合には、ログだけ残して何もしない。
-                Log.v(TAG, "onUpdateStatus() : " + name);
-                return;
-            //break;
+                case SHUTTER_SPEED:
+                    // シャッター速度の表示更新
+                    display.updateShutterSpeed(camera.getCameraPropertyValueTitle(camera.getActualShutterSpeed()));
+                    break;
+
+                case ISO_SENSITIVITY:
+                    // ISO感度の表示更新
+                    display.updateIsoSensitivity(camera.getCameraPropertyValueTitle(camera.getActualIsoSensitivity()));
+                    break;
+
+                case FOCAL_LENGTH:
+                    // 焦点距離の表示更新
+                    display.updateFocalLength(String.format(Locale.ENGLISH, "%3.0fmm", camera.getActualFocalLength()));
+                    break;
+
+                case EXPOSURE_COMPENSATION:
+                    // 露出補正値の表示更新
+                    display.updateExposureCompensation(camera.getCameraPropertyValueTitle(camera.getActualExposureCompensation()));
+                    break;
+
+                case EXPOSURE_WARNING:
+                case EXPOSURE_METERING_WARNING:
+                case HIGH_TEMPERATURE_WARNING:
+                case ACTUAL_ISO_SENSITIVITY_WARNING:
+                    // ワーニング系のメッセージの表示更新
+                    display.updateWarning(decideWarningMessage(camera));
+                    break;
+
+                case RECORDABLEIMAGES:
+                case MEDIA_BUSY:
+                case MEDIA_ERROR:
+                case DETECT_FACES:
+                case LEVEL_GAUGE:
+                case LENS_MOUNT_STATUS:
+                case MEDIA_MOUNT_STATUS:
+                case REMAINING_RECORDABLE_TIME:
+                case MINIMUM_FOCAL_LENGTH:
+                case MAXIMUM_FOCAL_LENGTH:
+                default:
+                    // 他の値が変わった場合には、ログだけ残して何もしない。
+                    Log.v(TAG, "onUpdateStatus() : " + name);
+                    display.updateCameraStatus(geCameraStatusMessage(camera, name));
+                    break;
+            }
         }
-        display.updateCameraStatus(geCameraStatusMessage(camera, name));
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     *   警告メッセージを生成する
+     *
+     */
+    private String decideWarningMessage(OLYCamera camera)
+    {
+        String message = "";
+        try
+        {
+            // 警告メッセージを生成
+            if (camera.isHighTemperatureWarning())
+            {
+                // 温度警告
+                message = message + context.getString(R.string.high_temperature_warning);
+            }
+            if ((camera.isExposureMeteringWarning())||(camera.isExposureWarning())||(camera.isActualIsoSensitivityWarning()))
+            {
+                // 露出警告
+                message = message + " " + context.getString(R.string.exposure_metering_warning);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            message = "";
+        }
+        return (message);
+    }
+
 
     /**
      *  表示用のメッセージを生成する

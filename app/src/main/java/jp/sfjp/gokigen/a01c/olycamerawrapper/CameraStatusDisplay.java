@@ -14,6 +14,16 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     private final IOlyCameraPropertyProvider propertyProxy;
     private final IShowInformation informationObject;
 
+    // 表示エリア定義用...  : 将来的には preferenceにおいてカスタマイズ可能にする
+    private int takeModeArea = IShowInformation.AREA_1;
+    private int shutterSpeedArea = IShowInformation.AREA_2;
+    private int apertureArea = IShowInformation.AREA_3;
+    private int isoSensitivityArea = 0;
+    private int focalLengthArea = 0;
+    private int exposureCompensationArea = 0;
+    private int warningArea = IShowInformation.AREA_4;
+
+
     CameraStatusDisplay(IOlyCameraPropertyProvider propertyProxy, IShowInformation informationObject)
     {
         this.propertyProxy = propertyProxy;
@@ -26,19 +36,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     public void updateTakeMode()
     {
         String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
-        informationObject.setMessage(IShowInformation.AREA_1, Color.WHITE, propetyValue);
-
-        propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.SHUTTER_SPEED));
-        informationObject.setMessage(IShowInformation.AREA_2, Color.WHITE, propetyValue);
-
-        propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.APERTURE));
-        if (propetyValue != null)
+        if ((propetyValue != null)&&(takeModeArea != 0))
         {
-            informationObject.setMessage(IShowInformation.AREA_3, Color.WHITE, "F" + propetyValue);
+            informationObject.setMessage(takeModeArea, Color.WHITE, propetyValue);
         }
-
-        informationObject.setMessage(IShowInformation.AREA_4, Color.GRAY, "");
-
     }
 
     @Override
@@ -76,9 +77,75 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         updateTakeMode();
     }
 
+
+    @Override
+    public void updateWarning(String value)
+    {
+        if((value != null)&&(warningArea != 0))
+        {
+            {
+                informationObject.setMessage(warningArea, Color.argb(0, 255,204,0), value);
+            }
+        }
+    }
+
+    @Override
+    public void updateExposureCompensation(String value)
+    {
+        if((value != null)&&(exposureCompensationArea != 0))
+        {
+            //if (!"0".equals(value))
+            {
+                informationObject.setMessage(exposureCompensationArea, Color.WHITE, value);
+            }
+        }
+    }
+
+    @Override
+    public void updateFocalLength(String value)
+    {
+        if((value != null)&&(focalLengthArea != 0))
+        {
+            informationObject.setMessage(focalLengthArea, Color.WHITE, value);
+        }
+    }
+
+    @Override
+    public void updateIsoSensitivity(String value)
+    {
+        String prefix = "ISO";
+        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ISO_SENSITIVITY));
+        if ("Auto".equals(propetyValue))
+        {
+            prefix = prefix + "-A ";
+        }
+        if((value != null)&&(isoSensitivityArea != 0))
+        {
+            informationObject.setMessage(isoSensitivityArea, Color.WHITE, prefix + value);
+        }
+    }
+
+    @Override
+    public void updateShutterSpeed(String value)
+    {
+        if((value != null)&&(shutterSpeedArea != 0))
+        {
+            informationObject.setMessage(shutterSpeedArea, Color.WHITE, value);
+        }
+    }
+
+    @Override
+    public void updateAperture(String value)
+    {
+        if((value != null)&&(apertureArea != 0))
+        {
+            informationObject.setMessage(apertureArea, Color.WHITE, "F" + value);
+        }
+    }
+
     @Override
     public void updateCameraStatus(String message)
     {
-        informationObject.setMessage(IShowInformation.AREA_4, Color.MAGENTA, message);
+        informationObject.setMessage(IShowInformation.AREA_4, Color.argb(0, 255,204,0), message);
     }
 }

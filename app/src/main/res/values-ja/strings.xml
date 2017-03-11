@@ -21,8 +21,8 @@
 
     <string name="dialog_message_power_off">カメラ電源断</string>
     
-    <string name="high_temperature_warning">TEMP</string>
-    <string name="exposure_metering_warning">EXP</string>
+    <string name="high_temperature_warning">温度</string>
+    <string name="exposure_metering_warning">露出</string>
     <string name="iso_sensitivity_warning">ISO</string>
 
     <string name="dialog_start_load_property_message">Please Wait</string>

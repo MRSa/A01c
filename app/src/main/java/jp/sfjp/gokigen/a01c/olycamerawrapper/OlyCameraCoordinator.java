@@ -62,7 +62,8 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         singleShot = new SingleShotControl(camera, focusFrameDisplay, this);  // 撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
-
+        setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay));
+        camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
     }
 
