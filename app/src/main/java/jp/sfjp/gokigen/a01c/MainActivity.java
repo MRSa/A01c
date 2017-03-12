@@ -346,7 +346,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             }
             if (id == 0)
             {
-                // 描画エリアが不定
+                // 描画エリアが不定の場合...
                 return;
             }
         }
