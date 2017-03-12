@@ -1,6 +1,7 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -163,9 +164,37 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     /**
      *   画像を１枚撮影
      */
+    @Override
     public void singleShot() {
         singleShot.singleShot();
     }
+
+    /**
+     *   撮影確認画像を生成するか設定する
+     *
+     */
+    @Override
+    public void setRecViewMode(boolean isRecViewMode)
+    {
+        try
+        {
+            String value = "<" + IOlyCameraProperty.REC_PREVIEW + "/";
+            if (isRecViewMode)
+            {
+                value = value + "ON>";
+            }
+            else
+            {
+                value = value + "OFF>";
+            }
+            propertyProxy.setCameraPropertyValue(IOlyCameraProperty.REC_PREVIEW, value);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void toggleAutoExposure()

@@ -12,7 +12,6 @@ import jp.co.olympus.camerakit.OLYCameraStatusListener;
  */
 public interface IOlyCameraCoordinator
 {
-
     /** ライブビュー関係 **/
     void changeLiveViewSize(String size);
     void setLiveViewListener(OLYCameraLiveViewListener listener);
@@ -25,6 +24,10 @@ public interface IOlyCameraCoordinator
 
     /** シングル撮影機能の実行 **/
     void singleShot();
+
+    /** 撮影確認画像の設定 **/
+    void setRecViewMode(boolean isRecViewMode);
+
 
     /** AE Lockの設定・解除、 AF/MFの切替え **/
     void toggleAutoExposure();

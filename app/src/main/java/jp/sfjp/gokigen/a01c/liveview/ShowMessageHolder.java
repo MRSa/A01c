@@ -17,9 +17,9 @@ class ShowMessageHolder implements IMessageDrawer
     private int centerMessageColor = Color.BLUE;
     private int lowerMessageColor = Color.BLUE;
 
-    private int upperMessageTextSize = 8;
-    private int centerMessageTextSize = 16;
-    private int lowerMessageTextSize = 8;
+    private int upperMessageTextSize = 16;
+    private int centerMessageTextSize = 24;
+    private int lowerMessageTextSize = 16;
 
     /**
      *

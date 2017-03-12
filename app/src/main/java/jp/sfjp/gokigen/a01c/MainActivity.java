@@ -273,6 +273,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 
         // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
         coordinator.startLiveView();
+        coordinator.setRecViewMode(false);
         listener.setEnableOperation(true);
         setMessage(IShowInformation.AREA_C, Color.WHITE, "");
     }
@@ -307,7 +308,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void setMessage(final int area, final int color, final String message)
     {
-        int id;
+        int id = 0;
         switch (area)
         {
             case IShowInformation.AREA_1:
@@ -320,8 +321,10 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 id = R.id.text_3;
                 break;
             case IShowInformation.AREA_4:
-            default:
                 id = R.id.text_4;
+                break;
+            default:
+                // unknown
                 break;
         }
         if (messageDrawer != null)
@@ -339,6 +342,11 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             if (area == IShowInformation.AREA_C)
             {
                 messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTER, color, IMessageDrawer.SIZE_LARGE, message);
+                return;
+            }
+            if (id == 0)
+            {
+                // 描画エリアが不定
                 return;
             }
         }

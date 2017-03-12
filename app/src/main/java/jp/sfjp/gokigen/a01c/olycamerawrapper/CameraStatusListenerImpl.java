@@ -131,10 +131,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
         {
             // 警告メッセージを生成
             if (camera.isHighTemperatureWarning())
-            {
-                // 温度警告
-                message = message + context.getString(R.string.high_temperature_warning);
-            }
+
             if ((camera.isExposureMeteringWarning())||(camera.isExposureWarning())||(camera.isActualIsoSensitivityWarning()))
             {
                 // 露出警告

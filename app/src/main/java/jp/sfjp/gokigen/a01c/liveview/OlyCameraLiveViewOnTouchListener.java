@@ -3,6 +3,7 @@ package jp.sfjp.gokigen.a01c.liveview;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraProperty;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraPropertyProvider;
 
 
 /**
@@ -49,6 +52,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
     /**
+     *   ボタン（オブジェクト）をクリックしたときの処理
      *
      */
     @Override
@@ -62,57 +66,46 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             Log.v(TAG, "onClick() : prohibit operation");
             return;
         }
-
         switch (id)
         {
             case R.id.btn_1:
-                changeShowGrid();
+                pushedButton1();
                 break;
-
             case R.id.btn_2:
-                //phoneShutter.onTouchedPreviewArea();
+                pushedButton2();
                 break;
-
             case R.id.btn_3:
-                //camera.toggleManualFocus();
+                pushedButton3();
                 break;
-
             case R.id.btn_4:
-                //camera.unlockAutoFocus();
+                pushedButton4();
                 break;
-
             case R.id.btn_5:
-                //camera.toggleAutoExposure();
+                pushedButton5();
                 break;
-
             case R.id.btn_6:
-                //camera.configure_expert();
-                pushShutterButton();
+                pushedButton6();
                 break;
-
             case R.id.text_1:
-                //
+                pushedArea1();
                 break;
-
             case R.id.text_2:
-                //
+                pushedArea2();
                 break;
-
             case R.id.text_3:
-                //
+                pushedArea3();
                 break;
-
             case R.id.text_4:
-                //
+                pushedArea4();
                 break;
-
             default:
-                //
+                // その他...何もしない
                 break;
         }
     }
 
     /**
+     *   画面(ライブビュー部分)をタッチした時の処理
      *
      */
     @Override
@@ -126,12 +119,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             Log.v(TAG, "onTouch() : prohibit operation");
             return (false);
         }
-
-        if (id == R.id.liveview)
-        {
-            return (camera.driveAutoFocus(event));
-        }
-        return (false);
+        return ((id == R.id.liveview)&&(touchedLiveViewArea(event)));
     }
 
     /**
@@ -147,16 +135,130 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
 
     /***************************************************************
-     *   ボタンが押された時の処理... あとで切り離す。
-     *
+     *   以下、ボタンが押された時の処理... あとで切り離す。
+     *   (撮影モードごとに処理を変えたい)
      ***************************************************************/
 
+    private boolean touchedLiveViewArea(MotionEvent event)
+    {
+        return (camera.driveAutoFocus(event));
+    }
 
-    private void changeTakeMode()
+
+    private void pushedButton1()
+    {
+        // グリッドの表示 / 非表示
+        changeShowGrid();
+    }
+
+
+    private void pushedButton2()
     {
 
 
+    }
 
+
+
+    private void pushedButton3()
+    {
+
+
+    }
+
+
+    private void pushedButton4()
+    {
+
+
+    }
+
+
+    private void pushedButton5()
+    {
+
+
+    }
+
+
+    private void pushedButton6()
+    {
+        pushShutterButton();
+    }
+
+
+    private void pushedArea1()
+    {
+        // 撮影モードの変更
+        changeTakeMode();
+    }
+
+    private void pushedArea2()
+    {
+
+    }
+
+    private void pushedArea3()
+    {
+
+    }
+
+    private void pushedArea4()
+    {
+
+    }
+
+    /***************************************************************
+     *   以下、具体的な機能の実行... あとで切り離す。
+     *
+     ***************************************************************/
+
+    /**
+     *   撮影モードの変更指示
+     *   (P > A > S > S > ART > iAuto > ...)
+     */
+    private void changeTakeMode()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
+        if (propetyValue == null)
+        {
+            // データ取得失敗
+            return;
+        }
+        String targetMode = "<" + IOlyCameraProperty.TAKE_MODE;  // 変更先モード
+        switch (propetyValue)
+        {
+            case "P":
+                targetMode = targetMode + "/A>";
+                break;
+
+            case "A":
+                    targetMode =  targetMode + "/S>";
+                break;
+
+            case "S":
+                targetMode =  targetMode + "/M>";
+                break;
+
+            case "M":
+                targetMode =  targetMode + "/ART>";
+                break;
+
+            case "ART":
+                targetMode =  targetMode + "/iAuto>";
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                targetMode =  targetMode + "/P>";
+                break;
+        }
+        propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode);
+        camera.unlockAutoFocus();
+
+        //
     }
 
 

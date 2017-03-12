@@ -10,13 +10,13 @@ import jp.co.olympus.camerakit.OLYCameraPropertyListener;
  *  (LiveViewFragment用)
  *
  */
-public class CameraPropertyListenerImpl implements OLYCameraPropertyListener
+class CameraPropertyListenerImpl implements OLYCameraPropertyListener
 {
     private final String TAG = this.toString();
 
     private final ICameraStatusDisplay display;
 
-    public CameraPropertyListenerImpl(ICameraStatusDisplay parent)
+    CameraPropertyListenerImpl(ICameraStatusDisplay parent)
     {
         this.display = parent;
     }
@@ -44,6 +44,7 @@ public class CameraPropertyListenerImpl implements OLYCameraPropertyListener
             case IOlyCameraProperty.AE_LOCK_STATE:
                 display.updateAeLockState();
                 break;
+
             default:
                 Log.v(TAG, "onUpdateCameraProperty() : " + name);
                 display.updateCameraStatus();

@@ -148,7 +148,12 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
+
+        // 画像の表示
         drawCanvas(canvas);
+
+        // メッセージの表示 (Overwrite)
+        drawInformationMessages(canvas);
     }
 
     /**
@@ -256,8 +261,10 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      * @param event A motion event.
      * @return A point in the view finder. if a point is equal to null, the point is out of the view finder.
      */
-    public PointF getPointWithEvent(MotionEvent event) {
-        if (event == null || imageBitmap == null) {
+    public PointF getPointWithEvent(MotionEvent event)
+    {
+        if (event == null || imageBitmap == null)
+        {
             return null;
         }
 
@@ -281,15 +288,18 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      * @param point The point to examine.
      * @return true if the image is not null or empty and the point is located within the rectangle; otherwise, false.
      */
-    public boolean isContainsPoint(PointF point) {
+    public boolean isContainsPoint(PointF point)
+    {
         return ((point != null) && (new RectF(0, 0, 1, 1)).contains(point.x, point.y));
     }
 
     /**
      * Hides the forcus frame.
      */
-    public void hideFocusFrame() {
-        if (focusFrameHideTimer != null) {
+    public void hideFocusFrame()
+    {
+        if (focusFrameHideTimer != null)
+        {
             focusFrameHideTimer.cancel();
             focusFrameHideTimer = null;
         }
@@ -305,7 +315,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      * @param duration A duration of the focus frame showing.
      */
     @Override
-    public void showFocusFrame(RectF rect, FocusFrameStatus status, double duration) {
+    public void showFocusFrame(RectF rect, FocusFrameStatus status, double duration)
+    {
         if (focusFrameHideTimer != null) {
             focusFrameHideTimer.cancel();
             focusFrameHideTimer = null;
@@ -332,7 +343,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      *
      *
      */
-    private void refreshCanvas() {
+    private void refreshCanvas()
+    {
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
             invalidate();
         } else {
@@ -395,16 +407,14 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         if ((viewRect != null) && (showGridFeature) && (gridFrameDrawer != null)) {
             drawGridFrame(canvas, viewRect);
         }
-
-        // メッセージの表示
-        drawInformationMessages(canvas);
     }
 
     /**
      *
      *
      */
-    private RectF decideViewRect(Canvas canvas, Bitmap bitmapToShow) {
+    private RectF decideViewRect(Canvas canvas, Bitmap bitmapToShow)
+    {
         final int srcWidth;
         final int srcHeight;
         if ((imageRotationDegrees == 0) || (imageRotationDegrees == 180)) {
@@ -463,7 +473,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      * @param imageWidth  幅
      * @param imageHeight 高さ
      */
-    private void drawFocusFrame(Canvas canvas, float imageWidth, float imageHeight) {
+    private void drawFocusFrame(Canvas canvas, float imageWidth, float imageHeight)
+    {
         //Log.v(TAG, "drawFocusFrame() :" + focusFrameStatus);
 
         //  Calculate the rectangle of focus.
@@ -503,7 +514,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      * @param canvas   キャンバスエリア
      * @param viewRect 表示領域
      */
-    private void drawGridFrame(Canvas canvas, RectF viewRect) {
+    private void drawGridFrame(Canvas canvas, RectF viewRect)
+    {
         RectF gridRect;
         if ((imageRotationDegrees == 0) || (imageRotationDegrees == 180)) {
             gridRect = new RectF(viewRect);
@@ -531,39 +543,41 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     private void drawInformationMessages(Canvas canvas)
     {
         String message;
-        Paint paint = new Paint();
-        float x = 5.0f;  // margin
-        float y = 5.0f;  // margin
+        float x = 10.0f;  // 表示マージン ... 実測なのでチューニング必要
+        float y = 55.0f;  // 表示マージン ... 実測なのでチューニング必要
 
         // 画面の中心に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.CENTER);
         if ((message != null)&&(message.length() > 0))
         {
+            Paint paint = new Paint();
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.CENTER));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTER));
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            x = (canvas.getWidth() / 2.0f) - (paint.measureText(message) / 2.0f);
-            y = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
-            canvas.drawText(message, x, y, paint);
+            float cx = (canvas.getWidth() / 2.0f) - (paint.measureText(message) / 2.0f);
+            float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
+            canvas.drawText(message, cx, cy, paint);
         }
 
         // 画面上部に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UP);
         if ((message != null)&&(message.length() > 0))
         {
-            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UP));
-            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UP));
-            canvas.drawText(message, x, y, paint);
+            Paint paintUp = new Paint();
+            paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UP));
+            paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UP));
+            canvas.drawText(message, x, y, paintUp);
         }
 
         // 画面下部に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOW);
         if ((message != null)&&(message.length() > 0))
         {
+            Paint paint = new Paint();
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOW));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOW));
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            y = canvas.getHeight() - (fontMetrics.ascent + fontMetrics.descent) - 5.0f;
+            y = canvas.getHeight() - (fontMetrics.ascent + fontMetrics.descent) - y;
             canvas.drawText(message, x, y, paint);
         }
     }
@@ -710,7 +724,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      *
      *
      */
-    public void setShowGridFrame(boolean isShowGridFeature) {
+    public void setShowGridFrame(boolean isShowGridFeature)
+    {
         showGridFeature = isShowGridFeature;
         SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
@@ -727,11 +742,16 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         setShowGridFrame(!showGridFeature);
     }
 
+    /**
+     *
+     *
+     */
     @Override
     public boolean isShowGrid()
     {
         return (showGridFeature);
     }
+
 
     /**
      *
