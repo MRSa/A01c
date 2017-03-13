@@ -1,7 +1,6 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.app.Activity;
-import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -139,6 +138,16 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     }
 
     /**
+     *   撮影モードの更新
+     *
+     */
+    @Override
+    public void updateTakeMode()
+    {
+        cameraStatusDisplay.updateTakeMode();
+    }
+
+    /**
      *   フォーカスロックの実行
      */
     public boolean driveAutoFocus(MotionEvent event)
@@ -217,6 +226,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         {
             e.printStackTrace();
         }
+        cameraStatusDisplay.updateTakeMode();
     }
 
     /**
@@ -297,7 +307,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     @Override
     public String getCameraStatusSummary(ICameraStatusSummary decoder)
     {
-        return (decoder.geCameraStatusMessage(camera, ""));
+        return (decoder.getCameraStatusMessage(camera, ""));
     }
 
     @Override

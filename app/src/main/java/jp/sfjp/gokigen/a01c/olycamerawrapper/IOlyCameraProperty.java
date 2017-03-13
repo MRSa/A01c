@@ -13,8 +13,9 @@ public interface IOlyCameraProperty
     String BATTERY_LEVEL = "BATTERY_LEVEL";
     String AE_MODE = "AE";
     String AE_LOCK_STATE = "AE_LOCK_STATE";
-    String ISO_SENSITIVITY = "ISO";
+    String AF_LOCK_STATE = "AF_LOCK_STATE";
 
+    String ISO_SENSITIVITY = "ISO";
 
 
 

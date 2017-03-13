@@ -1,10 +1,8 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.graphics.Color;
-import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
 
-import jp.co.olympus.camerakit.OLYCamera;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 
 /**
@@ -123,7 +121,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.AE_LOCK_STATE));
         if ((propetyValue != null)&&(aeLockStateArea != 0))
         {
-            informationObject.setMessage(aeLockStateArea, Color.WHITE, propetyValue);
+            if (propetyValue.equals("LOCK"))
+            {
+                informationObject.setMessage(aeLockStateArea, Color.WHITE, "AE-L");
+            }
         }
     }
 

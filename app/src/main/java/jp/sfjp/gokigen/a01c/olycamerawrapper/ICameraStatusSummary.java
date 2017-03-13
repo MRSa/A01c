@@ -5,6 +5,6 @@ import jp.co.olympus.camerakit.OLYCamera;
 
 public interface ICameraStatusSummary
 {
-    String geCameraStatusMessage(OLYCamera camera, String name);
+    String getCameraStatusMessage(OLYCamera camera, String name);
 
 }

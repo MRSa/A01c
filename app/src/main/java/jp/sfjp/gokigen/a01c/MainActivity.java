@@ -1,6 +1,5 @@
 package jp.sfjp.gokigen.a01c;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -67,6 +66,17 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                             Manifest.permission.INTERNET,
                     },
                     REQUEST_NEED_PERMISSIONS);
+        }
+
+        if (!hasGps())
+        {
+            // GPS機能が搭載されていない場合...
+            if (Log.isLoggable(TAG, Log.DEBUG))
+            {
+                Log.d(TAG, "This hardware doesn't have GPS.");
+            }
+            // Fall back to functionality that does not use location or
+            // warn the user that location function is not available.
         }
 
         listener = new OlyCameraLiveViewOnTouchListener(this);
@@ -359,6 +369,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                  final TextView textArea = (TextView) findViewById(areaId);
                  textArea.setTextColor(color);
                  textArea.setText(message);
+                 textArea.invalidate();
              }
         });
     }
@@ -406,5 +417,14 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 button.invalidate();
             }
         });
+    }
+
+    /**
+     *
+     * @return true GPS搭載, false GPS非搭載
+     */
+    private boolean hasGps()
+    {
+        return (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS));
     }
 }

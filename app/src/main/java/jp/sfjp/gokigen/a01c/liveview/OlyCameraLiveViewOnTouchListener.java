@@ -3,7 +3,6 @@ package jp.sfjp.gokigen.a01c.liveview;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -147,6 +146,35 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
     private void pushedButton1()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
+
+            case "A":
+                //
+                break;
+
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
         // グリッドの表示 / 非表示
         changeShowGrid();
     }
@@ -154,35 +182,172 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
     private void pushedButton2()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
 
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
     }
 
 
 
     private void pushedButton3()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
 
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
     }
 
 
     private void pushedButton4()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
 
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
     }
 
 
     private void pushedButton5()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
 
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
     }
 
 
     private void pushedButton6()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
+
+            case "A":
+                //
+                break;
+
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
         pushShutterButton();
     }
 
@@ -195,23 +360,90 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
     private void pushedArea2()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
+
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
     }
 
     private void pushedArea3()
     {
+        String takeMode = getTakeMode();
+        switch (takeMode)
+        {
+            case "P":
+                //
+                break;
 
+            case "A":
+                //
+                break;
+
+            case "S":
+                //
+                break;
+
+            case "M":
+                //
+                break;
+
+            case "ART":
+                //
+                break;
+
+            case "iAuto":
+            case "movie":
+            default:
+                //
+                break;
+        }
+        changeAeLockMode();
     }
 
+    /**
+     *   テキスト表示エリア（設定画面を開くで固定）
+     */
     private void pushedArea4()
     {
-
+        showSettingsScreen();
     }
 
     /***************************************************************
      *   以下、具体的な機能の実行... あとで切り離す。
      *
      ***************************************************************/
+
+    private String getTakeMode()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        return (propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE)));
+    }
+
 
     /**
      *   撮影モードの変更指示
@@ -258,7 +490,8 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode);
         camera.unlockAutoFocus();
 
-        //
+        //  撮影モードの更新
+        camera.updateTakeMode();
     }
 
 
@@ -288,6 +521,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
     /**
+     *   AE-Lock/Lock解除を行う
+     *
+     */
+    private void changeAeLockMode()
+    {
+        camera.toggleAutoExposure();
+    }
+
+    /**
      *  グリッドフレームの表示・非表示ボタンを更新する
      *
      */
@@ -307,4 +549,12 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         statusDrawer.setButtonDrawable(buttonId, btnResId);
     }
 
+    /**
+     *   設定画面を開く
+     *
+     */
+    private void showSettingsScreen()
+    {
+        // TBD...
+    }
 }

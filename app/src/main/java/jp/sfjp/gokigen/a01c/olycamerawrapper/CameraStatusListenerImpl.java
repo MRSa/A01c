@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeSet;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
@@ -110,7 +108,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 default:
                     // 他の値が変わった場合には、ログだけ残して何もしない。
                     Log.v(TAG, "onUpdateStatus() : " + name);
-                    display.updateCameraStatus(geCameraStatusMessage(camera, name));
+                    display.updateCameraStatus(getCameraStatusMessage(camera, name));
                     break;
             }
         }
@@ -137,6 +135,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 // 露出警告
                 message = message + " " + context.getString(R.string.exposure_metering_warning);
             }
+
         }
         catch (Exception e)
         {
@@ -152,8 +151,10 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
      *
      */
     @Override
-    public String geCameraStatusMessage(OLYCamera camera, String name)
+    public String getCameraStatusMessage(OLYCamera camera, String name)
     {
+        return (name);
+/*
         String message = name;
         String warn = "";
         try
@@ -195,5 +196,6 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
             e.printStackTrace();
         }
         return (message);
+*/
     }
 }

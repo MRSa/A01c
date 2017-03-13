@@ -1,6 +1,5 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
-import android.content.Context;
 import android.view.MotionEvent;
 
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
@@ -17,6 +16,9 @@ public interface IOlyCameraCoordinator
     void setLiveViewListener(OLYCameraLiveViewListener listener);
     void startLiveView();
     void stopLiveView();
+
+    /** 撮影モードの更新  **/
+    void updateTakeMode();
 
     /** オートフォーカス機能の実行 **/
     boolean driveAutoFocus(MotionEvent event);
