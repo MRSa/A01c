@@ -143,298 +143,425 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         return (camera.driveAutoFocus(event));
     }
 
-
+    /**
+     *   ボタン１が押された時の機能を引き当て実行する
+     *
+     */
     private void pushedButton1()
     {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON1;
         String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID;
         switch (takeMode)
         {
             case "P":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
                 break;
 
             case "A":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
                 break;
 
             case "S":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
                 break;
 
             case "M":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
                 break;
 
             case "ART":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
                 break;
 
             case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
             case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
             default:
-                //
                 break;
         }
-        // グリッドの表示 / 非表示
-        changeShowGrid();
+        dispatchAction(IShowInformation.BUTTON_1, preferences.getInt(preference_action_id, defaultAction));
     }
 
 
+    /**
+     *   ボタン２が押された時の機能を引き当て実行する
+     *
+     */
     private void pushedButton2()
     {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON2;
         String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
         switch (takeMode)
         {
             case "P":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
                 break;
 
             case "A":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
                 break;
 
             case "S":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
                 break;
 
             case "M":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
                 break;
 
             case "ART":
-                //
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
                 break;
 
             case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
             case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
             default:
-                //
                 break;
         }
-    }
-
-
-
-    private void pushedButton3()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-    }
-
-
-    private void pushedButton4()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-    }
-
-
-    private void pushedButton5()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-    }
-
-
-    private void pushedButton6()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-        pushShutterButton();
-    }
-
-
-    private void pushedArea1()
-    {
-        // 撮影モードの変更
-        changeTakeMode();
-    }
-
-    private void pushedArea2()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-    }
-
-    private void pushedArea3()
-    {
-        String takeMode = getTakeMode();
-        switch (takeMode)
-        {
-            case "P":
-                //
-                break;
-
-            case "A":
-                //
-                break;
-
-            case "S":
-                //
-                break;
-
-            case "M":
-                //
-                break;
-
-            case "ART":
-                //
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                //
-                break;
-        }
-        changeAeLockMode();
+        dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction));
     }
 
     /**
-     *   テキスト表示エリア（設定画面を開くで固定）
+     *   ボタン３が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedButton3()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON3;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.BUTTON_3, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   ボタン４が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedButton4()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON4;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.BUTTON_4, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   ボタン５が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedButton5()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON5;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.BUTTON_5, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   ボタン６が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedButton6()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON6;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+
+    /**
+     *   表示エリア１が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedArea1()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA1;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.AREA_1, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   表示エリア２が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedArea2()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA2;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.AREA_2, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   表示エリア３が押された時の機能を引き当て実行する
+     *
+     */
+    private void pushedArea3()
+    {
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA3;
+        String takeMode = getTakeMode();
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE;
+        switch (takeMode)
+        {
+            case "P":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                break;
+
+            case "A":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                break;
+
+            case "S":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                break;
+
+            case "M":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                break;
+
+            case "ART":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                break;
+
+            case "iAuto":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                break;
+
+            case "movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                break;
+
+            default:
+                break;
+        }
+        dispatchAction(IShowInformation.AREA_3, preferences.getInt(preference_action_id, defaultAction));
+    }
+
+    /**
+     *   テキスト表示エリア４（機能は「設定画面を開く」で固定）
      */
     private void pushedArea4()
     {
-        showSettingsScreen();
+        // 設定画面を開く
+        dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS);
     }
 
+
     /***************************************************************
-     *   以下、具体的な機能の実行... あとで切り離す。
+     *   以下、具体的な機能の実行... ここから下は、あとで切り離す。
      *
      ***************************************************************/
 
@@ -494,7 +621,6 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         camera.updateTakeMode();
     }
 
-
     /**
      *   シャッターボタンが押された！
      *   （現在は、連続撮影モードやムービー撮影についてはまだ非対応）
@@ -514,10 +640,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   グリッド表示の ON/OFFを切り替える
      *
      */
-    private void changeShowGrid()
+    private void changeShowGrid(int objectId)
     {
         liveImageView.toggleShowGridFrame();
-        updateGridStatusButton(IShowInformation.BUTTON_1);
+        updateGridStatusButton(objectId);
     }
 
     /**
@@ -556,5 +682,45 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     private void showSettingsScreen()
     {
         // TBD...
+    }
+
+    /**
+     *   指定した機能を実行する
+     *
+     * @param objectId　　　　　操作したオブジェクト
+     * @param featureNumber　　操作する機能
+     */
+    private void dispatchAction(int objectId, int featureNumber)
+    {
+        if (featureNumber <= ICameraFeatureDispatcher.FEATURE_ACTION_NONE)
+        {
+            // 何もしない
+            return;
+        }
+
+        // 機能実行の割り当て...
+        switch (featureNumber)
+        {
+            case ICameraFeatureDispatcher.FEATURE_SETTINGS:
+                // 設定画面を開く
+                showSettingsScreen();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID:
+                // グリッド標示ON/OFF
+                changeShowGrid(objectId);
+                break;
+            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT:
+                // シャッター
+                pushShutterButton();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE:
+                // 撮影モードの変更
+                changeTakeMode();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE:
+                // AE LOCKのON/OFF切り替え
+                changeAeLockMode();
+                break;
+        }
     }
 }
