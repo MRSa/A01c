@@ -179,6 +179,61 @@ class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
         }
     }
 
+    /**
+     *  カメラプロパティの選択肢を１段階あげる
+     */
+    @Override
+    public void updateCameraPropertyUp(String name)
+    {
+        String current = getCameraPropertyValue(name);
+        List<String> valueList = getCameraPropertyValueList(name);
+        int index = valueList.indexOf(current);
+        if (index < (valueList.size() - 1))
+        {
+            try
+            {
+                index++;
+                String targetValue = valueList.get(index);
+                Log.v(TAG, "updateCameraPropertyUp() : " + name + " , " + targetValue);
+                setCameraPropertyValue(name, targetValue);
+            }
+            catch (Exception e)
+            {
+                //
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     *  カメラプロパティの選択肢を１段階下げる
+     */
+    @Override
+    public void updateCameraPropertyDown(String name)
+    {
+        String current = getCameraPropertyValue(name);
+        List<String> valueList = getCameraPropertyValueList(name);
+        int index = valueList.indexOf(current);
+        if (index > 0)
+        {
+            try
+            {
+                index--;
+                String targetValue = valueList.get(index);
+                Log.v(TAG, "updateCameraPropertyDown() : " + name + " , " + targetValue);
+                setCameraPropertyValue(name, targetValue);
+            }
+            catch (Exception e)
+            {
+                //
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+
     @Override
     public boolean canSetCameraProperty(String name)
     {

@@ -30,6 +30,12 @@ public interface IOlyCameraPropertyProvider
     // カメラプロパティに値を一括設定
     void setCameraPropertyValues(Map<String, String> values);
 
+    // カメラプロパティの選択肢を１段階あげる
+    void updateCameraPropertyUp(String name);
+
+    // カメラプロパティの選択肢を１段階下げる
+    void updateCameraPropertyDown(String name);
+
     // カメラプロパティに値を設定できるかを検査
     boolean canSetCameraProperty(String name);
 

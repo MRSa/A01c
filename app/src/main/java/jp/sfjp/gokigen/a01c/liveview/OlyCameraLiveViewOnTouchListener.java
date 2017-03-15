@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
@@ -206,14 +208,17 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
                 break;
 
             case "ART":
@@ -251,14 +256,17 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
                 break;
 
             case "ART":
@@ -287,7 +295,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     {
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON4;
         String takeMode = getTakeMode();
-        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
         switch (takeMode)
         {
             case "P":
@@ -304,6 +312,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
                 break;
 
             case "ART":
@@ -312,6 +321,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "iAuto":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
                 break;
 
             case "movie":
@@ -332,7 +342,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     {
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON5;
         String takeMode = getTakeMode();
-        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
         switch (takeMode)
         {
             case "P":
@@ -349,6 +359,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
                 break;
 
             case "ART":
@@ -357,6 +368,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "iAuto":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
                 break;
 
             case "movie":
@@ -676,6 +688,63 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
     /**
+     *　  露出補正を１段階下げる
+     */
+    private void changeExposureBiasValueDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.EXPOSURE_COMPENSATION);
+    }
+
+    /**
+     *   露出補正を１段階あげる
+     *
+     */
+    private void changeExposureBiasValueUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.EXPOSURE_COMPENSATION);
+    }
+
+    /**
+     *　  絞り値を１段階下げる
+     */
+    private void changeApertureValueDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.APERTURE);
+    }
+
+    /**
+     *   絞り値を１段階あげる
+     *
+     */
+    private void changeApertureValueUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.APERTURE);
+    }
+
+    /**
+     *　  シャッター速度を１段階下げる
+     */
+    private void changeShutterSpeedDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.SHUTTER_SPEED);
+    }
+
+    /**
+     *   シャッター速度を１段階あげる
+     *
+     */
+    private void changeShutterSpeedUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.SHUTTER_SPEED);
+    }
+
+    /**
      *   設定画面を開く
      *
      */
@@ -720,6 +789,30 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             case ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE:
                 // AE LOCKのON/OFF切り替え
                 changeAeLockMode();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN:
+                // 露出補正を１段階下げる
+                changeExposureBiasValueDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP:
+                // 露出補正を１段階上げる
+                changeExposureBiasValueUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN:
+                // 絞り値を１段階下げる
+                changeApertureValueDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_APERTURE_UP:
+                // 絞り値を１段階上げる
+                changeApertureValueUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN:
+                // シャッター速度を１段階下げる
+                changeShutterSpeedDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP:
+                // シャッター速度を１段階上げる
+                changeShutterSpeedUp();
                 break;
         }
     }
