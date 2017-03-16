@@ -204,6 +204,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
                 break;
 
             case "A":
@@ -252,6 +253,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
                 break;
 
             case "A":
@@ -744,6 +746,26 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.SHUTTER_SPEED);
     }
 
+
+    /**
+     *　  仕上がり・ピクチャーモードを１段階下げる
+     */
+    private void changeColorToneDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.COLOR_TONE);
+    }
+
+    /**
+     *   仕上がり・ピクチャーモードを１段階あげる
+     *
+     */
+    private void changeColorToneUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.COLOR_TONE);
+    }
+
     /**
      *   設定画面を開く
      *
@@ -814,6 +836,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 // シャッター速度を１段階上げる
                 changeShutterSpeedUp();
                 break;
+            case ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN:
+                // 仕上がり・ピクチャーモードを選択
+                changeColorToneDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_COLORTONE_UP:
+                // 仕上がり・ピクチャーモードを選択
+                changeColorToneUp();
+                break;
+
         }
     }
 }

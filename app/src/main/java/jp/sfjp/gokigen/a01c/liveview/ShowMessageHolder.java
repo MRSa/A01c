@@ -9,17 +9,93 @@ import android.graphics.Color;
  */
 class ShowMessageHolder implements IMessageDrawer
 {
-    private String upperMessage = "";
-    private String centerMessage = "";
-    private String lowerMessage = "";
+    /**
+     *
+     */
+    private class messageHolder
+    {
+        private String message = "";
+        private int color = Color.BLUE;
+        private int textSize = 16;
 
-    private int upperMessageColor = Color.BLUE;
-    private int centerMessageColor = Color.BLUE;
-    private int lowerMessageColor = Color.BLUE;
+        String getMessage()
+        {
+            return message;
+        }
 
-    private int upperMessageTextSize = 16;
-    private int centerMessageTextSize = 24;
-    private int lowerMessageTextSize = 16;
+        void setMessage(String message)
+        {
+            this.message = message;
+        }
+
+        int getColor()
+        {
+            return color;
+        }
+
+        void setColor(int color)
+        {
+            this.color = color;
+        }
+
+        int getTextSize()
+        {
+            return textSize;
+        }
+
+        void setTextSize(int textSize)
+        {
+            this.textSize = textSize;
+        }
+    }
+
+    private messageHolder upperLeft = new messageHolder();
+    private messageHolder upperRight = new messageHolder();
+    private messageHolder center = new messageHolder();
+    private messageHolder lowerLeft = new messageHolder();
+    private messageHolder lowerRight = new messageHolder();
+
+    /**
+     *   コンストラクタ
+     *
+     */
+    ShowMessageHolder()
+    {
+        center.setTextSize(24);
+    }
+
+    /**
+     *
+     *
+     */
+    private messageHolder decideHolder(MessageArea area)
+    {
+        messageHolder target;
+        switch (area)
+        {
+            case CENTER:
+                target = center;
+                break;
+
+            case UPLEFT:
+                target = upperLeft;
+                break;
+
+            case UPRIGHT:
+                target = upperRight;
+                break;
+
+            case LOWLEFT:
+                target = lowerLeft;
+                break;
+
+            case LOWRIGHT:
+            default:
+                target = lowerRight;
+                break;
+        }
+        return (target);
+    }
 
     /**
      *
@@ -28,27 +104,10 @@ class ShowMessageHolder implements IMessageDrawer
     @Override
     public void setMessageToShow(MessageArea area, int color, int size, String message)
     {
-        switch (area)
-        {
-            case CENTER:
-                centerMessageColor = color;
-                centerMessageTextSize = size;
-                centerMessage = message;
-                break;
-
-            case UP:
-                upperMessageColor = color;
-                upperMessageTextSize = size;
-                upperMessage = message;
-                break;
-
-            case LOW:
-            default:
-                lowerMessageColor = color;
-                lowerMessageTextSize = size;
-                lowerMessage = message;
-                break;
-        }
+        messageHolder target = decideHolder(area);
+        target.setColor(color);
+        target.setTextSize(size);
+        target.setMessage(message);
     }
 
     /**
@@ -57,23 +116,8 @@ class ShowMessageHolder implements IMessageDrawer
      */
     int getSize(MessageArea area)
     {
-        int size;
-        switch (area)
-        {
-            case CENTER:
-                size = centerMessageTextSize;
-                break;
-
-            case UP:
-                size = upperMessageTextSize;
-                break;
-
-            case LOW:
-            default:
-                size = lowerMessageTextSize;
-                break;
-        }
-        return (size);
+        messageHolder target = decideHolder(area);
+        return (target.getTextSize());
     }
 
     /**
@@ -82,23 +126,8 @@ class ShowMessageHolder implements IMessageDrawer
      */
     int getColor(MessageArea area)
     {
-        int color;
-        switch (area)
-        {
-            case CENTER:
-                color = centerMessageColor;
-                break;
-
-            case UP:
-                color = upperMessageColor;
-                break;
-
-            case LOW:
-            default:
-                color = lowerMessageColor;
-                break;
-        }
-        return (color);
+        messageHolder target = decideHolder(area);
+        return (target.getColor());
     }
 
     /**
@@ -107,22 +136,7 @@ class ShowMessageHolder implements IMessageDrawer
      */
     String getMessage(MessageArea area)
     {
-        String message;
-        switch (area)
-        {
-            case CENTER:
-                message = centerMessage;
-                break;
-
-            case UP:
-                message = upperMessage;
-                break;
-
-            case LOW:
-            default:
-                message = lowerMessage;
-                break;
-        }
-        return (message);
+        messageHolder target = decideHolder(area);
+        return (target.getMessage());
     }
 }

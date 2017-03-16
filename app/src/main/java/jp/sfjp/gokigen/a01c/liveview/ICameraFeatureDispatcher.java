@@ -37,6 +37,7 @@ public interface ICameraFeatureDispatcher
     String DRAWABLE_BUTTON6 = "D6";
 
     // 表示エリア
+    String SHOW_TEXT_AREAC = "TXTC";
     String SHOW_TEXT_AREA1 = "TXT1";
     String SHOW_TEXT_AREA2 = "TXT2";
     String SHOW_TEXT_AREA3 = "TXT3";
@@ -44,6 +45,7 @@ public interface ICameraFeatureDispatcher
     String SHOW_TEXT_AREA5 = "TXT5";
     String SHOW_TEXT_AREA6 = "TXT6";
     String SHOW_TEXT_AREA7 = "TXT7";
+    String SHOW_TEXT_AREA8 = "TXT8";
 
 
     // A01Cが持つ機能 (ボタンに割り当て可能)
@@ -59,5 +61,7 @@ public interface ICameraFeatureDispatcher
     int FEATURE_APERTURE_UP = 9;
     int FEATURE_SHUTTER_SPEED_DOWN = 10;
     int FEATURE_SHUTTER_SPEED_UP = 11;
+    int FEATURE_COLORTONE_DOWN = 12;
+    int FEATURE_COLORTONE_UP = 13;
 
 }

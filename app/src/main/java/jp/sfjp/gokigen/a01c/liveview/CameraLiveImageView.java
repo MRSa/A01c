@@ -57,7 +57,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
 
     /**
-     *
+     *   コンストラクタ
      *
      */
     public CameraLiveImageView(Context context)
@@ -67,7 +67,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     }
 
     /**
-     *
+     *   コンストラクタ
      *
      */
     public CameraLiveImageView(Context context, AttributeSet attrs)
@@ -77,7 +77,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     }
 
     /**
-     *
+     *   コンストラクタ
      *
      */
     public CameraLiveImageView(Context context, AttributeSet attrs, int defStyleAttr)
@@ -366,8 +366,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         Bitmap bitmapToShow = imageBitmap;
         if (bitmapToShow == null)
         {
-            // 表示するビットマップがないときは、メッセージ表示のみ行う
-            drawInformationMessages(canvas);
+            // 表示するビットマップがないとき
             return;
         }
 
@@ -379,13 +378,16 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         RectF viewRect = null;
 
         //  Calculate the viewport of bitmap.
-        if (imageScaleType == ImageView.ScaleType.FIT_CENTER) {
-            viewRect = decideViewRect(canvas, bitmapToShow);
+        if (imageScaleType == ImageView.ScaleType.FIT_CENTER)
+        {
+            viewRect = decideViewRect(canvas, bitmapToShow, imageRotationDegrees);
 
             // Draws the bitmap.
             Rect imageRect = new Rect(0, 0, bitmapToShow.getWidth(), bitmapToShow.getHeight());
             canvas.drawBitmap(bitmapToShow, imageRect, viewRect, null);
-        } else {
+        }
+        else
+        {
             // Sorry, other scale types are not supported.
             Log.v(TAG, "Sorry, other scale types are not supported. " + imageScaleType);
         }
@@ -404,7 +406,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         }
 
         // グリッド（撮影補助線）の表示
-        if ((viewRect != null) && (showGridFeature) && (gridFrameDrawer != null)) {
+        if ((viewRect != null) && (showGridFeature) && (gridFrameDrawer != null))
+        {
             drawGridFrame(canvas, viewRect);
         }
     }
@@ -413,14 +416,17 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      *
      *
      */
-    private RectF decideViewRect(Canvas canvas, Bitmap bitmapToShow)
+    private RectF decideViewRect(Canvas canvas, Bitmap bitmapToShow, int degree)
     {
         final int srcWidth;
         final int srcHeight;
-        if ((imageRotationDegrees == 0) || (imageRotationDegrees == 180)) {
+        if ((degree == 0) || (degree == 180))
+        {
             srcWidth = bitmapToShow.getWidth();
             srcHeight = bitmapToShow.getHeight();
-        } else {
+        }
+        else
+        {
             // Replaces width and height.
             srcWidth = bitmapToShow.getHeight();
             srcHeight = bitmapToShow.getWidth();
@@ -438,11 +444,14 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
         final int dstWidth;
         final int dstHeight;
-        if (widthRatio < heightRatio) {
+        if (widthRatio < heightRatio)
+        {
             // Fits to maxWidth with keeping aspect ratio.
             dstWidth = maxWidth;
             dstHeight = (int) (smallRatio * srcHeight);
-        } else {
+        }
+        else
+        {
             // Fits to maxHeight with keeping aspect ratio.
             dstHeight = maxHeight;
             dstWidth = (int) (smallRatio * srcWidth);
@@ -450,7 +459,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
         final float halfWidth = dstWidth * 0.5f;
         final float halfHeight = dstHeight * 0.5f;
-        if ((imageRotationDegrees == 0) || (imageRotationDegrees == 180)) {
+        if ((degree == 0) || (degree == 180))
+        {
             return (new RectF(
                     centerX - halfWidth,
                     centerY - halfHeight,
@@ -543,8 +553,17 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     private void drawInformationMessages(Canvas canvas)
     {
         String message;
-        float x = 10.0f;  // 表示マージン ... 実測なのでチューニング必要
-        float y = 55.0f;  // 表示マージン ... 実測なのでチューニング必要
+        RectF viewRect;
+        if (imageBitmap != null)
+        {
+            // ビットマップの表示エリアに合わせて位置をチューニングする
+            viewRect = decideViewRect(canvas, imageBitmap, 0);
+        }
+        else
+        {
+            // 適当なサイズ...
+            viewRect = new RectF(5.0f, 0.0f, canvas.getWidth() - 5.0f, canvas.getHeight() - 55.0f);
+        }
 
         // 画面の中心に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.CENTER);
@@ -559,26 +578,25 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             canvas.drawText(message, cx, cy, paint);
         }
 
-        // 画面上部に表示する
-        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UP);
+        // 画面上部右側に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UPLEFT);
         if ((message != null)&&(message.length() > 0))
         {
             Paint paintUp = new Paint();
-            paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UP));
-            paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UP));
-            canvas.drawText(message, x, y, paintUp);
+            paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPLEFT));
+            paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPLEFT));
+            canvas.drawText(message, viewRect.left, viewRect.top, paintUp);
         }
 
-        // 画面下部に表示する
-        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOW);
+        // 画面下部右側に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOWLEFT);
         if ((message != null)&&(message.length() > 0))
         {
             Paint paint = new Paint();
-            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOW));
-            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOW));
+            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWLEFT));
+            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWLEFT));
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            y = canvas.getHeight() - (fontMetrics.ascent + fontMetrics.descent) - y;
-            canvas.drawText(message, x, y, paint);
+            canvas.drawText(message, viewRect.left + 3.0f, viewRect.bottom - fontMetrics.bottom, paint);
         }
     }
 

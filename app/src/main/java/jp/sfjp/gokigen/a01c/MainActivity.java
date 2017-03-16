@@ -339,19 +339,29 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
         if (messageDrawer != null)
         {
+            if (area == IShowInformation.AREA_C)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTER, color, IMessageDrawer.SIZE_LARGE, message);
+                return;
+            }
             if (area == IShowInformation.AREA_5)
             {
-                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.UP, color, IMessageDrawer.SIZE_STD, message);
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.UPLEFT, color, IMessageDrawer.SIZE_STD, message);
                 return;
             }
             if (area == IShowInformation.AREA_6)
             {
-                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOW, color, IMessageDrawer.SIZE_STD, message);
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOWLEFT, color, IMessageDrawer.SIZE_STD, message);
                 return;
             }
-            if (area == IShowInformation.AREA_C)
+            if (area == IShowInformation.AREA_7)
             {
-                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTER, color, IMessageDrawer.SIZE_LARGE, message);
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.UPRIGHT, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+            if (area == IShowInformation.AREA_8)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOWRIGHT, color, IMessageDrawer.SIZE_STD, message);
                 return;
             }
             if (id == 0)

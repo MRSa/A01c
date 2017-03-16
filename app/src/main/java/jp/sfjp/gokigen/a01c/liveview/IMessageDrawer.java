@@ -6,9 +6,11 @@ public interface IMessageDrawer
     // メッセージを表示する位置
     enum MessageArea
     {
-        UP,
+        UPLEFT,
+        UPRIGHT,
         CENTER,
-        LOW
+        LOWLEFT,
+        LOWRIGHT
     };
 
     int SIZE_STD = 16;
