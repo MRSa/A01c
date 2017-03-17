@@ -310,6 +310,17 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         return (decoder.getCameraStatusMessage(camera, ""));
     }
 
+    /**
+     *   ステータス表示をすべて更新する
+     *
+     */
+    @Override
+    public void updateStatusAll()
+    {
+        cameraStatusDisplay.updateCameraStatusAll();
+    }
+
+
     @Override
     public void changeRunMode(boolean isRecording)
     {

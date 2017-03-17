@@ -63,5 +63,6 @@ public interface ICameraFeatureDispatcher
     int FEATURE_SHUTTER_SPEED_UP = 11;
     int FEATURE_COLORTONE_DOWN = 12;
     int FEATURE_COLORTONE_UP = 13;
-
+    int FEATURE_ART_FILTER_DOWN = 14;
+    int FEATURE_ART_FILTER_UP = 15;
 }

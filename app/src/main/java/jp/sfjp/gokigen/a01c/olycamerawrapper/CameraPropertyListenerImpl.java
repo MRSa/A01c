@@ -45,6 +45,13 @@ class CameraPropertyListenerImpl implements OLYCameraPropertyListener
                 display.updateAeLockState();
                 break;
 
+            case IOlyCameraProperty.COLOR_TONE:
+                display.updateColorTone();
+                break;
+
+            case IOlyCameraProperty.ART_FILTER:
+                display.updateArtFilter();
+                break;
             default:
                 Log.v(TAG, "onUpdateCameraProperty() : " + name);
                 display.updateCameraStatus();

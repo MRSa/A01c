@@ -572,32 +572,63 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             Paint paint = new Paint();
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.CENTER));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTER));
+            paint.setAntiAlias(true);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             float cx = (canvas.getWidth() / 2.0f) - (paint.measureText(message) / 2.0f);
             float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
             canvas.drawText(message, cx, cy, paint);
         }
 
-        // 画面上部右側に表示する
+        // 画面上部左側に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UPLEFT);
         if ((message != null)&&(message.length() > 0))
         {
             Paint paintUp = new Paint();
             paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPLEFT));
             paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPLEFT));
-            canvas.drawText(message, viewRect.left, viewRect.top, paintUp);
+            paintUp.setAntiAlias(true);
+            Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
+            canvas.drawText(message, viewRect.left + 3.0f, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
         }
 
-        // 画面下部右側に表示する
+        // 画面上部右側に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UPRIGHT);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paintUp = new Paint();
+            paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPRIGHT));
+            paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPRIGHT));
+            paintUp.setAntiAlias(true);
+            float width = paintUp.measureText(message);
+            Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
+            canvas.drawText(message, (viewRect.right - 3.0f) - width, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
+        }
+
+        // 画面下部左側に表示する
         message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOWLEFT);
         if ((message != null)&&(message.length() > 0))
         {
             Paint paint = new Paint();
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWLEFT));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWLEFT));
+            paint.setAntiAlias(true);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             canvas.drawText(message, viewRect.left + 3.0f, viewRect.bottom - fontMetrics.bottom, paint);
         }
+
+        // 画面下部右側に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOWRIGHT);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paint = new Paint();
+            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWRIGHT));
+            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWRIGHT));
+            paint.setAntiAlias(true);
+            float width = paint.measureText(message);
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            canvas.drawText(message, (viewRect.right - 3.0f) - width, viewRect.bottom - fontMetrics.bottom, paint);
+        }
+
     }
 
     /**

@@ -22,7 +22,15 @@ public interface IShowInformation
     int BUTTON_5 = 5;
     int BUTTON_6 = 6;
 
+    int VIBRATE_PATTERN_NONE  = 0;
+    int VIBRATE_PATTERN_SIMPLE_SHORT  = 1;
+    int VIBRATE_PATTERN_SIMPLE_MIDDLE  = 2;
+    int VIBRATE_PATTERN_SIMPLE_LONG = 3;
+    int VIBRATE_PATTERN_SIMPLE_LONGLONG = 4;
+
     void setMessage(final int area, final int color, final String message);
     void setButtonDrawable(final int button, final int labelId);
+
+    void vibrate(int vibratePattern);
 
 }

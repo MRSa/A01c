@@ -12,7 +12,8 @@ public interface ICameraStatusDisplay
     void updateExposureCompensation(String value);
     void updateWarning(String value);
 
-
+    void updateColorTone();
+    void updateArtFilter();
     void updateTakeMode();
     void updateDriveMode();
     void updateWhiteBalance();
@@ -20,5 +21,6 @@ public interface ICameraStatusDisplay
     void updateAeMode();
     void updateAeLockState();
     void updateCameraStatus();
+    void updateCameraStatusAll();
     void updateCameraStatus(String message);
 }

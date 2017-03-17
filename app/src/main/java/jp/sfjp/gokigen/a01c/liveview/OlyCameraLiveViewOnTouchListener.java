@@ -224,6 +224,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN;
                 break;
 
             case "iAuto":
@@ -273,6 +274,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP;
                 break;
 
             case "iAuto":
@@ -767,6 +769,27 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
     /**
+     *   アートフィルターを１段階さげる
+     *
+     */
+    private void changeArtFilterDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.ART_FILTER);
+    }
+
+    /**
+     *   アートフィルターを１段階あげる
+     *
+     */
+    private void changeArtFilterUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.ART_FILTER);
+    }
+
+
+    /**
      *   設定画面を開く
      *
      */
@@ -790,11 +813,13 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         }
 
         // 機能実行の割り当て...
+        int duration = IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT;
         switch (featureNumber)
         {
             case ICameraFeatureDispatcher.FEATURE_SETTINGS:
                 // 設定画面を開く
                 showSettingsScreen();
+                duration =IShowInformation.VIBRATE_PATTERN_NONE;
                 break;
             case ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID:
                 // グリッド標示ON/OFF
@@ -803,6 +828,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             case ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT:
                 // シャッター
                 pushShutterButton();
+                duration =IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE;
                 break;
             case ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE:
                 // 撮影モードの変更
@@ -844,7 +870,17 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 // 仕上がり・ピクチャーモードを選択
                 changeColorToneUp();
                 break;
-
+            case ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN:
+                // アートフィルターを選択
+                changeArtFilterDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP:
+                // アートフィルターを選択
+                changeArtFilterUp();
+                break;
         }
+
+        // コマンド実行完了後、ぶるぶるさせる
+        statusDrawer.vibrate(duration);
     }
 }

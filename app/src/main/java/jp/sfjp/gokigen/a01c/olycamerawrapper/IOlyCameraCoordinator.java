@@ -43,6 +43,9 @@ public interface IOlyCameraCoordinator
     /** カメラの状態変化リスナの設定 **/
     void setCameraStatusListener(OLYCameraStatusListener listener);
 
+    /** カメラ状態の表示をすべて更新する **/
+    void updateStatusAll();
+
     /** カメラの状態サマリ(のテキスト情報)を取得する **/
     String getCameraStatusSummary(ICameraStatusSummary decoder);
 

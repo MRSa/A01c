@@ -2,6 +2,7 @@ package jp.sfjp.gokigen.a01c;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
@@ -34,6 +35,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private IOlyCameraCoordinator coordinator = null;
     private IMessageDrawer messageDrawer = null;
     private OlyCameraLiveViewOnTouchListener listener = null;
+    private Vibrator vibrator = null;
     /**
      *
      */
@@ -53,6 +55,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.CHANGE_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)||
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SETTINGS) != PackageManager.PERMISSION_GRANTED)||
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK) != PackageManager.PERMISSION_GRANTED)||
+                (ContextCompat.checkSelfPermission(this, Manifest.permission.VIBRATE) != PackageManager.PERMISSION_GRANTED)||
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED))
         {
             ActivityCompat.requestPermissions(this,
@@ -78,6 +81,9 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             // Fall back to functionality that does not use location or
             // warn the user that location function is not available.
         }
+
+        // バイブレータをつかまえる
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         listener = new OlyCameraLiveViewOnTouchListener(this);
 
@@ -286,6 +292,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator.setRecViewMode(false);
         listener.setEnableOperation(true);
         setMessage(IShowInformation.AREA_C, Color.WHITE, "");
+        coordinator.updateStatusAll();
     }
 
     /**
@@ -437,4 +444,46 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         return (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS));
     }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void vibrate(int vibratePattern)
+    {
+        try
+        {
+            if ((vibrator == null)||(!vibrator.hasVibrator()))
+            {
+                return;
+            }
+
+            switch (vibratePattern)
+            {
+                case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG:
+                    vibrator.vibrate(300);
+                    break;
+                case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG:
+                    vibrator.vibrate(150);
+                    break;
+                case IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE:
+                    vibrator.vibrate(75);
+                    break;
+                case IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT:
+                    vibrator.vibrate(20);
+                    break;
+                case IShowInformation.VIBRATE_PATTERN_NONE:
+                default:
+                    // ぶるぶるしない
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
 }

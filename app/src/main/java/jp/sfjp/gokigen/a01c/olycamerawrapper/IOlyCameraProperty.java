@@ -35,5 +35,6 @@ public interface IOlyCameraProperty
      String REC_PREVIEW = "RECVIEW";
 
     String COLOR_TONE = "COLORTONE";
+    String ART_FILTER = "RECENTLY_ART_FILTER";
 
 }
