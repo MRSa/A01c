@@ -20,16 +20,16 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     private int shutterSpeedArea = IShowInformation.AREA_2;           // シャッタースピードの表示エリア指定
     private int apertureArea = IShowInformation.AREA_3;                // 絞り値の表示エリア指定
     private int isoSensitivityArea = IShowInformation.AREA_4;         // ISO感度の表示エリア指定
-    private int focalLengthArea = 0;                                   // 焦点距離の表示エリア指定
+    private int focalLengthArea = IShowInformation.AREA_NONE;         // 焦点距離の表示エリア指定
     private int exposureCompensationArea = IShowInformation.AREA_6;  // 露出補正値の表示エリア指定
     private int warningArea = IShowInformation.AREA_7;                 // 警告の表示エリア指定
-    private int batteryLevelArea = 0;                                  // バッテリの残量表示エリア指定
-    private int whiteBalanceArea = 0;                                  // ホワイトバランスの表示エリア指定
-    private int driveModeArea = 0;                                     // ドライブモードの表示エリア指定
-    private int aeModeArea = 0;                                         // 測光モードの表示エリア指定
-    private int aeLockStateArea = IShowInformation.AREA_6;            // AEロック状態の表示エリア指定
+    private int batteryLevelArea = IShowInformation.AREA_NONE;       // バッテリの残量表示エリア指定
+    private int whiteBalanceArea = IShowInformation.AREA_NONE;       // ホワイトバランスの表示エリア指定
+    private int driveModeArea = IShowInformation.AREA_NONE;           // ドライブモードの表示エリア指定
+    private int aeModeArea = IShowInformation.AREA_NONE;              // 測光モードの表示エリア指定
+    private int aeLockStateArea = IShowInformation.AREA_5;            // AEロック状態の表示エリア指定
     private int colorToneArea = IShowInformation.AREA_8;              // 仕上がり・ピクチャーモードの表示エリア指定
-    private int artFilterArea = 0;                                     // アートフィルターの表示エリア指定
+    private int artFilterArea = IShowInformation.AREA_NONE;           // アートフィルターの表示エリア指定
 
     /**
      *
@@ -41,7 +41,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         this.informationObject = informationObject;
     }
 
-    /****************** ICameraStatusDisplayの 実装  *****************/
+    ////////////////////// ICameraStatusDisplayの 実装  ////////////////////////
 
     /**
      *
@@ -50,7 +50,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateTakeMode()
     {
-        if (takeModeArea == 0)
+        if (takeModeArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -61,6 +61,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
             informationObject.setMessage(takeModeArea, Color.WHITE, propetyValue);
             updateDisplayArea(propetyValue);
         }
+        updateAeLockState();  // ちょっと暫定。。。
     }
 
     /**
@@ -70,7 +71,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateDriveMode()
     {
-        if (driveModeArea == 0)
+        if (driveModeArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -88,7 +89,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateWhiteBalance()
     {
-        if (whiteBalanceArea == 0)
+        if (whiteBalanceArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -106,7 +107,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateBatteryLevel()
     {
-        if (batteryLevelArea == 0)
+        if (batteryLevelArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -124,7 +125,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateAeMode()
     {
-        if (aeModeArea == 0)
+        if (aeModeArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -142,23 +143,21 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateAeLockState()
     {
-        if (aeLockStateArea == 0)
+        if (aeLockStateArea == IShowInformation.AREA_NONE)
         {
             return;
         }
         String message = "";
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.AE_LOCK_STATE));
+        String propetyValue = propertyProxy.getCameraPropertyValue(IOlyCameraProperty.AE_LOCK_STATE);
         if (propetyValue != null)
         {
-            if (propetyValue.equals("LOCK"))
+            if (propetyValue.equals("<AE_LOCK_STATE/LOCK>"))
             {
                 message = "AE-L";
             }
+            Log.v(TAG,"updateAeLockState() [" + message + "]" + propetyValue);
         }
-        if (message.length() > 0)
-        {
-            informationObject.setMessage(aeLockStateArea, Color.WHITE, message);
-        }
+        informationObject.setMessage(aeLockStateArea, Color.WHITE, message);
     }
 
     /**
@@ -179,7 +178,8 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateWarning(String value)
     {
-        if (warningArea == 0)
+        Log.v(TAG,"updateWarning() " + value);
+        if (warningArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -194,29 +194,28 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateColorTone()
     {
-        if (colorToneArea == 0)
+        if (colorToneArea == IShowInformation.AREA_NONE)
         {
             return;
         }
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.COLOR_TONE));
-        if (propetyValue != null)
+        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.COLOR_TONE));
+        if (propertyValue != null)
         {
-            informationObject.setMessage(colorToneArea, Color.WHITE, propetyValue);
+            informationObject.setMessage(colorToneArea, Color.WHITE, propertyValue);
         }
     }
-
 
     @Override
     public void updateArtFilter()
     {
-        if (artFilterArea == 0)
+        if (artFilterArea == IShowInformation.AREA_NONE)
         {
             return;
         }
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ART_FILTER));
-        if (propetyValue != null)
+        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ART_FILTER));
+        if (propertyValue != null)
         {
-            informationObject.setMessage(artFilterArea, Color.WHITE, /*Color.argb(255, 0x72, 0x39, 0x34),*/ propetyValue);
+            informationObject.setMessage(artFilterArea, Color.WHITE, /*Color.argb(255, 0x72, 0x39, 0x34),*/ propertyValue);
         }
     }
 
@@ -227,19 +226,25 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateExposureCompensation(String value)
     {
-        if (exposureCompensationArea == 0)
+        if (exposureCompensationArea == IShowInformation.AREA_NONE)
         {
             return;
         }
-        if (value != null)
+        String actualValue = value;
+        if (actualValue == null)
         {
-            if ("0.0".equals(value))
+            actualValue = propertyProxy.getCameraPropertyValue(IOlyCameraProperty.EXPOSURE_COMPENSATION);
+        }
+        if (actualValue != null)
+        {
+            actualValue = propertyProxy.getCameraPropertyValueTitle(actualValue);
+            if ("0.0".equals(actualValue))
             {
                 informationObject.setMessage(exposureCompensationArea, Color.WHITE, "");
             }
             else
             {
-                informationObject.setMessage(exposureCompensationArea, Color.WHITE, value);
+                informationObject.setMessage(exposureCompensationArea, Color.WHITE, actualValue);
             }
         }
     }
@@ -251,7 +256,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateFocalLength(String value)
     {
-        if (focalLengthArea == 0)
+        if (focalLengthArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -268,19 +273,20 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateIsoSensitivity(String value)
     {
-        if (isoSensitivityArea == 0)
+        if (isoSensitivityArea == IShowInformation.AREA_NONE)
         {
             return;
         }
+        String actualValue = propertyProxy.getCameraPropertyValueTitle(value);
         String prefix = "ISO";
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ISO_SENSITIVITY));
-        if ("Auto".equals(propetyValue))
+        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ISO_SENSITIVITY));
+        if ("Auto".equals(propertyValue))
         {
             prefix = "iso";
         }
-        if (value != null)
+        if (actualValue != null)
         {
-            informationObject.setMessage(isoSensitivityArea, Color.WHITE, prefix + value);
+            informationObject.setMessage(isoSensitivityArea, Color.WHITE, prefix + actualValue);
         }
     }
 
@@ -291,7 +297,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateShutterSpeed(String value)
     {
-        if (shutterSpeedArea == 0)
+        if (shutterSpeedArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -308,7 +314,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateAperture(String value)
     {
-        if (apertureArea == 0)
+        if (apertureArea == IShowInformation.AREA_NONE)
         {
             return;
         }
@@ -329,43 +335,43 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         {
             case "P":
                 colorToneArea = IShowInformation.AREA_8;
-                artFilterArea = 0;
+                artFilterArea = IShowInformation.AREA_NONE;
                 updateColorTone();
                 break;
 
             case "A":
-                colorToneArea = 0;
-                artFilterArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
+                artFilterArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "S":
-                colorToneArea = 0;
-                artFilterArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
+                artFilterArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "M":
-                colorToneArea = 0;
-                artFilterArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
+                artFilterArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "ART":
-                colorToneArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_8;
                 updateArtFilter();
                 break;
 
             case "iAuto":
-                colorToneArea = 0;
-                artFilterArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
+                artFilterArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "movie":
-                colorToneArea = 0;
-                artFilterArea = 0;
+                colorToneArea = IShowInformation.AREA_NONE;
+                artFilterArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
@@ -374,16 +380,16 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
                 shutterSpeedArea = IShowInformation.AREA_2;           // シャッタースピードの表示エリア指定
                 apertureArea = IShowInformation.AREA_3;                // 絞り値の表示エリア指定
                 isoSensitivityArea = IShowInformation.AREA_4;         // ISO感度の表示エリア指定
-                focalLengthArea = 0;                                   // 焦点距離の表示エリア指定
+                focalLengthArea = IShowInformation.AREA_NONE;         // 焦点距離の表示エリア指定
                 exposureCompensationArea = IShowInformation.AREA_6;  // 露出補正値の表示エリア指定
                 warningArea = IShowInformation.AREA_7;                 // 警告の表示エリア指定
-                batteryLevelArea = 0;                                  // バッテリの残量表示エリア指定
-                whiteBalanceArea = 0;                                  // ホワイトバランスの表示エリア指定
-                driveModeArea = 0;                                     // ドライブモードの表示エリア指定
-                aeModeArea = 0;                                         // 測光モードの表示エリア指定
-                aeLockStateArea = IShowInformation.AREA_6;           // AEロック状態の表示エリア指定
-                colorToneArea = IShowInformation.AREA_8;              // 仕上がり・ピクチャーモードの表示エリア指定
-                artFilterArea = 0;                                     // アートフィルターの表示エリア指定
+                batteryLevelArea = IShowInformation.AREA_NONE;        // バッテリの残量表示エリア指定
+                whiteBalanceArea = IShowInformation.AREA_NONE;        // ホワイトバランスの表示エリア指定
+                driveModeArea = IShowInformation.AREA_NONE;            // ドライブモードの表示エリア指定
+                aeModeArea = IShowInformation.AREA_NONE;               // 測光モードの表示エリア指定
+                aeLockStateArea = IShowInformation.AREA_6;             // AEロック状態の表示エリア指定
+                colorToneArea = IShowInformation.AREA_8;               // 仕上がり・ピクチャーモードの表示エリア指定
+                artFilterArea = IShowInformation.AREA_NONE;           // アートフィルターの表示エリア指定
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
         }
@@ -406,6 +412,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateCameraStatusAll()
     {
+        Log.v(TAG, "updateCameraStatusAll()");
         updateTakeMode();
 
         updateColorTone();

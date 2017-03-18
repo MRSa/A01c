@@ -39,7 +39,7 @@ import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
  */
 public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify
 {
-    private final String TAG = this.toString();
+    private final String TAG = toString();
 
     private static final String EXIF_ORIENTATION = "Orientation";
 

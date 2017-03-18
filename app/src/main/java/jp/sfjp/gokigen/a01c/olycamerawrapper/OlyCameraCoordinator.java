@@ -210,7 +210,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     {
         try
         {
-            if (isExposureLocked)
+            if (isAELock())
             {
                 Log.v(TAG, "toggleAutoExposure() : unlockAutoExposure()");
                 camera.unlockAutoExposure();
@@ -226,7 +226,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         {
             e.printStackTrace();
         }
-        cameraStatusDisplay.updateTakeMode();
+        cameraStatusDisplay.updateAeLockState();
     }
 
     /**

@@ -74,7 +74,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
 
                 case ISO_SENSITIVITY:
                     // ISO感度の表示更新
-                    display.updateIsoSensitivity(camera.getCameraPropertyValueTitle(camera.getActualIsoSensitivity()));
+                    display.updateIsoSensitivity(camera.getActualIsoSensitivity());
                     break;
 
                 case FOCAL_LENGTH:
@@ -84,7 +84,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
 
                 case EXPOSURE_COMPENSATION:
                     // 露出補正値の表示更新
-                    display.updateExposureCompensation(camera.getCameraPropertyValueTitle(camera.getActualExposureCompensation()));
+                    display.updateExposureCompensation(camera.getActualExposureCompensation());
                     break;
 
                 case EXPOSURE_WARNING:
@@ -129,7 +129,9 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
         {
             // 警告メッセージを生成
             if (camera.isHighTemperatureWarning())
-
+            {
+                message = message + context.getString(R.string.high_temperature_warning);
+            }
             if ((camera.isExposureMeteringWarning())||(camera.isExposureWarning())||(camera.isActualIsoSensitivityWarning()))
             {
                 // 露出警告

@@ -28,7 +28,7 @@ import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
  */
 public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver
 {
-    private final String TAG = this.toString();
+    private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
 
     private CameraLiveImageView liveView = null;
@@ -74,10 +74,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         if (!hasGps())
         {
             // GPS機能が搭載されていない場合...
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
-                Log.d(TAG, "This hardware doesn't have GPS.");
-            }
+            Log.d(TAG, "This hardware doesn't have GPS.");
             // Fall back to functionality that does not use location or
             // warn the user that location function is not available.
         }
@@ -340,6 +337,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             case IShowInformation.AREA_4:
                 id = R.id.text_4;
                 break;
+            case IShowInformation.AREA_NONE:
             default:
                 // unknown
                 break;

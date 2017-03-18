@@ -630,11 +630,12 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 targetMode =  targetMode + "/P>";
                 break;
         }
+        Log.v(TAG, "changeTakeMode() " + targetMode);
         propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode);
         camera.unlockAutoFocus();
 
         //  撮影モードの更新
-        camera.updateTakeMode();
+        //camera.updateTakeMode();
     }
 
     /**
