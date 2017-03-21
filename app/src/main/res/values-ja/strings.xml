@@ -1,42 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">A01c</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World</string>
-
-    <string name="connect_start">接続開始</string>
-    <string name="connect_check_wifi">Wifi準備中(OS待ち)</string>
-    <string name="connect_connect">接続開始</string>
-    <string name="connect_connected">接続完了！</string>
-    <string name="connect_change_run_mode">カメラ動作モード変更</string>
-    <string name="connect_restore_camera_settings">カメラ設定を展開</string>
-
-    <string name="fatal_cannot_use_camera">Olympus Camera Kitが動作しないモードのため、カメラのリセットが必要です。電源ボタンを8秒以上長押しして、カメラをリセットしてください。</string>
-    <string name="camera_reset_required">カメラ側のリセット操作をお願いします。</string>
-    <string name="camera_disconnected">カメラ切断</string>
-
-    <string name="dialog_title_confirmation">確認</string>
-    <string name="dialog_positive_execute">実行</string>
-    <string name="dialog_negative_cancel">Cancel</string>
-
-    <string name="dialog_message_power_off">カメラ電源断</string>
-    
-    <string name="high_temperature_warning">温度</string>
-    <string name="exposure_metering_warning">露出</string>
-    <string name="iso_sensitivity_warning">ISO</string>
-
-    <string name="dialog_start_load_property_message">Please Wait</string>
-    <string name="dialog_start_load_property_title">設定中&#8230;</string>
-
-    <string name="dialog_start_save_property_message">Please Wait</string>
-    <string name="dialog_start_save_property_title">保存中&#8230;</string>
-
-    <string name="restored_my_props">展開 : </string>
-    <string name="saved_my_props">保存 : </string>
-
-    <string name="description_control_button">ファンクションキー</string>
-    <string name="text_message_blank"> </string>
-
-    <string name="shoot_camera">撮影しました!</string>
-    <string name="message_none">---</string>
+    <string name="blank"> </string>
 </resources>
