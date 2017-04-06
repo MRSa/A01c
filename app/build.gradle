@@ -7,8 +7,8 @@ android {
         applicationId "jp.sfjp.gokigen.a01c"
         minSdkVersion 23
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.0.1"
+        versionCode 7
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -29,15 +29,15 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     wearApp project(path: ':wear')
-    provided 'com.google.android.wearable:wearable:2.0.0'
-    compile 'com.google.android.support:wearable:2.0.0'
+    provided 'com.google.android.wearable:wearable:2.0.1'
+    compile 'com.google.android.support:wearable:2.0.1'
     compile 'com.google.android.gms:play-services-wearable:10.2.1'
 
-    compile 'com.android.support:animated-vector-drawable:25.3.0'
-    compile 'com.android.support:percent:25.3.0'
-    compile 'com.android.support:support-vector-drawable:25.3.0'
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:preference-v7:25.3.0'
-    compile 'com.android.support:exifinterface:25.3.0'
-    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.android.support:animated-vector-drawable:25.3.1'
+    compile 'com.android.support:percent:25.3.1'
+    compile 'com.android.support:support-vector-drawable:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:preference-v7:25.3.1'
+    compile 'com.android.support:exifinterface:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
 }

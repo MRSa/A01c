@@ -174,33 +174,43 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         final ImageButton btn1 = (ImageButton) findViewById(R.id.btn_1);
         btn1.setOnClickListener(listener);
+        btn1.setOnLongClickListener(listener);
 
         final ImageButton btn2 = (ImageButton) findViewById(R.id.btn_2);
         btn2.setOnClickListener(listener);
+        btn2.setOnLongClickListener(listener);
 
         final ImageButton btn3 = (ImageButton) findViewById(R.id.btn_3);
         btn3.setOnClickListener(listener);
+        btn3.setOnLongClickListener(listener);
 
         final ImageButton btn4 = (ImageButton) findViewById(R.id.btn_4);
         btn4.setOnClickListener(listener);
+        btn4.setOnLongClickListener(listener);
 
         final ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
         btn5.setOnClickListener(listener);
+        btn5.setOnLongClickListener(listener);
 
         final ImageButton btn6 = (ImageButton) findViewById(R.id.btn_6);
         btn6.setOnClickListener(listener);
+        btn6.setOnLongClickListener(listener);
 
         final TextView textArea1 = (TextView) findViewById(R.id.text_1);
         textArea1.setOnClickListener(listener);
+        textArea1.setOnLongClickListener(listener);
 
         final TextView textArea2 = (TextView) findViewById(R.id.text_2);
         textArea2.setOnClickListener(listener);
+        textArea2.setOnLongClickListener(listener);
 
         final TextView textArea3 = (TextView) findViewById(R.id.text_3);
         textArea3.setOnClickListener(listener);
+        textArea3.setOnLongClickListener(listener);
 
         final TextView textArea4 = (TextView) findViewById(R.id.text_4);
         textArea4.setOnClickListener(listener);
+        textArea4.setOnLongClickListener(listener);
 
         if (liveView == null)
         {

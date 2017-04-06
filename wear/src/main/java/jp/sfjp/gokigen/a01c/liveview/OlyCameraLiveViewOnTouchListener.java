@@ -17,12 +17,14 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraPropertyProvider;
 
+import static jp.sfjp.gokigen.a01c.liveview.ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
+
 
 /**
  *
  *
  */
-public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, View.OnTouchListener
+public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener
 {
     private final String TAG = toString();
     private final Context context;
@@ -70,39 +72,95 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         switch (id)
         {
             case R.id.btn_1:
-                pushedButton1();
+                pushedButton1(false);
                 break;
             case R.id.btn_2:
-                pushedButton2();
+                pushedButton2(false);
                 break;
             case R.id.btn_3:
-                pushedButton3();
+                pushedButton3(false);
                 break;
             case R.id.btn_4:
-                pushedButton4();
+                pushedButton4(false);
                 break;
             case R.id.btn_5:
-                pushedButton5();
+                pushedButton5(false);
                 break;
             case R.id.btn_6:
-                pushedButton6();
+                pushedButton6(false);
                 break;
             case R.id.text_1:
-                pushedArea1();
+                pushedArea1(false);
                 break;
             case R.id.text_2:
-                pushedArea2();
+                pushedArea2(false);
                 break;
             case R.id.text_3:
-                pushedArea3();
+                pushedArea3(false);
                 break;
             case R.id.text_4:
-                pushedArea4();
+                pushedArea4(false);
                 break;
             default:
                 // その他...何もしない
                 break;
         }
+    }
+
+    /**
+     *   長押しされたとき...
+     *
+     *
+     */
+    @Override
+    public boolean onLongClick(View v)
+    {
+        boolean ret = false;
+        int id = v.getId();
+        Log.v(TAG, "onLongClick() : " + id);
+        if (prohibitOperation)
+        {
+            // 操作禁止の指示がされていた場合は何もしない
+            Log.v(TAG, "onClick() : prohibit operation");
+            return (false);
+        }
+        switch (id)
+        {
+            case R.id.btn_1:
+                ret = pushedButton1(true);
+                break;
+            case R.id.btn_2:
+                ret = pushedButton2(true);
+                break;
+            case R.id.btn_3:
+                ret = pushedButton3(true);
+                break;
+            case R.id.btn_4:
+                ret = pushedButton4(true);
+                break;
+            case R.id.btn_5:
+                ret = pushedButton5(true);
+                break;
+            case R.id.btn_6:
+                ret = pushedButton6(true);
+                break;
+            case R.id.text_1:
+                ret = pushedArea1(true);
+                break;
+            case R.id.text_2:
+                ret = pushedArea2(true);
+                break;
+            case R.id.text_3:
+                ret = pushedArea3(true);
+                break;
+            case R.id.text_4:
+                ret = pushedArea4(true);
+                break;
+            default:
+                // その他...何もしない
+                break;
+        }
+        return (ret);
     }
 
     /**
@@ -118,6 +176,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onTouch() : prohibit operation");
+
+            // 実験... WIFIステート
+            //Intent intent = new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
+            //context.startActivity(intent);
             return (false);
         }
         return ((id == R.id.liveview)&&(touchedLiveViewArea(event)));
@@ -149,11 +211,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   ボタン１が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton1()
+    private boolean pushedButton1(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON1;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON1;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -187,7 +253,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_1, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_1, preferences.getInt(preference_action_id, defaultAction)));
     }
 
 
@@ -195,11 +261,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   ボタン２が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton2()
+    private boolean pushedButton2(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON2;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON2;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -238,18 +308,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   ボタン３が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton3()
+    private boolean pushedButton3(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON3;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON3;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -288,18 +362,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_3, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_3, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   ボタン４が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton4()
+    private boolean pushedButton4(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON4;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON4;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -335,18 +413,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_4, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_4, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   ボタン５が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton5()
+    private boolean pushedButton5(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON5;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON5;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -382,18 +464,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_5, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_5, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   ボタン６が押された時の機能を引き当て実行する
      *
      */
-    private void pushedButton6()
+    private boolean pushedButton6(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON6;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON6;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -427,7 +513,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction)));
     }
 
 
@@ -435,11 +521,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   表示エリア１が押された時の機能を引き当て実行する
      *
      */
-    private void pushedArea1()
+    private boolean pushedArea1(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA1;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA1;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -473,18 +563,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.AREA_1, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.AREA_1, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   表示エリア２が押された時の機能を引き当て実行する
      *
      */
-    private void pushedArea2()
+    private boolean pushedArea2(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA2;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA2;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -518,18 +612,22 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.AREA_2, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.AREA_2, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   表示エリア３が押された時の機能を引き当て実行する
      *
      */
-    private void pushedArea3()
+    private boolean pushedArea3(boolean isLongClick)
     {
-        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA3;
-        String takeMode = getTakeMode();
         int defaultAction = ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE;
+        String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA3;
+        if (isLongClick)
+        {
+            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+        }
+        String takeMode = getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -563,18 +661,23 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        dispatchAction(IShowInformation.AREA_3, preferences.getInt(preference_action_id, defaultAction));
+        return (dispatchAction(IShowInformation.AREA_3, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
      *   テキスト表示エリア４（機能は「設定画面を開く」で固定）
      */
-    private void pushedArea4()
+    private boolean pushedArea4(boolean isLongClick)
     {
-        // 設定画面を開く
-        dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS);
-    }
+        if (isLongClick)
+        {
+            // 設定画面を開く
+            return (dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
+        }
 
+        // 設定画面を開く
+        return (dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
+    }
 
     /***************************************************************
      *   以下、具体的な機能の実行... ここから下は、あとで切り離す。
@@ -805,12 +908,12 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      * @param objectId　　　　　操作したオブジェクト
      * @param featureNumber　　操作する機能
      */
-    private void dispatchAction(int objectId, int featureNumber)
+    private boolean dispatchAction(int objectId, int featureNumber)
     {
         if (featureNumber <= ICameraFeatureDispatcher.FEATURE_ACTION_NONE)
         {
             // 何もしない
-            return;
+            return (false);
         }
 
         // 機能実行の割り当て...
@@ -883,5 +986,6 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
         // コマンド実行完了後、ぶるぶるさせる
         statusDrawer.vibrate(duration);
+        return (true);
     }
 }

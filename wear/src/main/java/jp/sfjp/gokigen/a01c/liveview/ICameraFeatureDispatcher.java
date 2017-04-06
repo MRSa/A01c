@@ -47,6 +47,7 @@ public interface ICameraFeatureDispatcher
     String SHOW_TEXT_AREA7 = "TXT7";
     String SHOW_TEXT_AREA8 = "TXT8";
 
+    String ACTION_SECOND_CHOICE = "_L_";
 
     // A01Cが持つ機能 (ボタンに割り当て可能)
     int FEATURE_ACTION_NONE = 0;
