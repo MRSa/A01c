@@ -1,13 +1,17 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Locale;
+import java.util.Map;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 import jp.sfjp.gokigen.a01c.R;
+import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
 
 /**
  *   OLYCameraStatusListenerの実装
@@ -37,6 +41,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
     public static final String MINIMUM_FOCAL_LENGTH = "MinimumFocalLength";
     public static final String MAXIMUM_FOCAL_LENGTH = "MaximumFocalLength";
 
+    private final ILevelGauge levelGauge;
     private final ICameraStatusDisplay display;
     private final Context context;
 
@@ -44,12 +49,16 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
      *   コンストラクタ
      *
      */
-    CameraStatusListenerImpl(Context context, ICameraStatusDisplay display)
+    CameraStatusListenerImpl(Context context, ICameraStatusDisplay display, ILevelGauge levelGauge)
     {
         this.context = context;
         this.display = display;
+        this.levelGauge = levelGauge;
     }
 
+    /**
+     *
+     */
     @Override
     public void onUpdateStatus(OLYCamera camera, final String name)
     {
@@ -95,11 +104,15 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                     display.updateWarning(decideWarningMessage(camera));
                     break;
 
+                case LEVEL_GAUGE:
+                    // 水準器の確認
+                    levelGauge.checkLevelGauge(camera);
+                    break;
+
                 case RECORDABLEIMAGES:
                 case MEDIA_BUSY:
                 case MEDIA_ERROR:
                 case DETECT_FACES:
-                case LEVEL_GAUGE:
                 case LENS_MOUNT_STATUS:
                 case MEDIA_MOUNT_STATUS:
                 case REMAINING_RECORDABLE_TIME:
@@ -117,6 +130,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
             e.printStackTrace();
         }
     }
+
 
     /**
      *   警告メッセージを生成する

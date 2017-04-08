@@ -218,6 +218,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
         liveView.setOnTouchListener(listener);
         messageDrawer = liveView.getMessageDrawer();
+        messageDrawer.setLevelGauge(coordinator.getLevelGauge());
         listener.prepareInterfaces(coordinator, this, liveView);
     }
 

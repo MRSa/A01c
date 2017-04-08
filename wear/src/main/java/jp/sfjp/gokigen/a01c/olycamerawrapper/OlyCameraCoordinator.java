@@ -12,6 +12,7 @@ import jp.co.olympus.camerakit.OLYCameraStatusListener;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
+import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
 
 /**
  *   OlyCameraCoordinator : Olympus Air との接続、切断の間をとりもつクラス。
@@ -38,6 +39,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final LoadSaveCameraProperties loadSaveCameraProperties;
     private final OlyCameraConnection cameraConnection;
     private final ICameraStatusDisplay cameraStatusDisplay;
+    private final LevelMeterHolder levelMeter;
 
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
@@ -62,7 +64,8 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         singleShot = new SingleShotControl(camera, focusFrameDisplay, this);  // 撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
-        setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay));
+        this.levelMeter = new LevelMeterHolder(android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
+        setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
         camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
     }
@@ -320,7 +323,6 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         cameraStatusDisplay.updateCameraStatusAll();
     }
 
-
     @Override
     public void changeRunMode(boolean isRecording)
     {
@@ -375,6 +377,12 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     public IOlyCameraConnection getConnectionInterface()
     {
         return (cameraConnection);
+    }
+
+    @Override
+    public ILevelGauge getLevelGauge()
+    {
+        return (levelMeter);
     }
 
     @Override

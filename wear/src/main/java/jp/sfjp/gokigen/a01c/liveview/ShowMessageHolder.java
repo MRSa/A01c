@@ -2,6 +2,8 @@ package jp.sfjp.gokigen.a01c.liveview;
 
 import android.graphics.Color;
 
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
+
 /**
  *
  *
@@ -54,6 +56,8 @@ class ShowMessageHolder implements IMessageDrawer
     private messageHolder center = new messageHolder();
     private messageHolder lowerLeft = new messageHolder();
     private messageHolder lowerRight = new messageHolder();
+
+    private ILevelGauge levelGauge = null;
 
     /**
      *   コンストラクタ
@@ -112,6 +116,24 @@ class ShowMessageHolder implements IMessageDrawer
 
     /**
      *
+     */
+    @Override
+    public void setLevelGauge(ILevelGauge levelGauge)
+    {
+        this.levelGauge = levelGauge;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public ILevelGauge getLevelGauge()
+    {
+        return (levelGauge);
+    }
+
+    /**
+     *
      *
      */
     int getSize(MessageArea area)
@@ -139,4 +161,7 @@ class ShowMessageHolder implements IMessageDrawer
         messageHolder target = decideHolder(area);
         return (target.getMessage());
     }
+
+
+
 }

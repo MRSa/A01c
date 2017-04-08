@@ -218,6 +218,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         if (isLongClick)
         {
             preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            defaultAction = ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_LEVEL_GAUGE;
         }
         String takeMode = getTakeMode();
         switch (takeMode)
@@ -766,6 +767,16 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         updateGridStatusButton(objectId);
     }
 
+
+    /**
+     * 　デジタル水準器の ON/OFFを切り替える
+     *
+     */
+    private void changeShowLevelGauge()
+    {
+        liveImageView.toggleShowLevelGauge();
+    }
+
     /**
      *   AE-Lock/Lock解除を行う
      *
@@ -981,6 +992,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             case ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP:
                 // アートフィルターを選択
                 changeArtFilterUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_LEVEL_GAUGE:
+                // デジタル水準器の表示・非表示
+                changeShowLevelGauge();
                 break;
         }
 

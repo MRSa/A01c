@@ -68,6 +68,7 @@ public interface ICameraPropertyAccessor
 
     String SCENE_MANIPULATE_IMAGE = "manipulate_image";
 
+    String SHOW_LEVEL_GAUGE_STATUS = "level_gauge";
     String SHOW_GRID_STATUS = "show_grid";
     String SHOW_FOCUS_ASSIST_STATUS = "show_focus_assist";
 

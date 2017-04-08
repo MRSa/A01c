@@ -30,6 +30,7 @@ import jp.co.olympus.camerakit.OLYCamera;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.GridFrameFactory;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.IGridFrameDrawer;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
 import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
 
 /**
@@ -44,6 +45,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     private static final String EXIF_ORIENTATION = "Orientation";
 
     private boolean showGridFeature = false;
+    private boolean showLevelGaugeFeature = false;
     private ImageView.ScaleType imageScaleType;
     private Bitmap imageBitmap;
     private int imageRotationDegrees;
@@ -54,7 +56,6 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
     private IGridFrameDrawer gridFrameDrawer = null;
     private ShowMessageHolder messageHolder;
-
 
     /**
      *   コンストラクタ
@@ -405,10 +406,19 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             }
         }
 
-        // グリッド（撮影補助線）の表示
-        if ((viewRect != null) && (showGridFeature) && (gridFrameDrawer != null))
+        if (viewRect != null)
         {
-            drawGridFrame(canvas, viewRect);
+            // グリッド（撮影補助線）の表示
+            if ((showGridFeature) && (gridFrameDrawer != null))
+            {
+                drawGridFrame(canvas, viewRect);
+            }
+
+            // レベルゲージ（デジタル水準器）の表示
+            if (showLevelGaugeFeature)
+            {
+                drawLevelGauge(canvas, viewRect);
+            }
         }
     }
 
@@ -545,6 +555,67 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         framePaint.setStrokeWidth(strokeWidth);
         framePaint.setColor(gridFrameDrawer.getDrawColor());
         gridFrameDrawer.drawFramingGrid(canvas, gridRect, framePaint);
+    }
+
+    /**
+     *   デジタル水準器の表示
+     *
+     */
+    private void drawLevelGauge(Canvas canvas, RectF viewRect)
+    {
+       ILevelGauge levelGauge = messageHolder.getLevelGauge();
+        if (levelGauge == null)
+        {
+            // デジタル水準器がとれない場合は、何もしない
+            return;
+        }
+
+        // レベルゲージの表示位置
+        int height = (int) viewRect.bottom; // canvas.getHeight();
+        int width =  (int) viewRect.right;  // canvas.getWidth();
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        float maxBandWidth = width / 3.0f;     // ゲージの最大長 (画面の 1/3 ぐらい)
+        float maxBandHeight = height / 3.0f;   // ゲージの最大長 (画面の 1/3 ぐらい)
+        int barWidthInitial = 4;               // 表示するゲージの幅（の初期値）
+        int barWidth;                          // 実際に表示するゲージの幅
+
+        Paint paint = new Paint();
+
+        // 垂直線
+        float verticalValue = levelGauge.getLevel(ILevelGauge.LevelArea.LEVEL_VERTICAL);
+        float verticalSize = verticalValue / 60.0f * maxBandHeight;  // 45度で切り替わるはずだが、一応...
+        if (Math.abs(verticalSize) < 1.0f)
+        {
+            // 線引き限界以下、水平検出とする (この時の線は倍の長さにする)
+            verticalSize = 1.0f;
+            barWidth = barWidthInitial * 2;
+        }
+        else
+        {
+            barWidth = barWidthInitial;
+        }
+        paint.setStrokeWidth(barWidth);
+        paint.setColor(levelGauge.getLevelColor(verticalValue));
+        canvas.drawLine((width - barWidth), centerY, (width - barWidth), (centerY + verticalSize), paint);
+
+        // 水平線
+        float horizontalValue = levelGauge.getLevel(ILevelGauge.LevelArea.LEVEL_HORIZONTAL);
+        float horizontalSize = horizontalValue / 60.0f * maxBandWidth;  // 45度ぐらいで切り替わるはずだが、一応...
+        if (Math.abs(horizontalSize) < 1.0f)
+        {
+            // 線引き限界以下、水平検出とする (この時の線は倍の長さにする）
+            horizontalSize = 1.0f;
+            barWidth = barWidthInitial * 2;
+        }
+        else
+        {
+            barWidth = barWidthInitial;
+        }
+        paint.setStrokeWidth(barWidth);
+        paint.setColor(levelGauge.getLevelColor(horizontalValue));
+        canvas.drawLine(centerX, (height - barWidth), (centerX + horizontalSize),  (height - barWidth), paint);
     }
 
     /**
@@ -787,8 +858,51 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
      *
      */
     @Override
-    public void toggleShowGridFrame() {
+    public void toggleShowGridFrame()
+    {
         setShowGridFrame(!showGridFeature);
+    }
+
+    /**
+     *
+     *
+     */
+    public void setShowLevelGauge(boolean isShowLevelGaugeFeature)
+    {
+        Log.v(TAG, "setShowLevelGauge : " + isShowLevelGaugeFeature);
+        showLevelGaugeFeature = isShowLevelGaugeFeature;
+        SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
+        editor.apply();
+        ILevelGauge levelGauge = messageHolder.getLevelGauge();
+        if (levelGauge == null)
+        {
+            // デジタル水準器がとれない場合は、何もしない
+            Log.v(TAG, "setShowLevelGauge : levelGauge is null.");
+            return;
+        }
+        levelGauge.updateLevelGaugeChecking(isShowLevelGaugeFeature);
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void toggleShowLevelGauge()
+    {
+        setShowLevelGauge(!showLevelGaugeFeature);
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public boolean isShowLevelGauge()
+    {
+        return (showLevelGaugeFeature);
     }
 
     /**

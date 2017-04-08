@@ -6,5 +6,4 @@ import jp.co.olympus.camerakit.OLYCamera;
 public interface ICameraStatusSummary
 {
     String getCameraStatusMessage(OLYCamera camera, String name);
-
 }

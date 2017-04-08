@@ -66,4 +66,5 @@ public interface ICameraFeatureDispatcher
     int FEATURE_COLORTONE_UP = 13;
     int FEATURE_ART_FILTER_DOWN = 14;
     int FEATURE_ART_FILTER_UP = 15;
+    int FEATURE_TOGGLE_SHOW_LEVEL_GAUGE = 16;
 }

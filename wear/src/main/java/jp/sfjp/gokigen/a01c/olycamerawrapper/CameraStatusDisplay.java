@@ -286,7 +286,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         }
         if (actualValue != null)
         {
-            informationObject.setMessage(isoSensitivityArea, Color.WHITE, prefix + actualValue);
+            informationObject.setMessage(isoSensitivityArea, Color.WHITE, actualValue + prefix);
         }
     }
 
@@ -404,6 +404,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     {
         //informationObject.setMessage(IShowInformation.AREA_4, Color.argb(0, 255,204,0), message);
     }
+
 
     /**
      *   すべてのステータスをまとめて更新する
