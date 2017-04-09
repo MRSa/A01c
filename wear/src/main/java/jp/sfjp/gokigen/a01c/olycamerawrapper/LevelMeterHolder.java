@@ -6,10 +6,13 @@ import android.util.Log;
 import java.util.Map;
 
 import jp.co.olympus.camerakit.OLYCamera;
+import jp.sfjp.gokigen.a01c.IShowInformation;
 
-public class LevelMeterHolder implements ILevelGauge
+class LevelMeterHolder implements ILevelGauge
 {
     private final String TAG = toString();
+    private final IShowInformation vibrationNotifier;
+    private final float GAUGE_FLAT_THRESHOLD = 1.1f;
     private final float GAUGE_SENSITIVITY = 0.3f;
     private float prevRoll = 0.0f;
     private float prevPitch = 0.0f;
@@ -18,16 +21,18 @@ public class LevelMeterHolder implements ILevelGauge
     private float roll = Float.NaN;
     private float pitch = Float.NaN;
     private String orientation = "";
+    private boolean isFlat = false;
     private boolean isWatchingLevelGauge = false;
 
     /**
      *   コンストラクタ
      *
      */
-    LevelMeterHolder(boolean initialValue)
+    LevelMeterHolder(IShowInformation vibrationNotifier, boolean initialValue)
     {
         // 初期値
         isWatchingLevelGauge = initialValue;
+        this.vibrationNotifier = vibrationNotifier;
     }
     /**
      *   レベルゲージの情報確認
@@ -69,6 +74,23 @@ public class LevelMeterHolder implements ILevelGauge
             // 差動レベルが一定以下の場合は、報告しない
             //Log.v(TAG, "Level Gauge: " + orientation + "[" + roll + "(" + diffRoll + ")" +  "," + pitch + "(" + diffPitch + ")]");
             //}
+
+            // 水平になったかどうかの処理...
+            if (Math.abs(roll) < GAUGE_FLAT_THRESHOLD)
+            {
+                if (!isFlat)
+                {
+                    // rollがフラットになったよ通知 ... バイブレータでぶるぶるさせる。。。(あんまり役に立たない感じだが。。) 入れるかどうか考える。
+                    vibrationNotifier.vibrate(IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE);
+                    Log.v(TAG, "Level Gauge (FLAT) : " + orientation + "[" + roll + "(" + diffRoll + ")" +  "," + pitch + "(" + diffPitch + ")]");
+                }
+                isFlat = true;
+            }
+            else
+            {
+                // フラット状態から外れたとき...
+                isFlat = false;
+            }
         }
         catch (Exception e)
         {

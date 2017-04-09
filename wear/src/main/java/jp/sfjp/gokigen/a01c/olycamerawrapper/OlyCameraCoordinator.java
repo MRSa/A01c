@@ -64,7 +64,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         singleShot = new SingleShotControl(camera, focusFrameDisplay, this);  // 撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
-        this.levelMeter = new LevelMeterHolder(android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
+        this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
         setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
         camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);

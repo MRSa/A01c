@@ -28,6 +28,7 @@ public interface IShowInformation
     int VIBRATE_PATTERN_SIMPLE_MIDDLE  = 2;
     int VIBRATE_PATTERN_SIMPLE_LONG = 3;
     int VIBRATE_PATTERN_SIMPLE_LONGLONG = 4;
+    int VIBRATE_PATTERN_SHORT_DOUBLE  = 5;
 
     void setMessage(final int area, final int color, final String message);
     void setButtonDrawable(final int button, final int labelId);

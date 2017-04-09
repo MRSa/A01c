@@ -98,6 +98,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         showGridFeature = preferences.getBoolean(ICameraPropertyAccessor.SHOW_GRID_STATUS, true);
+        showLevelGaugeFeature = preferences.getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false);
 
         int framingGridStatus = Integer.parseInt(preferences.getString(ICameraPropertyAccessor.FRAME_GRID, ICameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE));
         gridFrameDrawer = GridFrameFactory.getGridFrameDrawer(framingGridStatus);
