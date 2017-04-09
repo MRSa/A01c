@@ -22,6 +22,7 @@
 
     <string name="high_temperature_warning">TEMP</string>
     <string name="exposure_metering_warning">EXP</string>
+    <string name="media_status_warning">MEDIA</string>
     <string name="iso_sensitivity_warning">ISO</string>
 
     <string name="dialog_start_load_property_message">Please Wait</string>

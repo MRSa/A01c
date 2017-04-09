@@ -100,6 +100,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 case EXPOSURE_METERING_WARNING:
                 case HIGH_TEMPERATURE_WARNING:
                 case ACTUAL_ISO_SENSITIVITY_WARNING:
+                case MEDIA_MOUNT_STATUS:
                     // ワーニング系のメッセージの表示更新
                     display.updateWarning(decideWarningMessage(camera));
                     break;
@@ -114,7 +115,6 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 case MEDIA_ERROR:
                 case DETECT_FACES:
                 case LENS_MOUNT_STATUS:
-                case MEDIA_MOUNT_STATUS:
                 case REMAINING_RECORDABLE_TIME:
                 case MINIMUM_FOCAL_LENGTH:
                 case MAXIMUM_FOCAL_LENGTH:
@@ -151,7 +151,39 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 // 露出警告
                 message = message + " " + context.getString(R.string.exposure_metering_warning);
             }
+            try
+            {
+                boolean mediaError = false;
+                String media = camera.getMediaMountStatus();
+                if (media != null)
+                {
+                    switch (media)
+                    {
+                        case "normal":
+                            // エラーなし
+                            break;
+                        case "readonly":
+                        case "cardfull":
+                        case "unmount":
+                        case "error":
+                            mediaError = true;
+                            break;
+                        default:
+                            Log.v(TAG, "getMediaMountStatus : " + media);
+                            mediaError = true;
+                            break;
+                    }
+                }
+                if (mediaError)
+                {
+                    message = message + " " + context.getString(R.string.media_status_warning);
+                }
 
+            }
+            catch (Exception ee)
+            {
+                ee.printStackTrace();
+            }
         }
         catch (Exception e)
         {

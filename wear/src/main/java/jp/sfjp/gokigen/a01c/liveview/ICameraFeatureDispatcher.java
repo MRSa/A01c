@@ -67,4 +67,5 @@ public interface ICameraFeatureDispatcher
     int FEATURE_ART_FILTER_DOWN = 14;
     int FEATURE_ART_FILTER_UP = 15;
     int FEATURE_TOGGLE_SHOW_LEVEL_GAUGE = 16;
+    int FEATURE_CHANGE_TAKEMODE_REVERSE = 17;
 }

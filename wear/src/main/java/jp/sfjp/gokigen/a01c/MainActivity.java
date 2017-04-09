@@ -45,6 +45,9 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
+        // Ambientモードを許してみる...
+        setAmbientEnabled();
+
         //  画面全体の設定
         setContentView(R.layout.activity_main);
 
