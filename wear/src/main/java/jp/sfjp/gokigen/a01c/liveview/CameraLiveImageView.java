@@ -601,7 +601,16 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         paint.setColor(levelGauge.getLevelColor(verticalValue));
         canvas.drawLine((width - barWidth), centerY, (width - barWidth), (centerY + verticalSize), paint);
 
-        // 水平線
+        // 水平線の表示
+        float YY = canvas.getHeight() / 2.0f; // centerY
+        float horizontalValue = levelGauge.getLevel(ILevelGauge.LevelArea.LEVEL_HORIZONTAL);
+        float diffY = (float) Math.sin(Math.toRadians(horizontalValue)) * (float) centerX;
+        paint.setStrokeWidth(2.0f);
+        paint.setAntiAlias(true);
+        paint.setColor(levelGauge.getLevelColor(horizontalValue));
+        canvas.drawLine(0, (YY + diffY), width, (YY - diffY), paint);
+/*
+        // 縦と同じ水平線を表示する場合...
         float horizontalValue = levelGauge.getLevel(ILevelGauge.LevelArea.LEVEL_HORIZONTAL);
         float horizontalSize = horizontalValue / 60.0f * maxBandWidth;  // 45度ぐらいで切り替わるはずだが、一応...
         if (Math.abs(horizontalSize) < 1.0f)
@@ -617,6 +626,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         paint.setStrokeWidth(barWidth);
         paint.setColor(levelGauge.getLevelColor(horizontalValue));
         canvas.drawLine(centerX, (height - barWidth), (centerX + horizontalSize),  (height - barWidth), paint);
+*/
     }
 
     /**
