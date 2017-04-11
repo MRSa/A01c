@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.HashMap;
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraAutoFocusResult;
+import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 
 /**
@@ -16,19 +17,23 @@ import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 class SingleShotControl implements OLYCamera.TakePictureCallback
 {
     private final String TAG = toString();
+    //private final Context context;
     private final OLYCamera camera;
     private final IIndicatorControl indicator;
     private final IAutoFocusFrameDisplay frameDisplayer;
+    private final IShowInformation statusDrawer;
 
     /**
      *  コンストラクタ
      *
      */
-    SingleShotControl(OLYCamera camera, IAutoFocusFrameDisplay frameInfo, IIndicatorControl indicator)
+    SingleShotControl(OLYCamera camera, IAutoFocusFrameDisplay frameInfo, IIndicatorControl indicator, IShowInformation statusDrawer)
     {
+        //this.context = context;
         this.camera = camera;
         this.indicator = indicator;
         this.frameDisplayer = frameInfo;
+        this.statusDrawer = statusDrawer;
     }
 
     /**
@@ -84,6 +89,12 @@ class SingleShotControl implements OLYCamera.TakePictureCallback
         {
             camera.clearAutoFocusPoint();
             hideFocusFrame();
+            // 撮影成功をバイブレータで知らせる
+            statusDrawer.vibrate(IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE);
+            {
+                // 撮影成功の表示をToastで行う
+                //Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
+            }
         }
         catch (Exception e)
         {
@@ -98,6 +109,12 @@ class SingleShotControl implements OLYCamera.TakePictureCallback
         {
             camera.clearAutoFocusPoint();
             hideFocusFrame();
+            // 撮影失敗をバイブレータで知らせる
+            statusDrawer.vibrate(IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT);
+            {
+                // 撮影失敗の表示をToastで行う
+                //Toast.makeText(context, R.string.shoot_camera_failure, Toast.LENGTH_SHORT).show();
+            }
         }
         catch (Exception ee)
         {

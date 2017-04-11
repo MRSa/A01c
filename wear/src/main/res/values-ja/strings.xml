@@ -38,6 +38,7 @@
     <string name="description_control_button">ファンクションキー</string>
     <string name="text_message_blank"> </string>
 
-    <string name="shoot_camera">撮影しました!</string>
+    <string name="shoot_camera">撮影!</string>
+    <string name="shoot_camera_failure">失敗です&#8230;</string>
     <string name="message_none">---</string>
 </resources>

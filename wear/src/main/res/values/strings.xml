@@ -37,6 +37,7 @@
     <string name="description_control_button">Control Button</string>
     <string name="text_message_blank"> </string>
 
-    <string name="shoot_camera">Captured</string>
+    <string name="shoot_camera">Capture!</string>
+    <string name="shoot_camera_failure">FAILED!</string>
     <string name="message_none">---</string>
 </resources>

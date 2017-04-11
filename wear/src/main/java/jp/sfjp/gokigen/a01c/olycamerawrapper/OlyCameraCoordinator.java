@@ -61,7 +61,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
 
         // 本クラスの配下のカメラ制御クラス群の設定
         autoFocus = new AutoFocusControl(camera, focusFrameDisplay, this); // AF制御
-        singleShot = new SingleShotControl(camera, focusFrameDisplay, this);  // 撮影
+        singleShot = new SingleShotControl(camera, focusFrameDisplay, this, showInformation);  // 撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
         this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器

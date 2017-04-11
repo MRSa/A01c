@@ -814,8 +814,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         // カメラ側のシャッターを押す
         camera.singleShot();
         {
-            // パラメータが ON (ONLY CAMERA)の時は、スマートフォン側の撮影は行わない。
-            // （本体カメラのシャッターを切らない時だけ、Toastで通知する。）
+            // 撮影の表示をToastで行う (成功とか失敗とか言っていない)
             Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
         }
     }
@@ -1006,7 +1005,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             case ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT:
                 // シャッター
                 pushShutterButton();
-                duration =IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE;
+                //duration =IShowInformation.VIBRATE_PATTERN_NONE;
                 break;
             case ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE:
                 // 撮影モードの変更
