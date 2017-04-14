@@ -1,10 +1,12 @@
 package jp.sfjp.gokigen.a01c.liveview;
 
+import android.view.MotionEvent;
+
 /**
  *   機能とボタンの設定群
  *
  */
-public interface ICameraFeatureDispatcher
+interface ICameraFeatureDispatcher
 {
     // 撮影モード
     String MODE_P = "_P";
@@ -37,19 +39,21 @@ public interface ICameraFeatureDispatcher
     String DRAWABLE_BUTTON6 = "D6";
 
     // 表示エリア
-    String SHOW_TEXT_AREAC = "TXTC";
-    String SHOW_TEXT_AREA1 = "TXT1";
-    String SHOW_TEXT_AREA2 = "TXT2";
-    String SHOW_TEXT_AREA3 = "TXT3";
-    String SHOW_TEXT_AREA4 = "TXT4";
-    String SHOW_TEXT_AREA5 = "TXT5";
-    String SHOW_TEXT_AREA6 = "TXT6";
-    String SHOW_TEXT_AREA7 = "TXT7";
-    String SHOW_TEXT_AREA8 = "TXT8";
+    String SHOW_TEXT_AREA_C = "TXTC";
+    String SHOW_TEXT_AREA_1 = "TXT1";
+    String SHOW_TEXT_AREA_2 = "TXT2";
+    String SHOW_TEXT_AREA_3 = "TXT3";
+    String SHOW_TEXT_AREA_4 = "TXT4";
+    String SHOW_TEXT_AREA_5 = "TXT5";
+    String SHOW_TEXT_AREA_6 = "TXT6";
+    String SHOW_TEXT_AREA_7 = "TXT7";
+    String SHOW_TEXT_AREA_8 = "TXT8";
+    String SHOW_TEXT_AREA_9 = "TXT9";
+    String SHOW_TEXT_AREA_A = "TXTA";
 
     String ACTION_SECOND_CHOICE = "_L_";
 
-    // A01Cが持つ機能 (ボタンに割り当て可能)
+    // A01Cが持つ機能 (ボタンに割り当て可能な featureNumber)
     int FEATURE_ACTION_NONE = 0;
     int FEATURE_SETTINGS = 1;
     int FEATURE_TOGGLE_SHOW_GRID = 2;
@@ -68,4 +72,14 @@ public interface ICameraFeatureDispatcher
     int FEATURE_ART_FILTER_UP = 15;
     int FEATURE_TOGGLE_SHOW_LEVEL_GAUGE = 16;
     int FEATURE_CHANGE_TAKEMODE_REVERSE = 17;
+
+    // エリアタッチ時の機能(featureNumber)
+    int FEATURE_AREA_ACTION_NONE = 100;
+    int FEATURE_AREA_ACTION_NOT_CONNECTED = 101;
+    int FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS = 102;
+
+    // アクションインタフェース
+    String getTakeMode();   // 撮影モードの取得
+    boolean dispatchAction(int objectId, int featureNumber);  // コマンドの実行
+    boolean dispatchAreaAction(MotionEvent event, int areaFeatureNumber);  // タッチエリアアクションの実行
 }

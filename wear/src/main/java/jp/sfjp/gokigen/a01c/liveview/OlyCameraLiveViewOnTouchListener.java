@@ -1,62 +1,39 @@
 package jp.sfjp.gokigen.a01c.liveview;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
-
-import java.util.List;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraProperty;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraPropertyProvider;
-
-import static jp.sfjp.gokigen.a01c.liveview.ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
-
 
 /**
- *
+ *   画面がタッチ・クリックされた時の処理分岐
  *
  */
 public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener
 {
     private final String TAG = toString();
-    private final Context context;
-    private IOlyCameraCoordinator camera = null;
-    private IShowInformation statusDrawer = null;
-    private ILiveImageStatusNotify liveImageView = null;
-    private final SharedPreferences preferences;
 
+    private final SharedPreferences preferences;
+    private final ICameraFeatureDispatcher dispatcher;
     private boolean prohibitOperation = true;
 
     /**
+     *   コンストラクタの整理
      *
      */
-    public OlyCameraLiveViewOnTouchListener(Context context)
+    public OlyCameraLiveViewOnTouchListener(Context context, ICameraFeatureDispatcher dispatcher)
     {
-        this.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    /**
-     *
-     */
-    public void prepareInterfaces(IOlyCameraCoordinator cameraCoordinator, IShowInformation statusDrawer, ILiveImageStatusNotify liveImageView)
-    {
-        this.camera = cameraCoordinator;
-        this.statusDrawer = statusDrawer;
-        this.liveImageView = liveImageView;
+        this.dispatcher = dispatcher;
     }
 
     /**
      *   ボタン（オブジェクト）をクリックしたときの処理
-     *
      */
     @Override
     public void onClick(View v)
@@ -121,7 +98,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         if (prohibitOperation)
         {
             // 操作禁止の指示がされていた場合は何もしない
-            Log.v(TAG, "onClick() : prohibit operation");
+            Log.v(TAG, "onLongClick() : prohibit operation");
             return (false);
         }
         switch (id)
@@ -177,12 +154,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onTouch() : prohibit operation");
 
-            // 実験... WIFIステート
-            //Intent intent = new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
-            //context.startActivity(intent);
             return (false);
         }
-        return ((id == R.id.liveview)&&(touchedLiveViewArea(event)));
+        // 現在のところ、タッチエリアの場合はオートフォーカス実行で固定
+        return ((id == R.id.liveview)&&(dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS)));
     }
 
     /**
@@ -197,15 +172,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
 
-    /***************************************************************
-     *   以下、ボタンが押された時の処理... あとで切り離す。
-     *   (撮影モードごとに処理を変えたい)
-     ***************************************************************/
-
-    private boolean touchedLiveViewArea(MotionEvent event)
-    {
-        return (camera.driveAutoFocus(event));
-    }
+    ///***************************************************************
+    // *   以下、ボタンが押された時の処理... あとで切り離す。
+    // *   (撮影モードごとに処理を変えたい)
+    ///***************************************************************/
 
     /**
      *   ボタン１が押された時の機能を引き当て実行する
@@ -217,10 +187,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON1;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
             defaultAction = ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_LEVEL_GAUGE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -254,7 +224,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_1, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_1, preferences.getInt(preference_action_id, defaultAction)));
     }
 
 
@@ -268,9 +238,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON2;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -309,7 +279,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -322,9 +292,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON3;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -363,7 +333,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_3, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_3, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -376,9 +346,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON4;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -419,7 +389,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_4, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_4, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -432,9 +402,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON5;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -475,7 +445,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_5, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_5, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -488,9 +458,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON6;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -524,7 +494,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction)));
     }
 
 
@@ -538,10 +508,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA1;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
             defaultAction = ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE_REVERSE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -575,7 +545,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.AREA_1, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.AREA_1, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -588,9 +558,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA2;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -624,7 +594,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.AREA_2, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.AREA_2, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -637,9 +607,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA3;
         if (isLongClick)
         {
-            preference_action_id = preference_action_id + ACTION_SECOND_CHOICE;
+            preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
         }
-        String takeMode = getTakeMode();
+        String takeMode = dispatcher.getTakeMode();
         switch (takeMode)
         {
             case "P":
@@ -673,7 +643,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             default:
                 break;
         }
-        return (dispatchAction(IShowInformation.AREA_3, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.AREA_3, preferences.getInt(preference_action_id, defaultAction)));
     }
 
     /**
@@ -684,389 +654,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         if (isLongClick)
         {
             // 設定画面を開く
-            return (dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
+            return (dispatcher.dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
         }
 
         // 設定画面を開く
-        return (dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
-    }
-
-    /***************************************************************
-     *   以下、具体的な機能の実行... ここから下は、あとで切り離す。
-     *
-     ***************************************************************/
-
-    private String getTakeMode()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        return (propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE)));
-    }
-
-
-    /**
-     *   撮影モードの変更指示
-     *   (P > A > S > M > ART > iAuto > ...)
-     */
-    private void changeTakeMode()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
-        if (propetyValue == null)
-        {
-            // データ取得失敗
-            return;
-        }
-        String targetMode = "<" + IOlyCameraProperty.TAKE_MODE;  // 変更先モード
-        switch (propetyValue)
-        {
-            case "P":
-                targetMode = targetMode + "/A>";
-                break;
-
-            case "A":
-                    targetMode =  targetMode + "/S>";
-                break;
-
-            case "S":
-                targetMode =  targetMode + "/M>";
-                break;
-
-            case "M":
-                targetMode =  targetMode + "/ART>";
-                break;
-
-            case "ART":
-                targetMode =  targetMode + "/iAuto>";
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                targetMode =  targetMode + "/P>";
-                break;
-        }
-        Log.v(TAG, "changeTakeMode() " + targetMode);
-        propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode);
-        camera.unlockAutoFocus();
-
-        //  撮影モードの更新
-        //camera.updateTakeMode();
-    }
-
-
-    /**
-     *   撮影モードの変更指示
-     *   (iAuto < P < A < S < M < ART < iAuto < ...)
-     */
-    private void changeTakeModeReverse()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
-        if (propetyValue == null)
-        {
-            // データ取得失敗
-            return;
-        }
-        String targetMode = "<" + IOlyCameraProperty.TAKE_MODE;  // 変更先モード
-        switch (propetyValue)
-        {
-            case "P":
-                targetMode = targetMode + "/iAuto>";
-                break;
-
-            case "A":
-                targetMode =  targetMode + "/P>";
-                break;
-
-            case "S":
-                targetMode =  targetMode + "/A>";
-                break;
-
-            case "M":
-                targetMode =  targetMode + "/S>";
-                break;
-
-            case "ART":
-                targetMode =  targetMode + "/M>";
-                break;
-
-            case "iAuto":
-            case "movie":
-            default:
-                targetMode =  targetMode + "/ART>";
-                break;
-        }
-        Log.v(TAG, "changeTakeMode() " + targetMode);
-        propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode);
-        camera.unlockAutoFocus();
-
-        //  撮影モードの更新
-        //camera.updateTakeMode();
-    }
-
-
-    /**
-     *   シャッターボタンが押された！
-     *   （現在は、連続撮影モードやムービー撮影についてはまだ非対応）
-     */
-    private void pushShutterButton()
-    {
-        // カメラ側のシャッターを押す
-        camera.singleShot();
-        {
-            // 撮影の表示をToastで行う (成功とか失敗とか言っていない)
-            Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     *   グリッド表示の ON/OFFを切り替える
-     *
-     */
-    private void changeShowGrid(int objectId)
-    {
-        liveImageView.toggleShowGridFrame();
-        updateGridStatusButton(objectId);
-    }
-
-
-    /**
-     * 　デジタル水準器の ON/OFFを切り替える
-     *
-     */
-    private void changeShowLevelGauge()
-    {
-        liveImageView.toggleShowLevelGauge();
-    }
-
-    /**
-     *   AE-Lock/Lock解除を行う
-     *
-     */
-    private void changeAeLockMode()
-    {
-        camera.toggleAutoExposure();
-    }
-
-    /**
-     *  グリッドフレームの表示・非表示ボタンを更新する
-     *
-     */
-    private void updateGridStatusButton(int buttonId)
-    {
-        int btnResId;
-        if (liveImageView.isShowGrid())
-        {
-            // グリッドがON状態、グリッドをOFFにするボタンを出す
-            btnResId = R.drawable.btn_ic_grid_off;
-        }
-        else
-        {
-            //  グリッドがOFF状態、グリッドをONにするボタンを出す
-            btnResId = R.drawable.btn_ic_grid_on;
-        }
-        statusDrawer.setButtonDrawable(buttonId, btnResId);
-    }
-
-    /**
-     *　  露出補正を１段階下げる
-     */
-    private void changeExposureBiasValueDown()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.EXPOSURE_COMPENSATION);
-    }
-
-    /**
-     *   露出補正を１段階あげる
-     *
-     */
-    private void changeExposureBiasValueUp()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.EXPOSURE_COMPENSATION);
-    }
-
-    /**
-     *　  絞り値を１段階下げる
-     */
-    private void changeApertureValueDown()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.APERTURE);
-    }
-
-    /**
-     *   絞り値を１段階あげる
-     *
-     */
-    private void changeApertureValueUp()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.APERTURE);
-    }
-
-    /**
-     *　  シャッター速度を１段階下げる
-     */
-    private void changeShutterSpeedDown()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.SHUTTER_SPEED);
-    }
-
-    /**
-     *   シャッター速度を１段階あげる
-     *
-     */
-    private void changeShutterSpeedUp()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.SHUTTER_SPEED);
-    }
-
-
-    /**
-     *　  仕上がり・ピクチャーモードを１段階下げる
-     */
-    private void changeColorToneDown()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.COLOR_TONE);
-    }
-
-    /**
-     *   仕上がり・ピクチャーモードを１段階あげる
-     *
-     */
-    private void changeColorToneUp()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.COLOR_TONE);
-    }
-
-    /**
-     *   アートフィルターを１段階さげる
-     *
-     */
-    private void changeArtFilterDown()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.ART_FILTER);
-    }
-
-    /**
-     *   アートフィルターを１段階あげる
-     *
-     */
-    private void changeArtFilterUp()
-    {
-        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.ART_FILTER);
-    }
-
-
-    /**
-     *   設定画面を開く
-     *
-     */
-    private void showSettingsScreen()
-    {
-        // TBD...
-    }
-
-    /**
-     *   指定した機能を実行する
-     *
-     * @param objectId　　　　　操作したオブジェクト
-     * @param featureNumber　　操作する機能
-     */
-    private boolean dispatchAction(int objectId, int featureNumber)
-    {
-        if (featureNumber <= ICameraFeatureDispatcher.FEATURE_ACTION_NONE)
-        {
-            // 何もしない
-            return (false);
-        }
-
-        // 機能実行の割り当て...
-        int duration = IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT;
-        switch (featureNumber)
-        {
-            case ICameraFeatureDispatcher.FEATURE_SETTINGS:
-                // 設定画面を開く
-                showSettingsScreen();
-                duration =IShowInformation.VIBRATE_PATTERN_NONE;
-                break;
-            case ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID:
-                // グリッド標示ON/OFF
-                changeShowGrid(objectId);
-                break;
-            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT:
-                // シャッター
-                pushShutterButton();
-                //duration =IShowInformation.VIBRATE_PATTERN_NONE;
-                break;
-            case ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE:
-                // 撮影モードの変更
-                changeTakeMode();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE:
-                // AE LOCKのON/OFF切り替え
-                changeAeLockMode();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN:
-                // 露出補正を１段階下げる
-                changeExposureBiasValueDown();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP:
-                // 露出補正を１段階上げる
-                changeExposureBiasValueUp();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN:
-                // 絞り値を１段階下げる
-                changeApertureValueDown();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_APERTURE_UP:
-                // 絞り値を１段階上げる
-                changeApertureValueUp();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN:
-                // シャッター速度を１段階下げる
-                changeShutterSpeedDown();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP:
-                // シャッター速度を１段階上げる
-                changeShutterSpeedUp();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN:
-                // 仕上がり・ピクチャーモードを選択
-                changeColorToneDown();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_COLORTONE_UP:
-                // 仕上がり・ピクチャーモードを選択
-                changeColorToneUp();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN:
-                // アートフィルターを選択
-                changeArtFilterDown();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP:
-                // アートフィルターを選択
-                changeArtFilterUp();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_LEVEL_GAUGE:
-                // デジタル水準器の表示・非表示
-                changeShowLevelGauge();
-                break;
-            case ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE_REVERSE:
-                // 撮影モードの変更（逆順）
-                changeTakeModeReverse();
-                break;
-        }
-
-        // コマンド実行完了後、ぶるぶるさせる
-        statusDrawer.vibrate(duration);
-        return (true);
+        return (dispatcher.dispatchAction(IShowInformation.AREA_4, ICameraFeatureDispatcher.FEATURE_SETTINGS));
     }
 }

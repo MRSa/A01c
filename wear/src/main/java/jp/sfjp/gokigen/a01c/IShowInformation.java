@@ -15,6 +15,8 @@ public interface IShowInformation
     int AREA_6 = 7;
     int AREA_7 = 8;
     int AREA_8 = 9;
+    int AREA_9 = 10;
+    int AREA_A = 11;
 
     int BUTTON_1 = 1;
     int BUTTON_2 = 2;

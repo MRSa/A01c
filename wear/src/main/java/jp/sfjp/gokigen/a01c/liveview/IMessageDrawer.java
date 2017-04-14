@@ -10,9 +10,11 @@ public interface IMessageDrawer
     {
         UPLEFT,
         UPRIGHT,
+        UPCENTER,
         CENTER,
         LOWLEFT,
-        LOWRIGHT
+        LOWRIGHT,
+        LOWCENTER
     }
 
     int SIZE_STD = 16;

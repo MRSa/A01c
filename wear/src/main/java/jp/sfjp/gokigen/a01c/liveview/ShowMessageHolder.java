@@ -7,7 +7,6 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
 /**
  *
  *
- * Created by MRSa on 2017/03/01.
  */
 class ShowMessageHolder implements IMessageDrawer
 {
@@ -53,9 +52,11 @@ class ShowMessageHolder implements IMessageDrawer
 
     private messageHolder upperLeft = new messageHolder();
     private messageHolder upperRight = new messageHolder();
+    private messageHolder upperCenter = new messageHolder();
     private messageHolder center = new messageHolder();
     private messageHolder lowerLeft = new messageHolder();
     private messageHolder lowerRight = new messageHolder();
+    private messageHolder lowerCenter = new messageHolder();
 
     private ILevelGauge levelGauge = null;
 
@@ -89,8 +90,16 @@ class ShowMessageHolder implements IMessageDrawer
                 target = upperRight;
                 break;
 
+            case UPCENTER:
+                target = upperCenter;
+                break;
+
             case LOWLEFT:
                 target = lowerLeft;
+                break;
+
+            case LOWCENTER:
+                target = lowerCenter;
                 break;
 
             case LOWRIGHT:

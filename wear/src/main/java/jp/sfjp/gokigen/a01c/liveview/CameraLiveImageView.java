@@ -723,6 +723,33 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             canvas.drawText(message, (viewRect.right - 3.0f) - width, viewRect.bottom - fontMetrics.bottom, paint);
         }
 
+/**/
+        // 画面上部中央に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.UPCENTER);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paintUp = new Paint();
+            paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPCENTER));
+            paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPCENTER));
+            paintUp.setAntiAlias(true);
+            float width = paintUp.measureText(message) / 2.0f;
+            Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
+            canvas.drawText(message, (viewRect.centerX()) - width, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
+        }
+
+        // 画面下部中央に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.LOWCENTER);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paint = new Paint();
+            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWCENTER));
+            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWCENTER));
+            paint.setAntiAlias(true);
+            float width = paint.measureText(message) / 2.0f;
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            canvas.drawText(message, (viewRect.centerX()) - width, viewRect.bottom - fontMetrics.bottom, paint);
+        }
+/**/
     }
 
     /**

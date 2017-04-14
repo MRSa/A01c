@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
+import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
@@ -31,6 +33,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final String TAG = toString();
     private final IAutoFocusFrameDisplay focusFrameDisplay;
     private final OLYCamera camera;
+    private final Activity context;
 
     // 本クラスの配下のカメラ制御クラス群
     private final AutoFocusControl autoFocus;
@@ -50,6 +53,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
      */
     public OlyCameraCoordinator(Activity context, IAutoFocusFrameDisplay focusFrameDisplay, IShowInformation showInformation, ICameraStatusReceiver receiver)
     {
+        this.context = context;
         this.focusFrameDisplay = focusFrameDisplay;
 
         // OLYMPUS CAMERA クラスの初期化、リスナの設定
@@ -177,8 +181,13 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
      *   画像を１枚撮影
      */
     @Override
-    public void singleShot() {
+    public void singleShot()
+    {
         singleShot.singleShot();
+        {
+            // 撮影の表示をToastで行う (成功とか失敗とか言っていない)
+            Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

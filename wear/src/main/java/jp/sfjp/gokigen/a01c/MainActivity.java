@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
+import jp.sfjp.gokigen.a01c.liveview.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
@@ -84,8 +85,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 
         // バイブレータをつかまえる
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-        listener = new OlyCameraLiveViewOnTouchListener(this);
 
         setupCameraCoordinator();
         setupActionListener();
@@ -222,7 +221,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         liveView.setOnTouchListener(listener);
         messageDrawer = liveView.getMessageDrawer();
         messageDrawer.setLevelGauge(coordinator.getLevelGauge());
-        listener.prepareInterfaces(coordinator, this, liveView);
     }
 
     /**
@@ -238,6 +236,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator = null;
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
         coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
+        listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView));
+
         Thread thread = new Thread(new Runnable()
         {
             @Override
@@ -383,6 +383,17 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOWRIGHT, color, IMessageDrawer.SIZE_STD, message);
                 return;
             }
+            if (area == IShowInformation.AREA_9)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.UPCENTER, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+            if (area == IShowInformation.AREA_A)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOWCENTER, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+
             if (id == 0)
             {
                 // 描画エリアが不定の場合...
@@ -500,6 +511,5 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             e.printStackTrace();
         }
     }
-
 
 }
