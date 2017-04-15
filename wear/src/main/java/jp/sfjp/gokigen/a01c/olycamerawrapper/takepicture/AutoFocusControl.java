@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -7,6 +7,7 @@ import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraAutoFocusResult;
 import jp.co.olympus.camerakit.OLYCameraKitException;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IIndicatorControl;
 
 /**
  *   オートフォーカス制御クラス
@@ -16,7 +17,7 @@ import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
  *     3. unlockAutoFocus() で AF-Unlock を実行
  *
  */
-class AutoFocusControl implements OLYCamera.TakePictureCallback
+public class AutoFocusControl implements OLYCamera.TakePictureCallback
 {
     private final OLYCamera camera;
     private final IIndicatorControl indicator;
@@ -27,7 +28,7 @@ class AutoFocusControl implements OLYCamera.TakePictureCallback
      *   コンストラクタ
      *
      */
-    AutoFocusControl(OLYCamera camera, IAutoFocusFrameDisplay focusFrameDrawer, IIndicatorControl indicator)
+    public AutoFocusControl(OLYCamera camera, IAutoFocusFrameDisplay focusFrameDrawer, IIndicatorControl indicator)
     {
         this.camera = camera;
         this.indicator = indicator;
@@ -40,7 +41,7 @@ class AutoFocusControl implements OLYCamera.TakePictureCallback
      * @param point  ターゲットAF点
      *
      */
-    boolean lockAutoFocus(PointF point)
+    public boolean lockAutoFocus(PointF point)
     {
         if (camera.isTakingPicture() || camera.isRecordingVideo())
         {
@@ -83,7 +84,7 @@ class AutoFocusControl implements OLYCamera.TakePictureCallback
      *   AF-Lを解除する
      *
      */
-    void unlockAutoFocus()
+    public void unlockAutoFocus()
     {
         if (camera.isTakingPicture() || camera.isRecordingVideo())
         {

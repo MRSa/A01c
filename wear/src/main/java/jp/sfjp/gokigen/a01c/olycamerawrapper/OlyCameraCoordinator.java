@@ -14,6 +14,9 @@ import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.AutoFocusControl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.MovieRecordingControl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.SingleShotControl;
 import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
 
 /**
@@ -38,6 +41,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     // 本クラスの配下のカメラ制御クラス群
     private final AutoFocusControl autoFocus;
     private final SingleShotControl singleShot;
+    private final MovieRecordingControl movieControl;
     private final OlyCameraPropertyProxy propertyProxy;
     private final LoadSaveCameraProperties loadSaveCameraProperties;
     private final OlyCameraConnection cameraConnection;
@@ -65,7 +69,8 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
 
         // 本クラスの配下のカメラ制御クラス群の設定
         autoFocus = new AutoFocusControl(camera, focusFrameDisplay, this); // AF制御
-        singleShot = new SingleShotControl(camera, focusFrameDisplay, this, showInformation);  // 撮影
+        singleShot = new SingleShotControl(camera, focusFrameDisplay, this, showInformation);  // １枚撮影
+        movieControl = new MovieRecordingControl(context, camera, showInformation); // ムービー撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
         this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
@@ -188,6 +193,15 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
             // 撮影の表示をToastで行う (成功とか失敗とか言っていない)
             Toast.makeText(context, R.string.shoot_camera, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     *   ムービーの撮影・停止
+     */
+    @Override
+    public void movieControl()
+    {
+        movieControl.movieControl();
     }
 
     /**

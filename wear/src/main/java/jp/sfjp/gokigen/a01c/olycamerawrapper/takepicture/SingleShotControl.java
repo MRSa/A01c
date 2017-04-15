@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture;
 
 import android.graphics.RectF;
 import android.util.Log;
@@ -8,13 +8,14 @@ import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraAutoFocusResult;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IIndicatorControl;
 
 /**
  *   一枚撮影用のクラス
  *
  * Created by MRSa on 2016/06/18.
  */
-class SingleShotControl implements OLYCamera.TakePictureCallback
+public class SingleShotControl implements OLYCamera.TakePictureCallback
 {
     private final String TAG = toString();
     //private final Context context;
@@ -27,7 +28,7 @@ class SingleShotControl implements OLYCamera.TakePictureCallback
      *  コンストラクタ
      *
      */
-    SingleShotControl(OLYCamera camera, IAutoFocusFrameDisplay frameInfo, IIndicatorControl indicator, IShowInformation statusDrawer)
+    public SingleShotControl(OLYCamera camera, IAutoFocusFrameDisplay frameInfo, IIndicatorControl indicator, IShowInformation statusDrawer)
     {
         //this.context = context;
         this.camera = camera;
@@ -40,7 +41,7 @@ class SingleShotControl implements OLYCamera.TakePictureCallback
      *   1枚撮影する
      *
      */
-    void singleShot()
+    public void singleShot()
     {
         try
         {

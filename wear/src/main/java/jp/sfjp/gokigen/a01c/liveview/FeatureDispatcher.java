@@ -117,6 +117,10 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 // 撮影モードの変更（逆順）
                 changeTakeModeReverse();
                 break;
+            case ICameraFeatureDispatcher.FEATURE_CONTROL_MOVIE:
+                // 動画の撮影・撮影終了
+                movieControl();
+                break;
         }
 
         // コマンド実行完了後、ぶるぶるさせる
@@ -174,7 +178,7 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
 
     /**
      *   撮影モードの変更指示
-     *   (P > A > S > M > ART > iAuto > ...)
+     *   (P > A > S > M > ART > movie > iAuto > ...)
      */
     private void changeTakeMode()
     {
@@ -205,11 +209,14 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 break;
 
             case "ART":
+                targetMode =  targetMode + "/movie>";
+                break;
+
+            case "Movie":
                 targetMode =  targetMode + "/iAuto>";
                 break;
 
             case "iAuto":
-            case "movie":
             default:
                 targetMode =  targetMode + "/P>";
                 break;
@@ -225,7 +232,7 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
 
     /**
      *   撮影モードの変更指示
-     *   (iAuto < P < A < S < M < ART < iAuto < ...)
+     *   (iAuto < P < A < S < M < ART < movie < iAuto < ...)
      */
     private void changeTakeModeReverse()
     {
@@ -258,11 +265,12 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
             case "ART":
                 targetMode =  targetMode + "/M>";
                 break;
-
-            case "iAuto":
-            case "movie":
-            default:
+            case "Movie":
                 targetMode =  targetMode + "/ART>";
+                break;
+            case "iAuto":
+            default:
+                targetMode =  targetMode + "/movie>";
                 break;
         }
         Log.v(TAG, "changeTakeMode() " + targetMode);
@@ -273,15 +281,23 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         //camera.updateTakeMode();
     }
 
-
     /**
      *   シャッターボタンが押された！
-     *   （現在は、連続撮影モードやムービー撮影についてはまだ非対応）
+     *   （現在は、連続撮影モードについてはまだ非対応）
      */
     private void pushShutterButton()
     {
         // カメラ側のシャッターを押す
         camera.singleShot();
+    }
+
+    /**
+     *   動画の撮影・停止を行う
+     *
+     */
+    private void movieControl()
+    {
+        camera.movieControl();
     }
 
     /**
@@ -293,7 +309,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         liveImageView.toggleShowGridFrame();
         updateGridStatusButton(objectId);
     }
-
 
     /**
      * 　デジタル水準器の ON/OFFを切り替える
@@ -429,7 +444,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.ART_FILTER);
     }
-
 
     /**
      *   設定画面を開く

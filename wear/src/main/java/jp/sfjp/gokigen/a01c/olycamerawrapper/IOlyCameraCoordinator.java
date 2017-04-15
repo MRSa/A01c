@@ -27,6 +27,9 @@ public interface IOlyCameraCoordinator
     /** シングル撮影機能の実行 **/
     void singleShot();
 
+    /** ムービー撮影機能の実行(開始・終了) **/
+    void movieControl();
+
     /** 撮影確認画像の設定 **/
     void setRecViewMode(boolean isRecViewMode);
 

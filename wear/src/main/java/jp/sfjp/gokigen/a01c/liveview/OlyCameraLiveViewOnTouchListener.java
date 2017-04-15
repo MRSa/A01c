@@ -217,7 +217,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
@@ -272,7 +272,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
@@ -326,7 +326,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
@@ -381,7 +381,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
                 break;
@@ -437,7 +437,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
                 break;
@@ -483,17 +483,17 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
                 break;
 
+            case "Movie":
+                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                defaultAction = ICameraFeatureDispatcher.FEATURE_CONTROL_MOVIE;
+                break;
+
             case "iAuto":
+            default:
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
-
-            case "movie":
-                preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
-                break;
-
-            default:
-                break;
         }
+        Log.v(TAG, "SHUTTER : " + takeMode);
         return (dispatcher.dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction)));
     }
 
@@ -538,7 +538,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
@@ -587,7 +587,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
@@ -636,7 +636,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
                 break;
 
-            case "movie":
+            case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
                 break;
 
