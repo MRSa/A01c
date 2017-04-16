@@ -63,10 +63,6 @@ public interface IOlyCameraCoordinator
 
     IOlyCameraConnection getConnectionInterface();
 
-
-    /** デジタル水準器のチェック状態を更新する **/
-    //void updateLevelGaugeChecking();
-
     // デジタル水準器のホルダーを取得する
     ILevelGauge getLevelGauge();
 }

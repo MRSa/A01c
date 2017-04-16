@@ -121,6 +121,62 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 // 動画の撮影・撮影終了
                 movieControl();
                 break;
+            case ICameraFeatureDispatcher.FEATURE_AE_DOWN:
+                // AE(測光方式)を選択
+                changeAEModeDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_AE_UP:
+                // AE(測光方式)を選択
+                changeAEModeUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_ISO_DOWN:
+                // ISO感度を選択
+                changeIsoSensitivityDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_ISO_UP:
+                // ISO感度を選択
+                changeIsoSensitivityUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_WB_DOWN:
+                // ホワイトバランスを選択
+                changeWhiteBalanceDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_WB_UP:
+                // ホワイトバランスを選択
+                changeWhiteBalanceUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_QUALITY_MOVIE_DOWN:
+                // 動画撮影クオリティを選択
+                changeMovieQualityModeDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_QUALITY_MOVIE_UP:
+                // 動画撮影クオリティを選択
+                changeMovieQualityModeUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_SHORT_MOVIE_RECORD_TIME_DOWN:
+                // ショートムービー時の撮影時間を選択
+                changeShortMovieRecordLengthDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_SHORT_MOVIE_RECORD_TIME_UP:
+                // ショートムービー時の撮影時間を選択
+                changeShortMovieRecordLengthUp();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_EXPOSE_MOVIE_SELECT_DOWN:
+                // 動画の撮影モードを選択
+                changeMovieTakeModeDown();
+                break;
+            case ICameraFeatureDispatcher.FEATURE_EXPOSE_MOVIE_SELECT_UP:
+                // 動画の撮影モードを選択
+                changeMovieTakeModeUp();
+                break;
+            case FEATURE_CHANGE_AF_MF:
+                // AF/MFの切り替えを行う
+                toggleAfMf();
+                break;
+            default:
+                // 上記以外...なにもしない
+                duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                break;
         }
 
         // コマンド実行完了後、ぶるぶるさせる
@@ -163,7 +219,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         return (ret);
     }
 
-
     /**
      *   撮影モードの取得
      *
@@ -174,7 +229,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
         return (propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE)));
     }
-
 
     /**
      *   撮影モードの変更指示
@@ -228,7 +282,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         //  撮影モードの更新
         //camera.updateTakeMode();
     }
-
 
     /**
      *   撮影モードの変更指示
@@ -298,6 +351,14 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     private void movieControl()
     {
         camera.movieControl();
+    }
+
+    /**
+     *   AF/MFの切り替えを行う
+     */
+    private void toggleAfMf()
+    {
+        camera.toggleManualFocus();
     }
 
     /**
@@ -443,6 +504,133 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     {
         IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.ART_FILTER);
+    }
+
+
+    /**
+     *   測光方式を１段階さげる
+     *
+     */
+    private void changeAEModeDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.AE_MODE);
+    }
+
+    /**
+     *   測光方式を１段階あげる
+     *
+     */
+    private void changeAEModeUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.AE_MODE);
+    }
+
+
+    /**
+     *   ISO感度を１段階さげる
+     *
+     */
+    private void changeIsoSensitivityDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.ISO_SENSITIVITY);
+    }
+
+    /**
+     *   ISO感度を１段階あげる
+     *
+     */
+    private void changeIsoSensitivityUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.ISO_SENSITIVITY);
+    }
+
+
+    /**
+     *   ホワイトバランスを１段階さげる
+     *
+     */
+    private void changeWhiteBalanceDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.WB_MODE);
+    }
+
+    /**
+     *   ホワイトバランスを１段階あげる
+     *
+     */
+    private void changeWhiteBalanceUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.WB_MODE);
+    }
+
+
+
+    /**
+     *   動画撮影モードを１段階さげる
+     *
+     */
+    private void changeMovieQualityModeDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.QUALITY_MOVIE);
+    }
+
+    /**
+     *    動画撮影モードを１段階あげる
+     *
+     */
+    private void changeMovieQualityModeUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.QUALITY_MOVIE);
+    }
+
+
+    /**
+     *   動画撮影モードがショートムービーのときの撮影時間を１段階さげる
+     *
+     */
+    private void changeShortMovieRecordLengthDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.SHORT_MOVIE_RECORD_TIME);
+    }
+
+    /**
+     *    動画撮影モードがショートムービーのときの撮影時間を１段階あげる
+     *
+     */
+    private void changeShortMovieRecordLengthUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.SHORT_MOVIE_RECORD_TIME);
+    }
+
+
+    /**
+     *   動画撮影モードを１段階さげる
+     *
+     */
+    private void changeMovieTakeModeDown()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.TAKE_MODE_MOVIE);
+    }
+
+    /**
+     *    動画撮影モードを１段階あげる
+     *
+     */
+    private void changeMovieTakeModeUp()
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.TAKE_MODE_MOVIE);
     }
 
     /**
