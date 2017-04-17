@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import jp.sfjp.gokigen.a01c.IChangeScene;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 
@@ -20,16 +21,18 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
     private final SharedPreferences preferences;
     private final ICameraFeatureDispatcher dispatcher;
+    private final IChangeScene changeScene;
     private boolean prohibitOperation = true;
 
     /**
      *   コンストラクタの整理
      *
      */
-    public OlyCameraLiveViewOnTouchListener(Context context, ICameraFeatureDispatcher dispatcher)
+    public OlyCameraLiveViewOnTouchListener(Context context, ICameraFeatureDispatcher dispatcher, IChangeScene changeScene)
     {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.dispatcher = dispatcher;
+        this.changeScene = changeScene;
     }
 
     /**
@@ -151,10 +154,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         Log.v(TAG, "onTouch() : " + id);
         if (prohibitOperation)
         {
-            // 操作禁止の指示がされていた場合は何もしない
+            // 操作禁止の指示がされていた場合は、接続状態を示すようにする
             Log.v(TAG, "onTouch() : prohibit operation");
-
-            return (false);
+            return (changeScene.showConnectionStatus());
         }
         // 現在のところ、タッチエリアの場合はオートフォーカス実行で固定
         return ((id == R.id.liveview)&&(dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS)));
@@ -171,6 +173,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         prohibitOperation = !operation;
     }
 
+    /**
+     *   操作可能状態かを応答する。
+     *
+     * @return true: 操作可能, false: 操作不可
+     */
+    public boolean isEnabledOperation()
+    {
+        return (!prohibitOperation);
+    }
 
     ///***************************************************************
     // *   以下、ボタンが押された時の処理... あとで切り離す。
@@ -274,6 +285,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN : ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
                 break;
 
             default:
@@ -328,6 +340,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_UP : ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
                 break;
 
             default:

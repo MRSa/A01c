@@ -101,6 +101,8 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                 case HIGH_TEMPERATURE_WARNING:
                 case ACTUAL_ISO_SENSITIVITY_WARNING:
                 case MEDIA_MOUNT_STATUS:
+                case MEDIA_BUSY:
+                case MEDIA_ERROR:
                     // ワーニング系のメッセージの表示更新
                     display.updateWarning(decideWarningMessage(camera));
                     break;
@@ -111,8 +113,6 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                     break;
 
                 case RECORDABLEIMAGES:
-                case MEDIA_BUSY:
-                case MEDIA_ERROR:
                 case DETECT_FACES:
                 case LENS_MOUNT_STATUS:
                 case REMAINING_RECORDABLE_TIME:
@@ -173,6 +173,12 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
                             mediaError = true;
                             break;
                     }
+                }
+                //if ((camera.isMediaBusy())||(camera.isMediaError()))
+                if (camera.isMediaError())
+                {
+                    // メディアエラー検出 (メディアビジーは、少し反応悪いかも)
+                    mediaError = true;
                 }
                 if (mediaError)
                 {

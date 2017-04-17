@@ -1,5 +1,6 @@
 package jp.sfjp.gokigen.a01c;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -37,6 +38,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private IMessageDrawer messageDrawer = null;
     private OlyCameraLiveViewOnTouchListener listener = null;
     private Vibrator vibrator = null;
+    private boolean cameraDisconnectedHappened = false;
+
     /**
      *
      */
@@ -108,8 +111,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         super.onPause();
         Log.v(TAG, "onPause()");
-
-
     }
 
     /**
@@ -236,8 +237,16 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator = null;
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
         coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-        listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView));
+        listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
+        connectToCamera();
+    }
 
+    /**
+     *   カメラと接続する
+     *
+     */
+    private void connectToCamera()
+    {
         Thread thread = new Thread(new Runnable()
         {
             @Override
@@ -282,6 +291,39 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     }
 
     /**
+     *   接続状態を見る or 再接続する
+     */
+    @Override
+    public boolean showConnectionStatus()
+    {
+        if ((!listener.isEnabledOperation())&&(cameraDisconnectedHappened))
+        {
+            // カメラが切断されたとき、再接続を指示する
+            connectToCamera();
+            cameraDisconnectedHappened = false;
+            return (true);
+        }
+/*
+        try
+        {
+            // Wifi 設定画面を表示する... (SONY Smart Watch 3では開かないけど...)
+            startActivity(new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"));
+            return (true);
+        }
+        catch (android.content.ActivityNotFoundException ex)
+        {
+            // Activity が存在しなかった...設定画面が起動できなかった
+            Log.v(TAG, "android.content.ActivityNotFoundException...");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+*/
+        return (false);
+    }
+
+    /**
      *
      */
     @Override
@@ -315,6 +357,8 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraDisconnected()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
+        listener.setEnableOperation(false);
+        cameraDisconnectedHappened = true;
     }
 
     /**
@@ -323,7 +367,10 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void onCameraOccursException(String message, Exception e)
     {
+        Log.v(TAG, "onCameraOccursException()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
+        listener.setEnableOperation(false);
+        cameraDisconnectedHappened = true;
     }
 
     /**s

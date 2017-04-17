@@ -30,6 +30,9 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     private int aeLockStateArea = IShowInformation.AREA_5;            // AEロック状態の表示エリア指定
     private int colorToneArea = IShowInformation.AREA_8;              // 仕上がり・ピクチャーモードの表示エリア指定
     private int artFilterArea = IShowInformation.AREA_NONE;           // アートフィルターの表示エリア指定
+    private int movieQualityArea = IShowInformation.AREA_NONE;       // 動画撮影時のサイズ表示エリア指定
+    private int shortMovieLength = IShowInformation.AREA_NONE;       // 動画撮影時のショートムービー長さ表示エリア指定
+    private int movieTakeModeArea = IShowInformation.AREA_NONE;      // 動画撮影時の撮影モード表示エリア指定
 
     /**
      *
@@ -158,6 +161,62 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
             Log.v(TAG,"updateAeLockState() [" + message + "]" + propetyValue);
         }
         informationObject.setMessage(aeLockStateArea, Color.WHITE, message);
+    }
+
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void updateMovieQuality()
+    {
+        if (movieQualityArea == IShowInformation.AREA_NONE)
+        {
+            return;
+        }
+        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.QUALITY_MOVIE));
+        if (propetyValue != null)
+        {
+            informationObject.setMessage(movieQualityArea, Color.WHITE, propetyValue);
+        }
+    }
+
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void updateShortMovieLength()
+    {
+        if (shortMovieLength == IShowInformation.AREA_NONE)
+        {
+            return;
+        }
+        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.SHORT_MOVIE_RECORD_TIME));
+        if (propetyValue != null)
+        {
+            informationObject.setMessage(shortMovieLength, Color.WHITE, propetyValue);
+        }
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void updateMovieTakeMode()
+    {
+        if (movieTakeModeArea == IShowInformation.AREA_NONE)
+        {
+            return;
+        }
+        String propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE_MOVIE));
+        if (propetyValue != null)
+        {
+            informationObject.setMessage(movieTakeModeArea, Color.WHITE, propetyValue);
+        }
     }
 
     /**
@@ -369,10 +428,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
-            case "movie":
-                colorToneArea = IShowInformation.AREA_NONE;
+            case "Movie":
+                colorToneArea = IShowInformation.AREA_8;
                 artFilterArea = IShowInformation.AREA_NONE;
-                informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
+                updateColorTone();
                 break;
 
             default:

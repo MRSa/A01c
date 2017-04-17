@@ -23,4 +23,9 @@ public interface ICameraStatusDisplay
     void updateCameraStatus();
     void updateCameraStatusAll();
     void updateCameraStatus(String message);
+
+    void updateMovieQuality();
+    void updateShortMovieLength();
+    void updateMovieTakeMode();
+
 }
