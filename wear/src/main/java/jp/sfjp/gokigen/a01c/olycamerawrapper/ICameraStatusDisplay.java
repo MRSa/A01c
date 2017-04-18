@@ -28,4 +28,8 @@ public interface ICameraStatusDisplay
     void updateShortMovieLength();
     void updateMovieTakeMode();
 
+    void updateStillFocusMode();
+    void updateMovieFocusMode();
+    void updateFullTimeAutoFocus();
+
 }
