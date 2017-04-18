@@ -39,6 +39,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private OlyCameraLiveViewOnTouchListener listener = null;
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
+    private boolean ambientMode = false;
 
     /**
      *
@@ -145,6 +146,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      {
          super.onEnterAmbient(ambientDetails);
          Log.v(TAG, "onEnterAmbient()");
+         ambientMode =true;
      }
 
     /**
@@ -156,6 +158,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         super.onExitAmbient();
         Log.v(TAG, "onExitAmbient()");
+        ambientMode = false;
     }
 
     /**
@@ -273,6 +276,13 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void exitApplication()
     {
         Log.v(TAG, "exitApplication()");
+        if (ambientMode)
+        {
+            // アンビエントモードの時（≒自分でアプリを終了しなかったとき）は、何もしない
+            // (接続したままとする)
+            Log.v(TAG, "keep liveview.");
+            return;
+        }
 
         // ライブビューを停止させる
         coordinator.stopLiveView();
@@ -520,7 +530,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      *
      */
     @Override
-    public void vibrate(int vibratePattern)
+    public void vibrate(final int vibratePattern)
     {
         try
         {
@@ -529,34 +539,39 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 return;
             }
 
-            switch (vibratePattern)
-            {
-                case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG:
-                    vibrator.vibrate(300);
-                    break;
-                case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG:
-                    vibrator.vibrate(150);
-                    break;
-                case IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE:
-                    vibrator.vibrate(75);
-                    break;
-                case IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT:
-                    vibrator.vibrate(20);
-                    break;
-                case IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE:
-                    long[] pattern = { 10, 25, 20, 25, 0 };
-                    vibrator.vibrate(pattern, -1);
-                    break;
-                case IShowInformation.VIBRATE_PATTERN_NONE:
-                default:
-                    // ぶるぶるしない
-                    break;
-            }
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (vibratePattern)
+                    {
+                        case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG:
+                            vibrator.vibrate(300);
+                            break;
+                        case IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG:
+                            vibrator.vibrate(150);
+                            break;
+                        case IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE:
+                            vibrator.vibrate(75);
+                            break;
+                        case IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT:
+                            vibrator.vibrate(20);
+                            break;
+                        case IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE:
+                            long[] pattern = { 10, 25, 20, 25, 0 };
+                            vibrator.vibrate(pattern, -1);
+                            break;
+                        case IShowInformation.VIBRATE_PATTERN_NONE:
+                        default:
+                            // ぶるぶるしない
+                            break;
+                    }
+                }
+            });
+            thread.start();
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
     }
-
 }

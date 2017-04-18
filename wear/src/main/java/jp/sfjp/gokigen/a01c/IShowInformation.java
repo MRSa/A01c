@@ -35,6 +35,6 @@ public interface IShowInformation
     void setMessage(final int area, final int color, final String message);
     void setButtonDrawable(final int button, final int labelId);
 
-    void vibrate(int vibratePattern);
+    void vibrate(final int vibratePattern);
 
 }
