@@ -24,10 +24,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
     private int exposureCompensationArea = IShowInformation.AREA_6;  // 露出補正値の表示エリア指定
     private int warningArea = IShowInformation.AREA_7;                 // 警告の表示エリア指定
     private int batteryLevelArea = IShowInformation.AREA_NONE;       // バッテリの残量表示エリア指定
-    private int whiteBalanceArea = IShowInformation.AREA_NONE;       // ホワイトバランスの表示エリア指定
+    private int whiteBalanceArea = IShowInformation.AREA_5;           // ホワイトバランスの表示エリア指定
     private int driveModeArea = IShowInformation.AREA_NONE;           // ドライブモードの表示エリア指定
     private int aeModeArea = IShowInformation.AREA_NONE;              // 測光モードの表示エリア指定
-    private int aeLockStateArea = IShowInformation.AREA_5;            // AEロック状態の表示エリア指定
+    private int aeLockStateArea = IShowInformation.AREA_A;            // AEロック状態の表示エリア指定
     private int colorToneArea = IShowInformation.AREA_8;              // 仕上がり・ピクチャーモードの表示エリア指定
     private int artFilterArea = IShowInformation.AREA_NONE;           // アートフィルターの表示エリア指定
     private int movieQualityArea = IShowInformation.AREA_NONE;       // 動画撮影時のサイズ表示エリア指定
@@ -101,10 +101,16 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         {
             return;
         }
-        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.WB_MODE));
+        String propertyValue = propertyProxy.getCameraPropertyValue(IOlyCameraProperty.WB_MODE);
         if (propertyValue != null)
         {
-            informationObject.setMessage(whiteBalanceArea, Color.WHITE, propertyValue);
+            String message = "";
+            if (!propertyValue.equals("<WB/WB_AUTO>"))
+            {
+                // WB Auto以外の時には、画面に設定値を表示する
+                message = propertyProxy.getCameraPropertyValueTitle(propertyValue);
+            }
+            informationObject.setMessage(whiteBalanceArea, Color.argb(255, 240,240,240), /*Color.WHITE,*/ message);
         }
     }
 
@@ -165,7 +171,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
             }
             Log.v(TAG,"updateAeLockState() [" + message + "]" + propertyValue);
         }
-        informationObject.setMessage(aeLockStateArea, Color.WHITE, message);
+        informationObject.setMessage(aeLockStateArea, Color.argb(255, 255,204,0), message);
     }
 
 
@@ -320,7 +326,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.COLOR_TONE));
         if (propertyValue != null)
         {
-            informationObject.setMessage(colorToneArea, Color.WHITE, propertyValue);
+            informationObject.setMessage(colorToneArea, Color.argb(255, 245,245,245), /*Color.WHITE, */ propertyValue);
         }
     }
 
@@ -334,7 +340,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
         String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.ART_FILTER));
         if (propertyValue != null)
         {
-            informationObject.setMessage(artFilterArea, Color.WHITE, /*Color.argb(255, 0x72, 0x39, 0x34),*/ propertyValue);
+            informationObject.setMessage(artFilterArea, Color.argb(255, 240,240,240), /*Color.WHITE, Color.argb(255, 0x72, 0x39, 0x34),*/ propertyValue);
         }
     }
 
@@ -454,42 +460,52 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
             case "P":
                 colorToneArea = IShowInformation.AREA_8;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_5;
                 updateColorTone();
+                updateWhiteBalance();
                 break;
 
             case "A":
                 colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_5;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "S":
                 colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_5;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "M":
                 colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_5;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
                 break;
 
             case "ART":
                 colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_8;
+                whiteBalanceArea = IShowInformation.AREA_5;
                 updateArtFilter();
                 break;
 
             case "iAuto":
                 colorToneArea = IShowInformation.AREA_NONE;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_NONE;
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
+                informationObject.setMessage(IShowInformation.AREA_5, Color.WHITE, "");
                 break;
 
             case "Movie":
                 colorToneArea = IShowInformation.AREA_8;
                 artFilterArea = IShowInformation.AREA_NONE;
+                whiteBalanceArea = IShowInformation.AREA_5;
+                updateWhiteBalance();
                 updateColorTone();
                 break;
 
@@ -502,10 +518,10 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
                 exposureCompensationArea = IShowInformation.AREA_6;  // 露出補正値の表示エリア指定
                 warningArea = IShowInformation.AREA_7;                 // 警告の表示エリア指定
                 batteryLevelArea = IShowInformation.AREA_NONE;        // バッテリの残量表示エリア指定
-                whiteBalanceArea = IShowInformation.AREA_NONE;        // ホワイトバランスの表示エリア指定
+                whiteBalanceArea = IShowInformation.AREA_5;            // ホワイトバランスの表示エリア指定
                 driveModeArea = IShowInformation.AREA_NONE;            // ドライブモードの表示エリア指定
                 aeModeArea = IShowInformation.AREA_NONE;               // 測光モードの表示エリア指定
-                aeLockStateArea = IShowInformation.AREA_6;             // AEロック状態の表示エリア指定
+                aeLockStateArea = IShowInformation.AREA_A;             // AEロック状態の表示エリア指定
                 colorToneArea = IShowInformation.AREA_8;               // 仕上がり・ピクチャーモードの表示エリア指定
                 artFilterArea = IShowInformation.AREA_NONE;           // アートフィルターの表示エリア指定
                 movieQualityArea = IShowInformation.AREA_NONE;        // 動画モードの品質表示エリア指定

@@ -256,27 +256,27 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN : ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
                 break;
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN : ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
-                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
+                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
-                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
+                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_DOWN;
                 break;
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
-                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN : ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN;
+                defaultAction = (isLongClick) ?  ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_ART_FILTER_DOWN;
                 break;
 
             case "iAuto":
@@ -285,7 +285,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN : ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_DOWN : ICameraFeatureDispatcher.FEATURE_COLORTONE_DOWN;
                 break;
 
             default:
@@ -311,27 +311,27 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_UP : ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP : ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
                 break;
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_APERTURE_UP : ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP : ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP : ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP :  ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP :  ICameraFeatureDispatcher.FEATURE_SHUTTER_SPEED_UP;
                 break;
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP : ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP : ICameraFeatureDispatcher.FEATURE_ART_FILTER_UP;
                 break;
 
             case "iAuto":
@@ -340,7 +340,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
 
             case "Movie":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_MOVIE;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_COLORTONE_UP : ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_WB_UP : ICameraFeatureDispatcher.FEATURE_COLORTONE_UP;
                 break;
 
             default:
