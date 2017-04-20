@@ -6,7 +6,7 @@ import android.view.MotionEvent;
  *   機能とボタンの設定群
  *
  */
-interface ICameraFeatureDispatcher
+public interface ICameraFeatureDispatcher
 {
     // 撮影モード
     String MODE_P = "_P";
@@ -29,6 +29,7 @@ interface ICameraFeatureDispatcher
     String ACTION_AREA1 = "A1";
     String ACTION_AREA2 = "A2";
     String ACTION_AREA3 = "A3";
+    String ACTION_AREA4 = "A4";
 
     // ボタンラベル
     String DRAWABLE_BUTTON1 = "D1";
