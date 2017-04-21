@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.indicator;
 
 /**
  *

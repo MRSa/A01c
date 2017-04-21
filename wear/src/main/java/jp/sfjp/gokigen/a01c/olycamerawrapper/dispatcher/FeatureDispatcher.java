@@ -1,13 +1,14 @@
-package jp.sfjp.gokigen.a01c.liveview;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher;
 
 import android.util.Log;
 import android.view.MotionEvent;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
+import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraProperty;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraPropertyProvider;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 
 
 /**
@@ -172,6 +173,14 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
             case FEATURE_CHANGE_AF_MF:
                 // AF/MFの切り替えを行う
                 toggleAfMf();
+                break;
+            case FEATURE_CHANGE_AE:
+                // AE(測光方式)を選択
+                changeAEMode(1);
+                break;
+            case FEATURE_CHANGE_AE_REVERSE:
+                // AE(測光方式)を選択
+                changeAEMode(-1);
                 break;
             default:
                 // 上記以外...なにもしない
@@ -527,6 +536,15 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.AE_MODE);
     }
 
+    /**
+     *   測光方式を更新する
+     *
+     */
+    private void changeAEMode(int direction)
+    {
+        IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
+        propertyProxy.changeCameraProperty(IOlyCameraProperty.AE_MODE, direction);
+    }
 
     /**
      *   ISO感度を１段階さげる
@@ -568,8 +586,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.WB_MODE);
     }
-
-
 
     /**
      *   動画撮影モードを１段階さげる

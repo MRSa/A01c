@@ -10,6 +10,7 @@ import jp.sfjp.gokigen.a01c.IChangeScene;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.button.IPushedButton;
 import jp.sfjp.gokigen.a01c.liveview.button.PushedButtonFactory;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
 
 /**
  *   画面がタッチ・クリックされた時の処理分岐

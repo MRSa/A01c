@@ -1,8 +1,10 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraHardwareStatus;
 
 public interface IOlyCameraPropertyProvider
 {
@@ -35,6 +37,9 @@ public interface IOlyCameraPropertyProvider
 
     // カメラプロパティの選択肢を１段階下げる
     void updateCameraPropertyDown(String name);
+
+    // カメラプロパティの選択肢を direction段階分更新する
+    void changeCameraProperty(String name, int direction);
 
     // カメラプロパティに値を設定できるかを検査
     boolean canSetCameraProperty(String name);

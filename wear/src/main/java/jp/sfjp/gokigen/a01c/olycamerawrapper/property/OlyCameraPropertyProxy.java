@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
 import android.util.Log;
 
@@ -7,11 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraHardwareStatus;
 
 /**
  *   カメラプロパティをやり取りするクラス (Wrapperクラス)
  */
-class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
+public class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
 {
     private final String TAG = toString();
     private final OLYCamera camera;
@@ -22,7 +23,7 @@ class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
      *
      * @param camera OLYCameraクラス
      */
-    OlyCameraPropertyProxy(OLYCamera camera)
+    public OlyCameraPropertyProxy(OLYCamera camera)
     {
         this.camera = camera;
         this.hardwareStatusInterface = new OlyCameraHardwareStatus(camera);
@@ -32,7 +33,7 @@ class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
      *  フォーカス状態を知る（MF or AF）
      * @return true : MF / false : AF
      */
-    boolean isManualFocus()
+    public boolean isManualFocus()
     {
         boolean isManualFocus = false;
         try
@@ -53,7 +54,7 @@ class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
      *
      * @return true : AE Lock / false : AE Unlock
      */
-    boolean isExposureLocked()
+    public boolean isExposureLocked()
     {
         boolean isExposureLocked =false;
         try
@@ -229,10 +230,41 @@ class OlyCameraPropertyProxy implements IOlyCameraPropertyProvider
                 e.printStackTrace();
             }
         }
-
     }
 
+    /**
+     *   カメラプロパティの選択肢を direction段階分更新する
+     *
+     */
+    @Override
+    public void changeCameraProperty(String name, int direction)
+    {
+        String current = getCameraPropertyValue(name);
+        List<String> valueList = getCameraPropertyValueList(name);
+        int index = valueList.indexOf(current) + direction;
+        if (index < 0)
+        {
+            // 下限を下回ったら、上限にする
+            index = valueList.size() - 1;
+        }
+        else if (index > (valueList.size() - 1))
+        {
+            // 上限を上回ったら、下限にする
+            index = 0;
+        }
+        try
+        {
+            String targetValue = valueList.get(index);
+            Log.v(TAG, "changeCameraProperty() : " + name + " , " + targetValue);
+            setCameraPropertyValue(name, targetValue);
+        }
+        catch (Exception e)
+        {
+            //
+            e.printStackTrace();
+        }
 
+    }
 
     @Override
     public boolean canSetCameraProperty(String name)

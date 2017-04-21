@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
-import jp.sfjp.gokigen.a01c.liveview.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
 
 class PushedArea3 implements IPushedButton
 {
@@ -26,6 +26,7 @@ class PushedArea3 implements IPushedButton
         if (isLongClick)
         {
             preference_action_id = preference_action_id + ICameraFeatureDispatcher.ACTION_SECOND_CHOICE;
+            defaultAction = ICameraFeatureDispatcher.FEATURE_CHANGE_AE;
         }
         String takeMode = dispatcher.getTakeMode();
         switch (takeMode)

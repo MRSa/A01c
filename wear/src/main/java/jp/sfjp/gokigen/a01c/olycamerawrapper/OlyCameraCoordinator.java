@@ -14,6 +14,16 @@ import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.CameraStatusDisplay;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraPropertyListenerImpl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraRecordingListenerImpl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraStatusListenerImpl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.LoadSaveCameraProperties;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.OlyCameraPropertyProxy;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.AutoFocusControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.MovieRecordingControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.SingleShotControl;
@@ -74,8 +84,9 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
         this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
-        setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
+        camera.setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
         camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
+        camera.setRecordingListener(new CameraRecordingListenerImpl(context, showInformation));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
     }
 

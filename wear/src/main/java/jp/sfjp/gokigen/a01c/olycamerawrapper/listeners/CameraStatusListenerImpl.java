@@ -1,17 +1,16 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.listeners;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Locale;
-import java.util.Map;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 import jp.sfjp.gokigen.a01c.R;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraStatusSummary;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
 
 /**
  *   OLYCameraStatusListenerの実装
@@ -49,7 +48,7 @@ public class CameraStatusListenerImpl implements OLYCameraStatusListener, ICamer
      *   コンストラクタ
      *
      */
-    CameraStatusListenerImpl(Context context, ICameraStatusDisplay display, ILevelGauge levelGauge)
+    public CameraStatusListenerImpl(Context context, ICameraStatusDisplay display, ILevelGauge levelGauge)
     {
         this.context = context;
         this.display = display;

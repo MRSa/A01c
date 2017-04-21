@@ -1,6 +1,5 @@
 package jp.sfjp.gokigen.a01c;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -16,7 +15,7 @@ import android.support.v4.content.ContextCompat;
 
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
-import jp.sfjp.gokigen.a01c.liveview.FeatureDispatcher;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;

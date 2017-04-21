@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.liveview;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher;
 
 import android.view.MotionEvent;
 
@@ -87,6 +87,8 @@ public interface ICameraFeatureDispatcher
     int FEATURE_EXPOSE_MOVIE_SELECT_DOWN = 29;
     int FEATURE_EXPOSE_MOVIE_SELECT_UP = 30;
     int FEATURE_CHANGE_AF_MF = 31;
+    int FEATURE_CHANGE_AE = 32;
+    int FEATURE_CHANGE_AE_REVERSE = 33;
 
 
     // エリアタッチ時の機能(featureNumber)

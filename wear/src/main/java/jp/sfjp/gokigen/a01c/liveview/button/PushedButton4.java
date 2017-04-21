@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
-import jp.sfjp.gokigen.a01c.liveview.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
 
 class PushedButton4 implements IPushedButton
 {

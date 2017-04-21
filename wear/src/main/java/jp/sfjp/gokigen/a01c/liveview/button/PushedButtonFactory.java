@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.SparseArray;
 
 import jp.sfjp.gokigen.a01c.R;
-import jp.sfjp.gokigen.a01c.liveview.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
 
 public class PushedButtonFactory
 {

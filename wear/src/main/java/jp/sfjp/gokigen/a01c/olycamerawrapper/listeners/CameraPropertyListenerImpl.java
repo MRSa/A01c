@@ -1,22 +1,24 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.listeners;
 
 import android.util.Log;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraPropertyListener;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
 
 /**
  *  OLYCameraPropertyListenerの実装
  *  (LiveViewFragment用)
  *
  */
-class CameraPropertyListenerImpl implements OLYCameraPropertyListener
+public class CameraPropertyListenerImpl implements OLYCameraPropertyListener
 {
     private final String TAG = this.toString();
 
     private final ICameraStatusDisplay display;
 
-    CameraPropertyListenerImpl(ICameraStatusDisplay parent)
+    public CameraPropertyListenerImpl(ICameraStatusDisplay parent)
     {
         this.display = parent;
     }

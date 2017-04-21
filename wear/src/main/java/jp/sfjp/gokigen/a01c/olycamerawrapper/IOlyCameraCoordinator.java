@@ -4,6 +4,8 @@ import android.view.MotionEvent;
 
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 
 /**
  *

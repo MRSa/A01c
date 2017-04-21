@@ -6,8 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import jp.sfjp.gokigen.a01c.R;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraStatusDisplay;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.ILoadSaveCameraProperties;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 
 /**
  *   カメラプロパティの保存、展開を実行する

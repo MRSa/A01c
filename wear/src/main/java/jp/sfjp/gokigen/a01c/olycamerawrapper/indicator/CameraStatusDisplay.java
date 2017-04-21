@@ -1,15 +1,17 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.indicator;
 
 import android.graphics.Color;
 import android.util.Log;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 
 /**
  *
  *
  */
-class CameraStatusDisplay implements  ICameraStatusDisplay
+public class CameraStatusDisplay implements  ICameraStatusDisplay
 {
     private final String TAG = toString();
     private final IOlyCameraPropertyProvider propertyProxy;
@@ -43,7 +45,7 @@ class CameraStatusDisplay implements  ICameraStatusDisplay
      *
      *
      */
-    CameraStatusDisplay(IOlyCameraPropertyProvider propertyProxy, IShowInformation informationObject)
+    public CameraStatusDisplay(IOlyCameraPropertyProvider propertyProxy, IShowInformation informationObject)
     {
         this.propertyProxy = propertyProxy;
         this.informationObject = informationObject;

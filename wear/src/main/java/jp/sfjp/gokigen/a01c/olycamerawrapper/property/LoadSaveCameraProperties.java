@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +13,7 @@ import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraKitException;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IOLYCameraObjectProvider;
 
 /**
  *   カメラプロパティを一括でバックアップしたり、リストアしたりするクラス
@@ -30,7 +31,7 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
     private final OLYCamera camera;
     private final IOlyCameraPropertyProvider propertyProvider;
 
-    LoadSaveCameraProperties(Context context, IOlyCameraPropertyProvider propertyProvider, IOLYCameraObjectProvider provider)
+    public LoadSaveCameraProperties(Context context, IOlyCameraPropertyProvider propertyProvider, IOLYCameraObjectProvider provider)
     {
         this.camera = provider.getOLYCamera();
         this.parent = context;
