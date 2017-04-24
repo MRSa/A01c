@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.util.Log;
 
 import jp.sfjp.gokigen.a01c.IShowInformation;
+import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 
@@ -18,6 +19,7 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
     private final IShowInformation informationObject;
 
     // 表示エリア定義用...  : 将来的には preferenceにおいてカスタマイズ可能にするつもり
+    private int shutterButtonId = R.id.btn_6;                          // シャッターボタンのボタンID
     private int takeModeArea = IShowInformation.AREA_1;                // 撮影モードの表示エリア指定
     private int shutterSpeedArea = IShowInformation.AREA_2;           // シャッタースピードの表示エリア指定
     private int apertureArea = IShowInformation.AREA_3;                // 絞り値の表示エリア指定
@@ -60,12 +62,14 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
     @Override
     public void updateTakeMode()
     {
+        Log.v(TAG, "updateTakeMode()");
+        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
+
+        updateButtonIcon(propertyValue);   // ボタンアイコンの更新
         if (takeModeArea == IShowInformation.AREA_NONE)
         {
             return;
         }
-        Log.v(TAG, "updateTakeMode()");
-        String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE));
         if (propertyValue != null)
         {
             informationObject.setMessage(takeModeArea, Color.WHITE, propertyValue);
@@ -453,6 +457,27 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
         if (value != null)
         {
             informationObject.setMessage(apertureArea, Color.WHITE, "F" + value);
+        }
+    }
+
+    /**
+     *   ボタンのアイコンを更新する
+     *
+     */
+    private void updateButtonIcon(String takeMode)
+    {
+        int btnResId;
+        if (takeMode.equals("Movie"))
+        {
+            btnResId = R.drawable.btn_videocam;
+        }
+        else
+        {
+            btnResId = R.drawable.btn_ic_camera_alt;
+        }
+        if (shutterButtonId != 0)
+        {
+            informationObject.setButtonDrawable(shutterButtonId, btnResId);
         }
     }
 
