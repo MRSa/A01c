@@ -32,27 +32,27 @@ class PushedButton5 implements IPushedButton
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
                 break;
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
-                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
+                defaultAction = (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_UP : ICameraFeatureDispatcher.FEATURE_APERTURE_UP;
                 break;
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_UP : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP;
                 break;
 
             case "iAuto":

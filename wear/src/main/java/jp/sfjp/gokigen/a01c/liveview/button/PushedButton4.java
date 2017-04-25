@@ -32,27 +32,27 @@ class PushedButton4 implements IPushedButton
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
                 break;
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_DOWN : ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN;
                 break;
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
-                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_ISO_DOWN : ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN;
                 break;
 
             case "iAuto":
