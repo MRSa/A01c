@@ -578,7 +578,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         int centerX = width / 2;
         int centerY = height / 2;
 
-        float maxBandWidth = width / 3.0f;     // ゲージの最大長 (画面の 1/3 ぐらい)
+        //float maxBandWidth = width / 3.0f;     // ゲージの最大長 (画面の 1/3 ぐらい)
         float maxBandHeight = height / 3.0f;   // ゲージの最大長 (画面の 1/3 ぐらい)
         int barWidthInitial = 4;               // 表示するゲージの幅（の初期値）
         int barWidth;                          // 実際に表示するゲージの幅

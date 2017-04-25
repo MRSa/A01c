@@ -1,5 +1,6 @@
 package jp.sfjp.gokigen.a01c;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -90,6 +91,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         setupCameraCoordinator();
+        setupInitialButtonIcons();
         setupActionListener();
     }
 
@@ -225,6 +227,31 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         messageDrawer = liveView.getMessageDrawer();
         messageDrawer.setLevelGauge(coordinator.getLevelGauge());
     }
+
+    /**
+     *   ボタンアイコンの初期設定
+     *
+     */
+    private void setupInitialButtonIcons()
+    {
+        if (coordinator != null)
+        {
+            int resId;
+            SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+            if (preferences.getBoolean(ICameraPropertyAccessor.SHOW_GRID_STATUS, true))
+            {
+                // ボタンをGrid OFFアイコンにする
+                resId = R.drawable.btn_ic_grid_off;
+            }
+            else
+            {
+                // ボタンをGrid ONアイコンにする
+                resId = R.drawable.btn_ic_grid_on;
+            }
+            setButtonDrawable(IShowInformation.BUTTON_1, resId);
+        }
+    }
+
 
     /**
      *   Olympus Cameraクラスとのやりとりをするクラスを準備する

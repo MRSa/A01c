@@ -207,7 +207,7 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 /*
                 try
                 {
-                    // 実験... WIFIステート
+                    // 実験... WIFIステート設定画面を開く
                     //Intent intent = new Intent(ACTION_ADD_NETWORK_SETTINGS);
                     Intent intent = new Intent(ACTION_NETWORK_SETTINGS);
                     context.startActivity(intent);

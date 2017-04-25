@@ -30,6 +30,6 @@ class GridFrameDrawer0 implements IGridFrameDrawer
     @Override
     public int getDrawColor()
     {
-        return (Color.argb(210,245,245,245));
+        return (Color.argb(230,245,245,245));
     }
 }
