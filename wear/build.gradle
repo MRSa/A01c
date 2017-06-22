@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "jp.sfjp.gokigen.a01c"
         minSdkVersion 23
         targetSdkVersion 25
-        versionCode 16
+        versionCode 18
         versionName "1.2.1"
     }
     buildTypes {

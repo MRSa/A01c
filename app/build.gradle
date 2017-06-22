@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "jp.sfjp.gokigen.a01c"
-        minSdkVersion 23
+        minSdkVersion 14
         targetSdkVersion 25
-        versionCode 17
+        versionCode 19
         versionName "1.2.1"
     }
     buildTypes {
@@ -19,6 +19,7 @@ android {
     productFlavors {
         wear1 {
             // Use the defaultConfig value
+            minSdkVersion 14
         }
         wear2 {
             minSdkVersion 23
