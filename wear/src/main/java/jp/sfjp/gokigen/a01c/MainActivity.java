@@ -1,10 +1,12 @@
 package jp.sfjp.gokigen.a01c;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -252,6 +254,53 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         }
     }
 
+    /**
+     *   Intentを使ってWiFi設定画面を開く
+     *
+     */
+    private boolean launchWifiSettingScreen()
+    {
+        try
+        {
+            // Wifi 設定画面を表示する... (SONY Smart Watch 3では開かないけど...)
+            startActivity(new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"));
+            return (true);
+        }
+        catch (android.content.ActivityNotFoundException ex)
+        {
+            Log.v(TAG, "android.content.ActivityNotFoundException... " + "com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
+            try
+            {
+                // SONY Smart Watch 3で開く場合のIntent...
+                Intent intent = new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
+                intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.wifi.WifiSettingsActivity");
+                startActivity(intent);
+                return (true);
+            }
+            catch (android.content.ActivityNotFoundException ex2)
+            {
+                try
+                {
+                    // Wifi 設定画面を表示する...普通のAndroidの場合
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                    return (true);
+                }
+                catch (Exception ee)
+                {
+                    ee.printStackTrace();
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        return (false);
+    }
 
     /**
      *   Olympus Cameraクラスとのやりとりをするクラスを準備する
@@ -327,6 +376,21 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     }
 
     /**
+     *   接続機能を確認する
+     */
+    @Override
+    public boolean checkConnectionFeature(int id)
+    {
+        boolean ret = false;
+        if (id == 0)
+        {
+            // Wifi 設定画面を開く
+            ret = launchWifiSettingScreen();
+        }
+        return (ret);
+    }
+
+    /**
      *   接続状態を見る or 再接続する
      */
     @Override
@@ -339,23 +403,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             cameraDisconnectedHappened = false;
             return (true);
         }
-/*
-        try
-        {
-            // Wifi 設定画面を表示する... (SONY Smart Watch 3では開かないけど...)
-            startActivity(new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"));
-            return (true);
-        }
-        catch (android.content.ActivityNotFoundException ex)
-        {
-            // Activity が存在しなかった...設定画面が起動できなかった
-            Log.v(TAG, "android.content.ActivityNotFoundException...");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-*/
         return (false);
     }
 

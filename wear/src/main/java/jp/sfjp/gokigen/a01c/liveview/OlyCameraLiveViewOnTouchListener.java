@@ -47,8 +47,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         Log.v(TAG, "onClick() : " + id);
         if (prohibitOperation)
         {
-            // 操作禁止の指示がされていた場合は何もしない
+            // 操作禁止の指示がされていた場合は、、接続機能を呼び出す
             Log.v(TAG, "onClick() : prohibit operation");
+            changeScene.checkConnectionFeature(0);
             return;
         }
         try
@@ -80,7 +81,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onLongClick() : prohibit operation");
-            return (false);
+            return (changeScene.checkConnectionFeature(1));
         }
         try
         {
