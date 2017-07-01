@@ -24,6 +24,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     private final IChangeScene changeScene;
     private final SparseArray<IPushedButton> buttonDispatcher;
     private boolean prohibitOperation = true;
+    private boolean suppressOperation = false;
 
 
     /**
@@ -49,7 +50,10 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は、、接続機能を呼び出す
             Log.v(TAG, "onClick() : prohibit operation");
-            changeScene.checkConnectionFeature(0);
+            if (!suppressOperation)
+            {
+                changeScene.checkConnectionFeature(0);
+            }
             return;
         }
         try
@@ -81,7 +85,14 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onLongClick() : prohibit operation");
-            return (changeScene.checkConnectionFeature(1));
+            /*
+            if (!suppressOperation)
+            {
+                return (changeScene.checkConnectionFeature(1));
+            }
+            return (false);
+            */
+            return  ((!suppressOperation)&&(changeScene.checkConnectionFeature(1)));
         }
         try
         {
@@ -111,7 +122,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は、接続状態を示すようにする
             Log.v(TAG, "onTouch() : prohibit operation");
-            return (changeScene.showConnectionStatus());
+            return ((!suppressOperation)&&(changeScene.showConnectionStatus()));
         }
         // 現在のところ、タッチエリアの場合はオートフォーカス実行で固定
         return ((id == R.id.liveview)&&(dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS)));
