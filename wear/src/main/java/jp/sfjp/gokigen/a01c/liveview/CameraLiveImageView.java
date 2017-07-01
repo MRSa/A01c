@@ -550,6 +550,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
         Paint framePaint = new Paint();
         framePaint.setStyle(Paint.Style.STROKE);
+        framePaint.setAntiAlias(true);
 
         //DisplayMetrics dm = getResources().getDisplayMetrics();
         //float strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.0f, dm);
