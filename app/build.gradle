@@ -7,8 +7,8 @@ android {
         applicationId "jp.sfjp.gokigen.a01c"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 19
-        versionName "1.2.1"
+        versionCode 21
+        versionName "1.2.2"
     }
     buildTypes {
         release {
@@ -19,7 +19,7 @@ android {
     productFlavors {
         wear1 {
             // Use the defaultConfig value
-            minSdkVersion 14
+            minSdkVersion 19
         }
         wear2 {
             minSdkVersion 23
