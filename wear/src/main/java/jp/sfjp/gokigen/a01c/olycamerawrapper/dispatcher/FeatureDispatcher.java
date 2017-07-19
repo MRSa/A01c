@@ -9,6 +9,8 @@ import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.BracketingShotControl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
 
 
 /**
@@ -181,6 +183,16 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
             case FEATURE_CHANGE_AE_REVERSE:
                 // AE(測光方式)を選択
                 changeAEMode(-1);
+                break;
+
+            case FEATURE_SHOT_INTERVAL_3SEC:
+                // ３秒待ってから１枚撮影する
+                intervalOneShot(3);
+                break;
+
+            case FEATURE_SHOT_INTERVAL_10SEC:
+                // 10秒待ってから１枚撮影する
+                intervalOneShot(10);
                 break;
             default:
                 // 上記以外...なにもしない
@@ -647,6 +659,16 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     {
         IOlyCameraPropertyProvider propertyProxy = camera.getCameraPropertyProvider();
         propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.TAKE_MODE_MOVIE);
+    }
+
+    /**
+     *   インターバル撮影（１枚）を行う
+     *
+     * @param waitSeconds  撮影待ち時間（単位：秒）
+     */
+    private void intervalOneShot(int waitSeconds)
+    {
+        camera.bracketingShot(IBracketingShotStyle.BRACKET_NONE, 1, waitSeconds);
     }
 
     /**

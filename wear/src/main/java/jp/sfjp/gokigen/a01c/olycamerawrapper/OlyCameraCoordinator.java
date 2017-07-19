@@ -229,7 +229,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     @Override
     public void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds)
     {
-        bracketingShot.startShootBracketing(bracketingStyle, bracketingCount, durationSeconds);
+        bracketingShot.bracketingShot(bracketingStyle, bracketingCount, durationSeconds);
     }
 
     /**

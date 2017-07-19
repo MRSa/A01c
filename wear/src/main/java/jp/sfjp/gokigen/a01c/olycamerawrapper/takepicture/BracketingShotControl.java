@@ -29,14 +29,6 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
     private static final int BRACKETING_INTERVAL_MILLISECOND = 300; // 撮影待ち時間(ms)
     private static final int BRACKETING_PROPERTY_VALUE_SET_RETRY = 10;
 
-    private static final int BRACKET_NONE = 0;       // 通常のショット
-    private static final int BRACKET_EXPREV = 1;     // 露出補正
-    private static final int BRACKET_APERTURE = 2;   // 絞り
-    private static final int BRACKET_ISO = 3;         // ISO
-    private static final int BRACKET_SHUTTER = 4;    // シャッター
-    private static final int BRACKET_WB = 5;          // ホワイトバランス
-    private static final int BRACKET_COLOR_TONE = 6; // カラートーン
-
     private final OLYCamera camera;
     private final IAutoFocusFrameDisplay autoFocusFrame;
     private final IShowInformation statusDrawer;
@@ -112,39 +104,39 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
     {
         switch (isBracketing)
         {
-            case BRACKET_EXPREV:
+            case IBracketingShotStyle.BRACKET_EXPREV:
                 // 露出ブラケット
                 targetPropertyName = IOlyCameraProperty.EXPOSURE_COMPENSATION;
                 break;
 
-            case BRACKET_APERTURE:
+            case IBracketingShotStyle.BRACKET_APERTURE:
                 // 絞り値設定
                 targetPropertyName = IOlyCameraProperty.APERTURE;
                 break;
 
-            case BRACKET_ISO:
+            case IBracketingShotStyle.BRACKET_ISO:
                 // ISO
                 targetPropertyName = IOlyCameraProperty.ISO_SENSITIVITY;
                 break;
 
-            case BRACKET_SHUTTER:
+            case IBracketingShotStyle.BRACKET_SHUTTER:
                 // シャッターブラケット
                 targetPropertyName = IOlyCameraProperty.SHUTTER_SPEED;
                 break;
 
-            case BRACKET_WB:
+            case IBracketingShotStyle.BRACKET_WB:
                 // ホワイトバランスブラケット
                 targetPropertyName = IOlyCameraProperty.WB_MODE;
                 bracketCount = -1;
                 break;
 
-            case BRACKET_COLOR_TONE:
+            case IBracketingShotStyle.BRACKET_COLOR_TONE:
                 // ピクチャーモードブラケット
                 targetPropertyName = IOlyCameraProperty.COLOR_TONE;
                 bracketCount = -1;
                 break;
 
-            case BRACKET_NONE:
+            case IBracketingShotStyle.BRACKET_NONE:
                 // パラメータは変更しないパターン...
                 targetPropertyName = "";
                 break;
@@ -164,7 +156,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
      *    bracketingCount : 撮影枚数
      *    durationSeconds : 撮影間隔（単位：秒）
      */
-    public void startShootBracketing(int bracketingStyle, int bracketingCount, int durationSeconds)
+    public void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds)
     {
         if ((camera.isTakingPicture())||(camera.isRecordingVideo())||(isBracketingAction))
         {

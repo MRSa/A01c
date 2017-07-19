@@ -89,7 +89,8 @@ public interface ICameraFeatureDispatcher
     int FEATURE_CHANGE_AF_MF = 31;
     int FEATURE_CHANGE_AE = 32;
     int FEATURE_CHANGE_AE_REVERSE = 33;
-
+    int FEATURE_SHOT_INTERVAL_3SEC = 34;
+    int FEATURE_SHOT_INTERVAL_10SEC = 35;
 
     // エリアタッチ時の機能(featureNumber)
     int FEATURE_AREA_ACTION_NONE = 100;
