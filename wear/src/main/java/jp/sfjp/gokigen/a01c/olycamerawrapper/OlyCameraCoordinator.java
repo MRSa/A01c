@@ -25,6 +25,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.LoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.OlyCameraPropertyProxy;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.AutoFocusControl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.BracketingShotControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.MovieRecordingControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.SingleShotControl;
 import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
@@ -52,6 +53,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final AutoFocusControl autoFocus;
     private final SingleShotControl singleShot;
     private final MovieRecordingControl movieControl;
+    private final BracketingShotControl bracketingShot;
     private final OlyCameraPropertyProxy propertyProxy;
     private final LoadSaveCameraProperties loadSaveCameraProperties;
     private final OlyCameraConnection cameraConnection;
@@ -60,7 +62,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
 
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
-    private boolean isExposureLocked = false;
+    //private boolean isExposureLocked = false;
 
     /**
      * コンストラクタ
@@ -81,6 +83,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         autoFocus = new AutoFocusControl(camera, focusFrameDisplay, this); // AF制御
         singleShot = new SingleShotControl(camera, focusFrameDisplay, this, showInformation);  // １枚撮影
         movieControl = new MovieRecordingControl(context, camera, showInformation); // ムービー撮影
+        bracketingShot = new BracketingShotControl(camera, focusFrameDisplay, this, showInformation);  // ブラケッティング＆インターバル撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
         this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
@@ -216,6 +219,20 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     }
 
     /**
+     *   インターバル＆ブラケッティング撮影の実行
+     *
+     *     @param bracketingStyle : ブラケッティングスタイル
+     *     @param bracketingCount : 撮影枚数
+     *     @param durationSeconds : 撮影間隔（単位：秒）
+     *
+     */
+    @Override
+    public void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds)
+    {
+        bracketingShot.startShootBracketing(bracketingStyle, bracketingCount, durationSeconds);
+    }
+
+    /**
      *   撮影確認画像を生成するか設定する
      *
      */
@@ -331,8 +348,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     @Override
     public boolean isAELock()
     {
-        isExposureLocked = propertyProxy.isExposureLocked();
-        return (isExposureLocked);
+        return (propertyProxy.isExposureLocked());
     }
 
     @Override

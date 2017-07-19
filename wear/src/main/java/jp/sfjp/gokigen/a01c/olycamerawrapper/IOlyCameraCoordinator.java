@@ -32,6 +32,9 @@ public interface IOlyCameraCoordinator
     /** ムービー撮影機能の実行(開始・終了) **/
     void movieControl();
 
+    /** インターバル＆ブラケッティング撮影の実行 **/
+    void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds);
+
     /** 撮影確認画像の設定 **/
     void setRecViewMode(boolean isRecViewMode);
 
