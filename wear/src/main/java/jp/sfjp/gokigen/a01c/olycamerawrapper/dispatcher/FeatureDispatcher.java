@@ -190,10 +190,51 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 intervalOneShot(3);
                 break;
 
+            case FEATURE_SHOT_INTERVAL_5SEC:
+                // 5秒待ってから１枚撮影する
+                intervalOneShot(5);
+                break;
+
             case FEATURE_SHOT_INTERVAL_10SEC:
                 // 10秒待ってから１枚撮影する
                 intervalOneShot(10);
                 break;
+            case FEATURE_SHOT_BRACKET_EXPOSURE:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_EXPREV, 5);
+                break;
+
+            case FEATURE_SHOT_BRACKET_APERATURE:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_APERTURE, 5);
+                break;
+
+            case FEATURE_SHOT_BRACKET_SHUTTER:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_SHUTTER, 5);
+                break;
+
+            case FEATURE_SHOT_BRACKET_COLORTONE:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_COLOR_TONE, 11);
+                break;
+
+            case FEATURE_SHOT_BRACKET_WB:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_WB, 7);
+                break;
+
+            case FEATURE_SHOT_BRACKET_ART_FILTER:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_ART_FILTER, 5);
+                break;
+
+            case FEATURE_SHOT_BRACKET_ISO:
+                // ブラケット撮影を行う
+                bracketingShot(IBracketingShotStyle.BRACKET_ISO, 3);
+                break;
+
+
             default:
                 // 上記以外...なにもしない
                 duration =IShowInformation.VIBRATE_PATTERN_NONE;
@@ -669,6 +710,17 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     private void intervalOneShot(int waitSeconds)
     {
         camera.bracketingShot(IBracketingShotStyle.BRACKET_NONE, 1, waitSeconds);
+    }
+
+    /**
+     *   ブラケット撮影を行う
+     *
+     * @param style  撮影スタイル
+     * @param count  撮影枚数
+     */
+    private void bracketingShot(int style, int count)
+    {
+        camera.bracketingShot(style, count, 0);
     }
 
     /**

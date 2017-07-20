@@ -14,4 +14,5 @@ public interface IBracketingShotStyle
     int BRACKET_SHUTTER = 4;    // シャッター
     int BRACKET_WB = 5;          // ホワイトバランス
     int BRACKET_COLOR_TONE = 6; // カラートーン
+    int BRACKET_ART_FILTER = 7; // アートフィルター
 }

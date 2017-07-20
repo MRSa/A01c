@@ -21,7 +21,7 @@ class PushedButton6 implements IPushedButton
     @Override
     public boolean pushedButton(boolean isLongClick)
     {
-        int defaultAction = ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
+        int defaultAction;// = ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
         String preference_action_id = ICameraFeatureDispatcher.ACTION_BUTTON6;
         if (isLongClick)
         {
@@ -32,22 +32,27 @@ class PushedButton6 implements IPushedButton
         {
             case "P":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_P;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_EXPOSURE : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
 
             case "A":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_A;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_APERATURE : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
 
             case "S":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_S;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_SHUTTER : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
 
             case "M":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_M;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_WB : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
 
             case "ART":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_ART;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_ART_FILTER : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
 
             case "Movie":
@@ -58,6 +63,8 @@ class PushedButton6 implements IPushedButton
             case "iAuto":
             default:
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_SHOT_INTERVAL_5SEC : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
+
                 break;
         }
         return (dispatcher.dispatchAction(IShowInformation.BUTTON_6, preferences.getInt(preference_action_id, defaultAction)));

@@ -141,6 +141,12 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
                 targetPropertyName = "";
                 break;
 
+            case IBracketingShotStyle.BRACKET_ART_FILTER:
+                // アートフィルターブラケット
+                targetPropertyName = IOlyCameraProperty.ART_FILTER;
+                bracketCount = -1;
+                break;
+
             default:
                 // 何もしない
                 return (false);
