@@ -426,7 +426,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
         coordinator.startLiveView();
         coordinator.setRecViewMode(false);
-        listener.setEnableOperation(true);
+        listener.setEnableOperation(true, false);
         setMessage(IShowInformation.AREA_C, Color.WHITE, "");
         coordinator.updateStatusAll();
     }
@@ -440,7 +440,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraDisconnected()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
-        listener.setEnableOperation(false);
+        listener.setEnableOperation(false, false);
         cameraDisconnectedHappened = true;
     }
 
@@ -452,7 +452,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraOccursException()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
-        listener.setEnableOperation(false);
+        listener.setEnableOperation(false, false);
         cameraDisconnectedHappened = true;
     }
 
@@ -645,6 +645,15 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setEnabledOperation(boolean operation, boolean suppress)
+    {
+        if (listener != null)
+        {
+            listener.setEnableOperation(operation, suppress);
         }
     }
 }

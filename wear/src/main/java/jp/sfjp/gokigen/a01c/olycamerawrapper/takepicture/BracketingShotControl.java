@@ -189,7 +189,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
             public void run()
             {
                 isBracketingAction = true;
-                updateMessage("INT");
+                updateMessage("BRACKET");
                 try
                 {
                     startBracket();
@@ -238,6 +238,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
         }
 
         PointF afPoint = camera.getActualAutoFocusPoint();
+        statusDrawer.setEnabledOperation(false, true);  // 画面のタッチ操作を禁止
         for (int index = 0; index < bracketCount; index++)
         {
             // 撮影条件を更新する
@@ -311,6 +312,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
         {
             e.printStackTrace();
         }
+        statusDrawer.setEnabledOperation(true, false);  // 画面のタッチ操作を有効化する
     }
 
     /**
@@ -326,7 +328,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
             try
             {
                 // BKT表示(撮影枚数表示と待ち時間)を変える
-                updateMessage("WAIT " + count + "s.");
+                updateMessage("WAIT " + count + "sec.");
                 Thread.sleep(1000);
             }
             catch (Exception e)
@@ -369,7 +371,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
         retryUpdateBracketingStatus = 0;
 
         // 撮影枚数表示を変える
-        updateMessage("INT " + (index + 1) + "/" + bracketCount);
+        updateMessage("BRACKET " + (index + 1) + "/" + bracketCount);
     }
 
     /**

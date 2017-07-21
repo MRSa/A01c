@@ -132,11 +132,12 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   操作の可否を設定する。
      *
      *    @param operation  true: 操作可能, false: 操作不可
-     *
+     *    @param suppress   true: 操作不可, false: 接続操作実施 （操作不可時のコマンド受付）
      */
-    public void setEnableOperation(boolean operation)
+    public void setEnableOperation(boolean operation, boolean suppress)
     {
         prohibitOperation = !operation;
+        suppressOperation = suppress;
     }
 
     /**

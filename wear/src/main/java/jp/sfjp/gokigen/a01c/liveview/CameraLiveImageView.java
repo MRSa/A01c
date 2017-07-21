@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -669,6 +670,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.CENTER));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTER));
             paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             float cx = (canvas.getWidth() / 2.0f) - (paint.measureText(message) / 2.0f);
             float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
