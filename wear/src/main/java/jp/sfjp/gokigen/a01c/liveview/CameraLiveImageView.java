@@ -685,6 +685,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPLEFT));
             paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPLEFT));
             paintUp.setAntiAlias(true);
+            paintUp.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
             canvas.drawText(message, viewRect.left + 3.0f, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
         }
@@ -697,6 +698,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPRIGHT));
             paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPRIGHT));
             paintUp.setAntiAlias(true);
+            paintUp.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             float width = paintUp.measureText(message);
             Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
             canvas.drawText(message, (viewRect.right - 3.0f) - width, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
@@ -710,6 +712,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWLEFT));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWLEFT));
             paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             canvas.drawText(message, viewRect.left + 3.0f, viewRect.bottom - fontMetrics.bottom, paint);
         }
@@ -722,6 +725,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWRIGHT));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWRIGHT));
             paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             float width = paint.measureText(message);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             canvas.drawText(message, (viewRect.right - 3.0f) - width, viewRect.bottom - fontMetrics.bottom, paint);
@@ -736,6 +740,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paintUp.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.UPCENTER));
             paintUp.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.UPCENTER));
             paintUp.setAntiAlias(true);
+            paintUp.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             float width = paintUp.measureText(message) / 2.0f;
             Paint.FontMetrics fontMetrics = paintUp.getFontMetrics();
             canvas.drawText(message, (viewRect.centerX()) - width, viewRect.top + (fontMetrics.descent - fontMetrics.ascent), paintUp);
@@ -749,6 +754,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.LOWCENTER));
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.LOWCENTER));
             paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
             float width = paint.measureText(message) / 2.0f;
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             canvas.drawText(message, (viewRect.centerX()) - width, viewRect.bottom - fontMetrics.bottom, paint);
