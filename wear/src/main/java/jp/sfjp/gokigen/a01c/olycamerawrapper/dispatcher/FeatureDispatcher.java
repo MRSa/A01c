@@ -200,32 +200,32 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 intervalOneShot(10);
                 break;
             case FEATURE_SHOT_BRACKET_EXPOSURE:
-                // ブラケット撮影を行う
+                // 露出ブラケット撮影を行う (5枚)
                 bracketingShot(IBracketingShotStyle.BRACKET_EXPREV, 5);
                 break;
 
             case FEATURE_SHOT_BRACKET_APERATURE:
-                // ブラケット撮影を行う
+                // 絞りブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_APERTURE, 5);
                 break;
 
             case FEATURE_SHOT_BRACKET_SHUTTER:
-                // ブラケット撮影を行う
+                // シャッターブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_SHUTTER, 5);
                 break;
 
             case FEATURE_SHOT_BRACKET_COLORTONE:
-                // ブラケット撮影を行う
+                // カラートーンブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_COLOR_TONE, 11);
                 break;
 
             case FEATURE_SHOT_BRACKET_WB:
-                // ブラケット撮影を行う
+                // ホワイトバランスブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_WB, 7);
                 break;
 
             case FEATURE_SHOT_BRACKET_ART_FILTER:
-                // ブラケット撮影を行う
+                // アートフィルターブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_ART_FILTER, 5);
                 break;
 
@@ -233,7 +233,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 // ブラケット撮影を行う
                 bracketingShot(IBracketingShotStyle.BRACKET_ISO, 3);
                 break;
-
 
             default:
                 // 上記以外...なにもしない
