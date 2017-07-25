@@ -99,6 +99,7 @@ public interface ICameraFeatureDispatcher
     int FEATURE_SHOT_BRACKET_WB = 41;
     int FEATURE_SHOT_BRACKET_ART_FILTER = 42;
     int FEATURE_SHOT_BRACKET_ISO = 43;
+    int FEATURE_SHOW_FAVORITE_DIALOG = 44;
 
     // エリアタッチ時の機能(featureNumber)
     int FEATURE_AREA_ACTION_NONE = 100;

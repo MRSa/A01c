@@ -234,6 +234,11 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 bracketingShot(IBracketingShotStyle.BRACKET_ISO, 3);
                 break;
 
+            case FEATURE_SHOW_FAVORITE_DIALOG:
+                // お気に入りのダイアログ表示を行う
+                showFavoriteDialog();
+                break;
+
             default:
                 // 上記以外...なにもしない
                 duration =IShowInformation.VIBRATE_PATTERN_NONE;
@@ -720,6 +725,16 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     private void bracketingShot(int style, int count)
     {
         camera.bracketingShot(style, count, 0);
+    }
+
+
+    /**
+     *   「お気に入り設定」表示画面を開く
+     *
+     */
+    private void showFavoriteDialog()
+    {
+        // TBD...
     }
 
     /**
