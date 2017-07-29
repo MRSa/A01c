@@ -5,7 +5,7 @@ package jp.sfjp.gokigen.a01c.preference;
  *
  *
  */
-public interface ICameraPropertyAccessor
+public interface IPreferenceCameraPropertyAccessor
 {
     String FRAME_GRID = "frame_grid";
     String FRAME_GRID_DEFAULT_VALUE = "0";

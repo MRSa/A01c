@@ -9,7 +9,6 @@ import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.BracketingShotControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
 
 
@@ -20,6 +19,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
 public class FeatureDispatcher implements ICameraFeatureDispatcher
 {
     private final String TAG = toString();
+
     private final IShowInformation statusDrawer;
     private final IOlyCameraCoordinator camera;
     private final ILiveImageStatusNotify liveImageView;
@@ -734,7 +734,8 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
      */
     private void showFavoriteDialog()
     {
-        // TBD...
+        // お気に入り設定表示画面を開く
+        statusDrawer.showFavoriteSettingsDialog();
     }
 
     /**

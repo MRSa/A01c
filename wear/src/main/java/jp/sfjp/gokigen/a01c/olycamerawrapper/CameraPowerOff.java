@@ -6,7 +6,7 @@ import android.support.v7.preference.Preference;
 import jp.sfjp.gokigen.a01c.ConfirmationDialog;
 import jp.sfjp.gokigen.a01c.IChangeScene;
 import jp.sfjp.gokigen.a01c.R;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 
 /**
  *  Preferenceがクリックされた時に処理するクラス
@@ -52,7 +52,7 @@ public class CameraPowerOff implements Preference.OnPreferenceClickListener, Con
         }
 
         preferenceKey = preference.getKey();
-        if (preferenceKey.contains(ICameraPropertyAccessor.EXIT_APPLICATION))
+        if (preferenceKey.contains(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION))
         {
 
             // 確認ダイアログの生成と表示
@@ -66,7 +66,7 @@ public class CameraPowerOff implements Preference.OnPreferenceClickListener, Con
     @Override
     public void confirm()
     {
-        if (preferenceKey.contains(ICameraPropertyAccessor.EXIT_APPLICATION))
+        if (preferenceKey.contains(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION))
         {
             // カメラの電源をOFFにしたうえで、アプリケーションを終了する。
             changeScene.exitApplication();

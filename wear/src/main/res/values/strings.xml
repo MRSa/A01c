@@ -42,4 +42,10 @@
     <string name="video_recording">&#9679;REC</string>
     <string name="video_failure">FAILED!</string>
     <string name="message_none">---</string>
+
+    <string name="title_my_settings">Favorite</string>
+    <string name="title_tab_title_load">Load</string>
+    <string name="title_tab_title_save">Save</string>
+    <string name="save_props">Save</string>
+    <string name="hint_save_props">Name</string>
 </resources>

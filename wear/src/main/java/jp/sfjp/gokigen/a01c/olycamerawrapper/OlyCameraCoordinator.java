@@ -19,6 +19,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraPropertyListenerImpl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraRecordingListenerImpl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraStatusListenerImpl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
@@ -28,7 +29,8 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.AutoFocusControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.BracketingShotControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.MovieRecordingControl;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.SingleShotControl;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.CameraPropertyLoadSaveOperations;
+import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 
 /**
  *   OlyCameraCoordinator : Olympus Air との接続、切断の間をとりもつクラス。
@@ -55,6 +57,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final MovieRecordingControl movieControl;
     private final BracketingShotControl bracketingShot;
     private final OlyCameraPropertyProxy propertyProxy;
+    private final CameraPropertyLoadSaveOperations loadSaveOperations;
     private final LoadSaveCameraProperties loadSaveCameraProperties;
     private final OlyCameraConnection cameraConnection;
     private final ICameraStatusDisplay cameraStatusDisplay;
@@ -63,6 +66,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
     //private boolean isExposureLocked = false;
+
 
     /**
      * コンストラクタ
@@ -86,11 +90,12 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         bracketingShot = new BracketingShotControl(camera, focusFrameDisplay, this, showInformation);  // ブラケッティング＆インターバル撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
-        this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
+        this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
         camera.setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
         camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
         camera.setRecordingListener(new CameraRecordingListenerImpl(context, showInformation));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
+        loadSaveOperations = new CameraPropertyLoadSaveOperations(context, loadSaveCameraProperties, cameraStatusDisplay);
     }
 
     /**
@@ -409,6 +414,12 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     public IOlyCameraPropertyProvider getCameraPropertyProvider()
     {
         return (propertyProxy);
+    }
+
+    @Override
+    public ICameraPropertyLoadSaveOperations getCameraPropertyLoadSaveOperations()
+    {
+        return (loadSaveOperations);
     }
 
     @Override

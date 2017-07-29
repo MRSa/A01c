@@ -6,6 +6,7 @@ import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
 
 /**
  *
@@ -59,6 +60,9 @@ public interface IOlyCameraCoordinator
 
     // カメラプロパティアクセスインタフェース
     IOlyCameraPropertyProvider getCameraPropertyProvider();
+
+    // カメラプロパティのロード・セーブインタフェース（読み込み中/保存中のダイアログ表示機能付き）
+    ICameraPropertyLoadSaveOperations getCameraPropertyLoadSaveOperations();
 
     // カメラプロパティのロード・セーブインタフェース
     ILoadSaveCameraProperties getLoadSaveCameraProperties();

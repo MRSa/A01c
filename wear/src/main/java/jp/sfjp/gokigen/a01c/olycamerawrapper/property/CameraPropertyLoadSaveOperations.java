@@ -1,4 +1,4 @@
-package jp.sfjp.gokigen.a01c.preference;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 
 /**
  *   カメラプロパティの保存、展開を実行する

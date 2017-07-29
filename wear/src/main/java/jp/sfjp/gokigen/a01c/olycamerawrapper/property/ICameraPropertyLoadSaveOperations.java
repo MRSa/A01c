@@ -1,6 +1,6 @@
-package jp.sfjp.gokigen.a01c.preference;
+package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
-interface ICameraPropertyLoadSaveOperations
+public interface ICameraPropertyLoadSaveOperations
 {
     void saveProperties(final String idHeader, final String dataName);
     void loadProperties(final String idHeader, final String dataName);

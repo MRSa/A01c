@@ -38,4 +38,6 @@ public interface IShowInformation
     void vibrate(final int vibratePattern);
 
     void setEnabledOperation(boolean operation, boolean suppress);
+
+    void showFavoriteSettingsDialog();
 }

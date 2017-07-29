@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -32,7 +31,7 @@ import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.GridFrameFactory;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.IGridFrameDrawer;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 
 /**
  *   CameraLiveImageView :
@@ -98,10 +97,10 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         imageScaleType = ImageView.ScaleType.FIT_CENTER;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        showGridFeature = preferences.getBoolean(ICameraPropertyAccessor.SHOW_GRID_STATUS, true);
-        showLevelGaugeFeature = preferences.getBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false);
+        showGridFeature = preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, true);
+        showLevelGaugeFeature = preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false);
 
-        int framingGridStatus = Integer.parseInt(preferences.getString(ICameraPropertyAccessor.FRAME_GRID, ICameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE));
+        int framingGridStatus = Integer.parseInt(preferences.getString(IPreferenceCameraPropertyAccessor.FRAME_GRID, IPreferenceCameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE));
         gridFrameDrawer = GridFrameFactory.getGridFrameDrawer(framingGridStatus);
 
         // ダミーのビットマップデータ読み込み...画面表示のテスト用ロジック
@@ -909,7 +908,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         showGridFeature = isShowGridFeature;
         SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(ICameraPropertyAccessor.SHOW_GRID_STATUS, showGridFeature);
+        editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, showGridFeature);
         editor.apply();
     }
 
@@ -933,7 +932,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         showLevelGaugeFeature = isShowLevelGaugeFeature;
         SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(ICameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
+        editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
         editor.apply();
         ILevelGauge levelGauge = messageHolder.getLevelGauge();
         if (levelGauge == null)

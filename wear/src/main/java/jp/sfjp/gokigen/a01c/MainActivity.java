@@ -24,7 +24,7 @@ import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
-import jp.sfjp.gokigen.a01c.preference.ICameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 
 /**
  *   メインのActivity
@@ -34,6 +34,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
+    static final int COMMAND_MY_PROPERTY = 0x00000100;
 
     private CameraLiveImageView liveView = null;
     private IOlyCameraCoordinator coordinator = null;
@@ -240,7 +241,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         {
             int resId;
             SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-            if (preferences.getBoolean(ICameraPropertyAccessor.SHOW_GRID_STATUS, true))
+            if (preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, true))
             {
                 // ボタンをGrid OFFアイコンにする
                 resId = R.drawable.btn_ic_grid_off;
@@ -363,7 +364,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator.stopLiveView();
 
         //  パラメータを確認し、カメラの電源を切る
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ICameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
         {
             Log.v(TAG, "Shutdown camera...");
 
@@ -656,4 +657,34 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             listener.setEnableOperation(operation, suppress);
         }
     }
+
+    /**
+     *   「お気に入り設定」表示画面を開く
+     *
+     */
+    @Override
+    public void showFavoriteSettingsDialog()
+    {
+/*
+        // お気に入り設定画面を開く...
+        LoadSaveMyCameraPropertyDialog dialog = new LoadSaveMyCameraPropertyDialog();
+        dialog.setTargetFragment(this, COMMAND_MY_PROPERTY);
+        dialog.setPropertyOperationsHolder(coordinator.getCameraPropertyLoadSaveOperations());
+        dialog.show(this, "my_dialog");
+*/
+/*
+        //  コマンドの実行確認ダイアログ... 動かん。。
+        ConfirmationDialog dialog = new ConfirmationDialog(this);
+        dialog.show(R.string.title_my_settings, R.string.message_none, new ConfirmationDialog.Callback()
+        {
+            @Override
+            public void confirm()
+            {
+                vibrate(IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG);
+            }
+        });
+*/
+    }
+
+
 }

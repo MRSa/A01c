@@ -23,9 +23,7 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
 {
     private final String TAG = toString();
 
-    public static final int MAX_STORE_PROPERTIES = 256;   // お気に入り設定の最大記憶数...
-    public static final String TITLE_KEY = "CameraPropTitleKey";
-    public static final String DATE_KEY = "CameraPropDateTime";
+
     private static final String TAKEMODE = "TAKEMODE";
     private final Context parent;
     private final OLYCamera camera;
