@@ -238,7 +238,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
         }
 
         PointF afPoint = camera.getActualAutoFocusPoint();
-        statusDrawer.setEnabledOperation(false, true);  // 画面のタッチ操作を禁止
+        statusDrawer.setEnabledOperation(IShowInformation.operation.DISABLE);  // 画面のタッチ操作を禁止
         for (int index = 0; index < bracketCount; index++)
         {
             // 撮影条件を更新する
@@ -312,7 +312,7 @@ public class BracketingShotControl implements OLYCamera.TakePictureCallback
         {
             e.printStackTrace();
         }
-        statusDrawer.setEnabledOperation(true, false);  // 画面のタッチ操作を有効化する
+        statusDrawer.setEnabledOperation(IShowInformation.operation.ENABLE);  // 画面のタッチ操作を有効化する
     }
 
     /**

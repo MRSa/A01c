@@ -28,6 +28,8 @@ import java.util.TimerTask;
 import jp.co.olympus.camerakit.OLYCamera;
 
 import jp.sfjp.gokigen.a01c.R;
+import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogController;
+import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDrawer;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.GridFrameFactory;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.IGridFrameDrawer;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
@@ -38,7 +40,7 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
  *    (OLYMPUS の ImageCaptureSample をカスタマイズ)
  *
  */
-public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify
+public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, IDialogController
 {
     private final String TAG = toString();
 
@@ -56,6 +58,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
     private IGridFrameDrawer gridFrameDrawer = null;
     private ShowMessageHolder messageHolder;
+
+    private IDialogDrawer dialogDrawer = null;
 
     /**
      *   コンストラクタ
@@ -153,6 +157,13 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
         // 画像の表示
         drawCanvas(canvas);
+
+        // ダイアログの表示
+        if (dialogDrawer != null)
+        {
+            dialogDrawer.drawDialog(canvas);
+            return;
+        }
 
         // メッセージの表示 (Overwrite)
         drawInformationMessages(canvas);
@@ -982,5 +993,36 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     public IMessageDrawer getMessageDrawer()
     {
         return (messageHolder);
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void showDialog(IDialogDrawer dialogDrawer)
+    {
+        this.dialogDrawer = dialogDrawer;
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public void hideDialog()
+    {
+        this.dialogDrawer = null;
+        System.gc();
+    }
+
+    /**
+     *
+     *
+     */
+    @Override
+    public boolean touchedPosition(float posX, float posY)
+    {
+        return ((dialogDrawer != null)&&(dialogDrawer.touchedPosition(posX, posY)));
     }
 }

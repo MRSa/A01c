@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import jp.sfjp.gokigen.a01c.IChangeScene;
+import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.button.IPushedButton;
 import jp.sfjp.gokigen.a01c.liveview.button.PushedButtonFactory;
@@ -23,9 +24,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     private final ICameraFeatureDispatcher dispatcher;
     private final IChangeScene changeScene;
     private final SparseArray<IPushedButton> buttonDispatcher;
-    private boolean prohibitOperation = true;
-    private boolean suppressOperation = false;
-
+    private IShowInformation.operation operationMode = IShowInformation.operation.ONLY_CONNECT;
 
     /**
      *   コンストラクタの整理
@@ -46,11 +45,11 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     {
         int id = v.getId();
         Log.v(TAG, "onClick() : " + id);
-        if (prohibitOperation)
+        if (operationMode != IShowInformation.operation.ENABLE)
         {
             // 操作禁止の指示がされていた場合は、、接続機能を呼び出す
             Log.v(TAG, "onClick() : prohibit operation");
-            if (!suppressOperation)
+            if (operationMode == IShowInformation.operation.ONLY_CONNECT)
             {
                 changeScene.checkConnectionFeature(0);
             }
@@ -81,18 +80,11 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         boolean ret = false;
         int id = v.getId();
         Log.v(TAG, "onLongClick() : " + id);
-        if (prohibitOperation)
+        if (operationMode != IShowInformation.operation.ENABLE)
         {
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onLongClick() : prohibit operation");
-            /*
-            if (!suppressOperation)
-            {
-                return (changeScene.checkConnectionFeature(1));
-            }
-            return (false);
-            */
-            return  ((!suppressOperation)&&(changeScene.checkConnectionFeature(1)));
+            return  ((operationMode == IShowInformation.operation.ONLY_CONNECT)&&(changeScene.checkConnectionFeature(1)));
         }
         try
         {
@@ -118,11 +110,15 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     {
         int id = v.getId();
         Log.v(TAG, "onTouch() : " + id);
-        if (prohibitOperation)
+        if (operationMode != IShowInformation.operation.ENABLE)
         {
+            if (operationMode == IShowInformation.operation.ENABLE_ONLY_TOUCHED_POSITION)
+            {
+                return (changeScene.touchedPosition((event.getX() / v.getX()), (event.getY() / v.getY())));
+            }
             // 操作禁止の指示がされていた場合は、接続状態を示すようにする
             Log.v(TAG, "onTouch() : prohibit operation");
-            return ((!suppressOperation)&&(changeScene.showConnectionStatus()));
+            return ((operationMode == IShowInformation.operation.ONLY_CONNECT)&&(changeScene.showConnectionStatus()));
         }
         // 現在のところ、タッチエリアの場合はオートフォーカス実行で固定
         return ((id == R.id.liveview)&&(dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS)));
@@ -131,23 +127,19 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     /**
      *   操作の可否を設定する。
      *
-     *    @param operation  true: 操作可能, false: 操作不可
-     *    @param suppress   true: 操作不可, false: 接続操作実施 （操作不可時のコマンド受付）
      */
-    public void setEnableOperation(boolean operation, boolean suppress)
+    public void setEnableOperation(IShowInformation.operation requestOperation)
     {
-        prohibitOperation = !operation;
-        suppressOperation = suppress;
+        operationMode = requestOperation;
     }
 
     /**
      *   操作可能状態かを応答する。
      *
-     * @return true: 操作可能, false: 操作不可
      */
-    public boolean isEnabledOperation()
+    public IShowInformation.operation isEnabledOperation()
     {
-        return (!prohibitOperation);
+        return (operationMode);
     }
 
 }

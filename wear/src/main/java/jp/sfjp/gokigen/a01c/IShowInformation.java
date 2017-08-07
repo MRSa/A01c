@@ -32,12 +32,20 @@ public interface IShowInformation
     int VIBRATE_PATTERN_SIMPLE_LONGLONG = 4;
     int VIBRATE_PATTERN_SHORT_DOUBLE  = 5;
 
+    enum operation
+    {
+        DISABLE,
+        ENABLE,
+        ONLY_CONNECT,
+        ENABLE_ONLY_TOUCHED_POSITION,
+    };
+
     void setMessage(final int area, final int color, final String message);
     void setButtonDrawable(final int button, final int labelId);
 
     void vibrate(final int vibratePattern);
 
-    void setEnabledOperation(boolean operation, boolean suppress);
+    void setEnabledOperation(operation operation);
 
     void showFavoriteSettingsDialog();
 }

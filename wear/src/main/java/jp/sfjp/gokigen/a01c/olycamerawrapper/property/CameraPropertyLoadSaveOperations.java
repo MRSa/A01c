@@ -30,7 +30,7 @@ public class CameraPropertyLoadSaveOperations implements ICameraPropertyLoadSave
     @Override
     public void loadProperties(final String id, final String name)
     {
-        //Log.v(TAG, "PROPERTY RESTORE ENTER : (" + id + ") " + name);
+        Log.v(TAG, "PROPERTY RESTORE ENTER : (" + id + ") " + name);
 
         //
         // BUSYダイアログを表示する
@@ -77,7 +77,7 @@ public class CameraPropertyLoadSaveOperations implements ICameraPropertyLoadSave
         {
             e.printStackTrace();
         }
-        //Log.v(TAG, "PROPERTY RESTORE EXIT : (" + id + ") " + name);
+        Log.v(TAG, "PROPERTY RESTORE EXIT : (" + id + ") " + name);
     }
 
     @Override

@@ -18,6 +18,9 @@ import android.support.v4.content.ContextCompat;
 
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
+import jp.sfjp.gokigen.a01c.liveview.dialog.FavoriteSettingSelectionDialog;
+import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDismissedNotifier;
+import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDrawer;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
@@ -30,7 +33,7 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
  *   メインのActivity
  *
  */
-public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver
+public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -40,6 +43,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private IOlyCameraCoordinator coordinator = null;
     private IMessageDrawer messageDrawer = null;
     private OlyCameraLiveViewOnTouchListener listener = null;
+    private FavoriteSettingSelectionDialog selectionDialog = null;
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
     private boolean ambientMode = false;
@@ -317,6 +321,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
         coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
         listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
+        selectionDialog = new FavoriteSettingSelectionDialog(coordinator.getCameraPropertyLoadSaveOperations(), this);
         connectToCamera();
     }
 
@@ -392,12 +397,26 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     }
 
     /**
+     *   画面をタッチした場所を受信する
+     *
+     * @param posX  X座標位置 (0.0f - 1.0f)
+     * @param posY  Y座標位置 (0.0f - 1.0f)
+     * @return true / false
+     */
+    @Override
+    public boolean touchedPosition(float posX, float posY)
+    {
+        Log.v(TAG, "touchedPosition (" + posX + ", " + posY);
+        return ((liveView != null)&&(liveView.touchedPosition(posX, posY)));
+    }
+
+    /**
      *   接続状態を見る or 再接続する
      */
     @Override
     public boolean showConnectionStatus()
     {
-        if ((!listener.isEnabledOperation())&&(cameraDisconnectedHappened))
+        if ((listener.isEnabledOperation() == IShowInformation.operation.ONLY_CONNECT)&&(cameraDisconnectedHappened))
         {
             // カメラが切断されたとき、再接続を指示する
             connectToCamera();
@@ -427,7 +446,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
         coordinator.startLiveView();
         coordinator.setRecViewMode(false);
-        listener.setEnableOperation(true, false);
+        listener.setEnableOperation(operation.ENABLE);
         setMessage(IShowInformation.AREA_C, Color.WHITE, "");
         coordinator.updateStatusAll();
     }
@@ -441,7 +460,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraDisconnected()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
-        listener.setEnableOperation(false, false);
+        listener.setEnableOperation(operation.ONLY_CONNECT);
         cameraDisconnectedHappened = true;
     }
 
@@ -453,7 +472,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         Log.v(TAG, "onCameraOccursException()");
         setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
-        listener.setEnableOperation(false, false);
+        listener.setEnableOperation(operation.ONLY_CONNECT);
         cameraDisconnectedHappened = true;
     }
 
@@ -650,11 +669,11 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     }
 
     @Override
-    public void setEnabledOperation(boolean operation, boolean suppress)
+    public void setEnabledOperation(IShowInformation.operation operation)
     {
         if (listener != null)
         {
-            listener.setEnableOperation(operation, suppress);
+            listener.setEnableOperation(operation);
         }
     }
 
@@ -684,6 +703,26 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             }
         });
 */
+        if ((liveView != null)&&(listener != null)&&(listener.isEnabledOperation() != operation.ONLY_CONNECT))
+        {
+            listener.setEnableOperation(operation.ENABLE_ONLY_TOUCHED_POSITION);
+            liveView.showDialog(selectionDialog);
+        }
+    }
+
+    /**
+     *   「お気に入り設定」表示画面を閉じる
+     *
+     */
+    @Override
+    public void dialogDismissed(boolean isExecuted)
+    {
+        if ((liveView != null)&&(listener != null))
+        {
+            liveView.hideDialog();
+            listener.setEnableOperation(operation.ENABLE);
+
+        }
     }
 
 
