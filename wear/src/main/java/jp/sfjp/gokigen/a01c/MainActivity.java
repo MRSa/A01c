@@ -724,6 +724,4 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 
         }
     }
-
-
 }

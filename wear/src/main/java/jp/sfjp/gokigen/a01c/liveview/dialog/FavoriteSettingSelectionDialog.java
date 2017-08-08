@@ -3,6 +3,7 @@ package jp.sfjp.gokigen.a01c.liveview.dialog;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.Locale;
 
@@ -16,6 +17,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOpe
  */
 public class FavoriteSettingSelectionDialog implements IDialogDrawer
 {
+    private final String TAG = toString();
     private final ICameraPropertyLoadSaveOperations propertyOperation;
     private final IDialogDismissedNotifier dismissNotifier;
     private int selectedId = 0;
@@ -47,17 +49,26 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
 
         float width = canvas.getWidth();
         float height = canvas.getHeight();
+
+        float height_unit = (height - 2.0f * (HEIGHT_MARGIN)) / 20.0f;
+        float width_unit = (width - 2.0f * (WIDE_MARGIN)) / 21.0f;
+
         Paint paint = new Paint();
         paint.setAntiAlias(true);
+
+        // 背景を消す
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(WIDE_MARGIN, HEIGHT_MARGIN, (width - WIDE_MARGIN), (height - HEIGHT_MARGIN), paint);
 
+        // 外枠を引く
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(STROKE_WIDTH);
         canvas.drawRect(WIDE_MARGIN, HEIGHT_MARGIN, (width - WIDE_MARGIN), (height - HEIGHT_MARGIN), paint);
-
+        canvas.drawLine(WIDE_MARGIN, ((height - HEIGHT_MARGIN) - (height_unit * 4.0f)), (width - WIDE_MARGIN),((height - HEIGHT_MARGIN) - (height_unit * 4.0f)), paint);
+        canvas.drawLine((width / 2.0f), ((height - HEIGHT_MARGIN) - (height_unit * 4.0f)), (width / 2.0f), (height - HEIGHT_MARGIN), paint);
+        canvas.drawLine(WIDE_MARGIN, (HEIGHT_MARGIN + (height_unit * 3.0f)), (width - WIDE_MARGIN),  (HEIGHT_MARGIN + (height_unit * 3.0f)), paint);
 
     }
 
@@ -72,14 +83,17 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     @Override
     public boolean touchedPosition(float posX, float posY)
     {
-        if (dismissNotifier != null)
+        Log.v(TAG, " FavoriteSettingSelectionDialog::touchedPosition()  [" + posX + "," + posY + "]");
+
+        //  押された場所をチェックする
+        if (posY > (16.0f / 20.0f))
         {
-            dismiss(false);
+            // 画面下部のOK or Cancelが押された
+            dismiss(posX);
             return (true);
         }
         return (false);
     }
-
 
     /**
      *   プロパティの保存処理をする
@@ -118,11 +132,29 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     /**
      *   ダイアログを閉じる
      *
-     * @param isExecuted  true: OK  / false: cancel
+     * @param posX ： ボタンが押された位置
      */
-    private void dismiss(boolean isExecuted)
+    private void dismiss(float posX)
     {
-        dismissNotifier.dialogDismissed(isExecuted);
+        boolean isExecute = (posX > 0.5f);
+        if (isExecute)
+        {
+            Log.v(TAG, "  EXECUTE OPERATION  : " + selectedId + " " + isSaveOperation);
+/*
+            // コマンドを実行する
+            if (isSaveOperation)
+            {
+                saveProperties(selectedId);
+            }
+            else
+            {
+                loadProperties(selectedId);
+            }
+*/
+        }
+        if (dismissNotifier != null)
+        {
+            dismissNotifier.dialogDismissed(isExecute);
+        }
     }
-
 }

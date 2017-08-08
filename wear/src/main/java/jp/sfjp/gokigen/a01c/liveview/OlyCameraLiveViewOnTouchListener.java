@@ -114,7 +114,8 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             if (operationMode == IShowInformation.operation.ENABLE_ONLY_TOUCHED_POSITION)
             {
-                return (changeScene.touchedPosition((event.getX() / v.getX()), (event.getY() / v.getY())));
+                Log.v(TAG, "touchedPosition() : [" + event.getX() + "," + event.getY() + "](" +  v.getWidth() +"," + v.getHeight() + ")");
+                return (changeScene.touchedPosition((event.getX() / v.getWidth()), (event.getY() / v.getHeight())));
             }
             // 操作禁止の指示がされていた場合は、接続状態を示すようにする
             Log.v(TAG, "onTouch() : prohibit operation");
