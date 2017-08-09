@@ -32,8 +32,8 @@
     <string name="dialog_start_save_property_message">Please Wait</string>
     <string name="dialog_start_save_property_title">保存中&#8230;</string>
 
-    <string name="restored_my_props">展開 : </string>
-    <string name="saved_my_props">保存 : </string>
+    <string name="restored_my_props">展開 </string>
+    <string name="saved_my_props">保存 </string>
 
     <string name="description_control_button">ファンクションキー</string>
     <string name="text_message_blank"> </string>

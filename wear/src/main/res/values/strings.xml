@@ -31,8 +31,8 @@
     <string name="dialog_start_save_property_message">Please Wait</string>
     <string name="dialog_start_save_property_title">Storing Properties&#8230;</string>
 
-    <string name="restored_my_props">Restored Property : </string>
-    <string name="saved_my_props">Saved Property : </string>
+    <string name="restored_my_props">Restored Property  </string>
+    <string name="saved_my_props">Saved Property  </string>
 
     <string name="description_control_button">Control Button</string>
     <string name="text_message_blank"> </string>

@@ -321,7 +321,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
         coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
         listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
-        selectionDialog = new FavoriteSettingSelectionDialog(coordinator.getCameraPropertyLoadSaveOperations(), this);
+        selectionDialog = new FavoriteSettingSelectionDialog(this, coordinator.getCameraPropertyLoadSaveOperations(), this);
         connectToCamera();
     }
 
