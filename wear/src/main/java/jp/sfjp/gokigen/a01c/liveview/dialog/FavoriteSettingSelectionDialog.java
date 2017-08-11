@@ -283,7 +283,8 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     {
         try
         {
-            propertyOperation.saveProperties(String.format(Locale.ENGLISH, "%03d", id), "a01c:" + id);
+            String idName = String.format(Locale.ENGLISH, "%03d", id);
+            propertyOperation.saveProperties(idName, " " + idName);
         }
         catch (Exception e)
         {
@@ -300,7 +301,8 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     {
         try
         {
-            propertyOperation.loadProperties(String.format(Locale.ENGLISH, "%03d", id), "a01c:" + id);
+            String idName = String.format(Locale.ENGLISH, "%03d", id);
+            propertyOperation.loadProperties(idName, " " + idName);
         }
         catch (Exception e)
         {
