@@ -21,7 +21,7 @@ class PushedArea2 implements IPushedButton
     @Override
     public boolean pushedButton(boolean isLongClick)
     {
-        int defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+        int defaultAction = ICameraFeatureDispatcher.FEATURE_SHOW_FAVORITE_DIALOG;
         String preference_action_id = ICameraFeatureDispatcher.ACTION_AREA2;
         if (isLongClick)
         {

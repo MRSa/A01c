@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
 
 
@@ -27,8 +28,6 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     private final float HEIGHT_MARGIN = 27.0f;
     private int selectedId = 0;
     private boolean isSaveOperation = false;  // loadはfalse, saveがtrue
-
-
 
     /**
      *   コンストラクタ
@@ -50,7 +49,6 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
     @Override
     public void drawDialog(Canvas canvas)
     {
-
         final float STROKE_WIDTH = 2.0f;
 
         float width = canvas.getWidth();
@@ -78,40 +76,137 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
 
         Paint.Style style;
 
-        // Load
+        // タイトルを入れる
+        String title = context.getString(R.string.title_my_settings);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(height_unit * 2.0f);
+        canvas.drawText(title, (WIDE_MARGIN + width_unit), (HEIGHT_MARGIN + height_unit * 2.3f), paint);
+
+        // 「読込」
         style = (isSaveOperation) ? Paint.Style.STROKE : Paint.Style.FILL;
+        paint.setStrokeWidth(STROKE_WIDTH);
         paint.setStyle(style);
         canvas.drawRect((WIDE_MARGIN + (width_unit * 1.0f)), HEIGHT_MARGIN + 4.0f * height_unit, (WIDE_MARGIN + width_unit * (1.0f + 9.0f)), HEIGHT_MARGIN + 8.0f * height_unit, paint);
 
-        // Save
+        // 「読込」の文字
+        title = context.getString(R.string.title_tab_title_load);
+        paint.setTextSize(height_unit * 2.7f);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.FILL);
+        if (isSaveOperation)
+        {
+            paint.setColor(Color.WHITE);
+        }
+        else
+        {
+            paint.setColor(Color.BLACK);
+        }
+        canvas.drawText(title, (WIDE_MARGIN + width_unit * 1.5f), (HEIGHT_MARGIN + height_unit * 7.0f), paint);
+
+        // 「保存」
         style = (!isSaveOperation) ? Paint.Style.STROKE : Paint.Style.FILL;
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(STROKE_WIDTH);
         paint.setStyle(style);
         canvas.drawRect((WIDE_MARGIN + (width_unit * 11.0f)), HEIGHT_MARGIN + 4.0f * height_unit, (WIDE_MARGIN + width_unit * (11.0f + 9.0f)), HEIGHT_MARGIN + 8.0f * height_unit, paint);
 
-        // ボタン０
-        style = (selectedId != 0) ? Paint.Style.STROKE : Paint.Style.FILL;
-        paint.setStyle(style);
-        canvas.drawRect((WIDE_MARGIN + (width_unit * 1.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (1.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+        // 「保存」の文字
+        title = context.getString(R.string.title_tab_title_save);
+        paint.setTextSize(height_unit * 2.7f);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.FILL);
+        if (isSaveOperation)
+        {
+            paint.setColor(Color.BLACK);
+        }
+        else
+        {
+            paint.setColor(Color.WHITE);
+        }
+        canvas.drawText(title, (WIDE_MARGIN + width_unit * 11.5f), (HEIGHT_MARGIN + height_unit * 7.0f), paint);
+
+        ///////
+        paint.setStrokeWidth(STROKE_WIDTH);
 
         // ボタン１
-        style = (selectedId != 1) ? Paint.Style.STROKE : Paint.Style.FILL;
+        style = (selectedId != 0) ? Paint.Style.STROKE : Paint.Style.FILL;
         paint.setStyle(style);
-        canvas.drawRect((WIDE_MARGIN + (width_unit * 5.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (5.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect((WIDE_MARGIN + (width_unit * 1.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (1.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+
+        paint.setColor((selectedId != 0) ? Color.WHITE : Color.BLACK);
+        paint.setTextSize(width_unit * 2.5f);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setStrokeWidth(1.0f);
+        canvas.drawText("1", (WIDE_MARGIN + (width_unit * 1.8f)), (HEIGHT_MARGIN + 13.0f * height_unit), paint);
 
         // ボタン２
-        style = (selectedId != 2) ? Paint.Style.STROKE : Paint.Style.FILL;
+        style = (selectedId != 1) ? Paint.Style.STROKE : Paint.Style.FILL;
         paint.setStyle(style);
-        canvas.drawRect((WIDE_MARGIN + (width_unit * 9.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (9.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect((WIDE_MARGIN + (width_unit * 5.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (5.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+
+        paint.setColor((selectedId != 1) ? Color.WHITE : Color.BLACK);
+        paint.setTextSize(width_unit * 2.5f);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setStrokeWidth(1.0f);
+        canvas.drawText("2", (WIDE_MARGIN + (width_unit * 5.8f)), (HEIGHT_MARGIN + 13.0f * height_unit), paint);
 
         // ボタン３
-        style = (selectedId != 3) ? Paint.Style.STROKE : Paint.Style.FILL;
+        style = (selectedId != 2) ? Paint.Style.STROKE : Paint.Style.FILL;
         paint.setStyle(style);
-        canvas.drawRect((WIDE_MARGIN + (width_unit * 13.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (13.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect((WIDE_MARGIN + (width_unit * 9.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (9.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+
+        paint.setColor((selectedId != 2) ? Color.WHITE : Color.BLACK);
+        paint.setTextSize(width_unit * 2.5f);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setStrokeWidth(1.0f);
+        canvas.drawText("3", (WIDE_MARGIN + (width_unit * 9.8f)), (HEIGHT_MARGIN + 13.0f * height_unit), paint);
 
         // ボタン４
+        style = (selectedId != 3) ? Paint.Style.STROKE : Paint.Style.FILL;
+        paint.setStyle(style);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect((WIDE_MARGIN + (width_unit * 13.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (13.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+
+        paint.setColor((selectedId != 3) ? Color.WHITE : Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(width_unit * 2.5f);
+        paint.setStrokeWidth(1.0f);
+        canvas.drawText("4", (WIDE_MARGIN + (width_unit * 13.8f)), (HEIGHT_MARGIN + 13.0f * height_unit), paint);
+
+        // ボタン５
         style = (selectedId != 4) ? Paint.Style.STROKE : Paint.Style.FILL;
         paint.setStyle(style);
+        paint.setColor(Color.WHITE);
         canvas.drawRect((WIDE_MARGIN + (width_unit * 17.0f)), HEIGHT_MARGIN + 9.0f * height_unit, (WIDE_MARGIN + width_unit * (17.0f + 3.0f)), HEIGHT_MARGIN + 15.0f * height_unit, paint);
+
+        paint.setColor((selectedId != 4) ? Color.WHITE : Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(width_unit * 2.5f);
+        paint.setStrokeWidth(1.0f);
+        canvas.drawText("5", (WIDE_MARGIN + (width_unit * 17.8f)), (HEIGHT_MARGIN + 13.0f * height_unit), paint);
+
+        // Paint
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(height_unit * 2.3f);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.FILL);
+
+        // 'OK' および 'Cancel' ボタン
+        title = context.getString(R.string.title_dialog_cancel);
+        canvas.drawText(title, (WIDE_MARGIN + width_unit * 2.5f), (HEIGHT_MARGIN + height_unit * 19.0f), paint);
+        if (isSaveOperation)
+        {
+            title = context.getString(R.string.title_tab_title_save);
+        }
+        else
+        {
+            title = context.getString(R.string.title_tab_title_load);
+        }
+        canvas.drawText(title, (WIDE_MARGIN + width_unit * 13.5f), (HEIGHT_MARGIN + height_unit * 19.0f), paint);
 
     }
 

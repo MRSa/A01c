@@ -44,9 +44,13 @@
     <string name="video_failure">失敗です&#8230;</string>
     <string name="message_none">---</string>
 
-    <string name="title_my_settings">設定</string>
+    <string name="title_my_settings">お気に入り設定</string>
     <string name="title_tab_title_load">読込</string>
     <string name="title_tab_title_save">保存</string>
     <string name="save_props">Save</string>
     <string name="hint_save_props">Name</string>
+
+    <string name="title_dialog_ok">了解</string>
+    <string name="title_dialog_cancel">中止</string>
+
 </resources>
