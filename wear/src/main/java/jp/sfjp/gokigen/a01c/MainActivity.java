@@ -36,7 +36,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
-    static final int COMMAND_MY_PROPERTY = 0x00000100;
+    //static final int COMMAND_MY_PROPERTY = 0x00000100;
 
     private CameraLiveImageView liveView = null;
     private IOlyCameraCoordinator coordinator = null;
