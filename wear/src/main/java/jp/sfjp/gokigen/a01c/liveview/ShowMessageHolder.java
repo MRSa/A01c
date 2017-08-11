@@ -57,6 +57,8 @@ class ShowMessageHolder implements IMessageDrawer
     private messageHolder lowerLeft = new messageHolder();
     private messageHolder lowerRight = new messageHolder();
     private messageHolder lowerCenter = new messageHolder();
+    private messageHolder centerLeft = new messageHolder();
+    private messageHolder centerRight = new messageHolder();
 
     private ILevelGauge levelGauge = null;
 
@@ -100,6 +102,14 @@ class ShowMessageHolder implements IMessageDrawer
 
             case LOWCENTER:
                 target = lowerCenter;
+                break;
+
+            case CENTERLEFT:
+                target = centerLeft;
+                break;
+
+            case CENTERRIGHT:
+                target = centerRight;
                 break;
 
             case LOWRIGHT:

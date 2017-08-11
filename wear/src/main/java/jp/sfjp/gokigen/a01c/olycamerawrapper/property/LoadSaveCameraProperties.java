@@ -7,12 +7,10 @@ import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
-import jp.co.olympus.camerakit.OLYCameraKitException;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOLYCameraObjectProvider;
 
 /**
@@ -23,8 +21,8 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
 {
     private final String TAG = toString();
 
-
     private static final String TAKEMODE = "TAKEMODE";
+
     private final Context parent;
     private final OLYCamera camera;
     private final IOlyCameraPropertyProvider propertyProvider;
@@ -85,7 +83,69 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
     public void loadCameraSettings(String idHeader)
     {
         Log.v(TAG, "loadCameraSettings() : START [" + idHeader + "]");
+        //loadCameraSettingsBatch(idHeader);
+        loadCameraSettingsSequential(idHeader);
+    }
 
+    /**
+     *
+     *
+     */
+    private void loadCameraSettingsSequential(String idHeader)
+    {
+        int setCount = 0;
+        // Restores my settings.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(parent);
+        if (camera.isConnected())
+        {
+            String takeModeValue = preferences.getString(idHeader + TAKEMODE, null);
+            try
+            {
+                // TAKEMODE だけは先行して設定する（設定できないカメラプロパティもあるので...）
+                if (takeModeValue != null)
+                {
+                    camera.setCameraPropertyValue(TAKEMODE, takeModeValue);
+                    Log.v(TAG, "loadCameraSettings() TAKEMODE : " + takeModeValue);
+                    setCount++;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Log.v(TAG, "loadCameraSettings() : loadCameraSettingsSequential() fail...");
+            }
+
+            Set<String> names = camera.getCameraPropertyNames();
+            for (String name : names)
+            {
+                String value = preferences.getString(idHeader + name, null);
+                if (value != null)
+                {
+                    if (propertyProvider.canSetCameraProperty(name))
+                    {
+                        // Read Onlyのプロパティを除外して登録
+                        try
+                        {
+                            // カメラプロパティを個別登録（全パラメータを一括登録すると何か落ちている
+                            Log.v(TAG, "loadCameraSettingsSequential(): " + value);
+                            camera.setCameraPropertyValue(name, value);
+                            setCount++;
+                            //Thread.sleep(5);   //　処理落ちしている？かもしれないので必要なら止める
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            Log.v(TAG, "loadCameraSettingsSequential() : END [" + idHeader + "]" + " " + setCount);
+        }
+    }
+/*
+    //// プロパティの一括設定
+    private void loadCameraSettingsBatch(String idHeader)
+    {
         // Restores my settings.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(parent);
         if (camera.isConnected())
@@ -136,7 +196,8 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
                     e.printStackTrace();
                 }
             }
-            Log.v(TAG, "loadCameraSettings() : END [" + idHeader + "]" + " " + values.size());
+            Log.v(TAG, "loadCameraSettingsBatch() : END [" + idHeader + "]" + " " + values.size());
         }
     }
+*/
 }

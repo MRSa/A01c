@@ -17,6 +17,8 @@ public interface IShowInformation
     int AREA_8 = 9;
     int AREA_9 = 10;
     int AREA_A = 11;
+    int AREA_B = 12;
+    int AREA_D = 13;
 
     int BUTTON_1 = 1;
     int BUTTON_2 = 2;
@@ -38,7 +40,7 @@ public interface IShowInformation
         ENABLE,
         ONLY_CONNECT,
         ENABLE_ONLY_TOUCHED_POSITION,
-    };
+    }
 
     void setMessage(final int area, final int color, final String message);
     void setButtonDrawable(final int button, final int labelId);

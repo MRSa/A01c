@@ -543,6 +543,16 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.LOWCENTER, color, IMessageDrawer.SIZE_STD, message);
                 return;
             }
+            if (area == IShowInformation.AREA_B)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTERLEFT, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
+            if (area == IShowInformation.AREA_D)
+            {
+                messageDrawer.setMessageToShow(IMessageDrawer.MessageArea.CENTERRIGHT, color, IMessageDrawer.SIZE_STD, message);
+                return;
+            }
 
             if (id == 0)
             {

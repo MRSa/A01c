@@ -769,7 +769,37 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             canvas.drawText(message, (viewRect.centerX()) - width, viewRect.bottom - fontMetrics.bottom, paint);
         }
-/**/
+
+        // 画面中央左に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.CENTERLEFT);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paint = new Paint();
+            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.CENTERLEFT));
+            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTERLEFT));
+            paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
+            float width = paint.measureText(message) / 2.0f;
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
+            canvas.drawText(message, viewRect.left + 3.0f, cy, paint);
+        }
+
+        // 画面中央右に表示する
+        message = messageHolder.getMessage(ShowMessageHolder.MessageArea.CENTERRIGHT);
+        if ((message != null)&&(message.length() > 0))
+        {
+            Paint paint = new Paint();
+            paint.setColor(messageHolder.getColor(ShowMessageHolder.MessageArea.CENTERRIGHT));
+            paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTERRIGHT));
+            paint.setAntiAlias(true);
+            paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
+            float width = paint.measureText(message) / 2.0f;
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
+            canvas.drawText(message, (viewRect.right - 3.0f) - width, cy, paint);
+        }
+        /**/
     }
 
     /**
