@@ -20,7 +20,6 @@ import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
 import jp.sfjp.gokigen.a01c.liveview.dialog.FavoriteSettingSelectionDialog;
 import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDismissedNotifier;
-import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDrawer;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
@@ -694,25 +693,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void showFavoriteSettingsDialog()
     {
-/*
-        // お気に入り設定画面を開く...
-        LoadSaveMyCameraPropertyDialog dialog = new LoadSaveMyCameraPropertyDialog();
-        dialog.setTargetFragment(this, COMMAND_MY_PROPERTY);
-        dialog.setPropertyOperationsHolder(coordinator.getCameraPropertyLoadSaveOperations());
-        dialog.show(this, "my_dialog");
-*/
-/*
-        //  コマンドの実行確認ダイアログ... 動かん。。
-        ConfirmationDialog dialog = new ConfirmationDialog(this);
-        dialog.show(R.string.title_my_settings, R.string.message_none, new ConfirmationDialog.Callback()
-        {
-            @Override
-            public void confirm()
-            {
-                vibrate(IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG);
-            }
-        });
-*/
         if ((liveView != null)&&(listener != null)&&(listener.isEnabledOperation() != operation.ONLY_CONNECT))
         {
             listener.setEnableOperation(operation.ENABLE_ONLY_TOUCHED_POSITION);
