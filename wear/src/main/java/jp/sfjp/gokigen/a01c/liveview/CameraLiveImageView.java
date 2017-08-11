@@ -779,7 +779,6 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTERLEFT));
             paint.setAntiAlias(true);
             paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
-            float width = paint.measureText(message) / 2.0f;
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
             canvas.drawText(message, viewRect.left + 3.0f, cy, paint);
@@ -794,7 +793,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             paint.setTextSize(messageHolder.getSize(ShowMessageHolder.MessageArea.CENTERRIGHT));
             paint.setAntiAlias(true);
             paint.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK);  // これで文字に影をつけたい
-            float width = paint.measureText(message) / 2.0f;
+            float width = paint.measureText(message);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             float cy = (canvas.getHeight() / 2.0f) - ((fontMetrics.ascent + fontMetrics.descent) / 2.0f);
             canvas.drawText(message, (viewRect.right - 3.0f) - width, cy, paint);

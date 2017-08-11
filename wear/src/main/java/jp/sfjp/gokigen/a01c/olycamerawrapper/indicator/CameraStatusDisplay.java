@@ -38,7 +38,7 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
     private int shortMovieLengthArea = IShowInformation.AREA_NONE;       // 動画撮影時のショートムービー長さ表示エリア指定
     private int movieTakeModeArea = IShowInformation.AREA_NONE;      // 動画撮影時の撮影モード表示エリア指定
 
-    private int stillFocusArea =  IShowInformation.AREA_NONE;        // スチル用フォーカスモード表示エリア指定
+    private int stillFocusArea =  IShowInformation.AREA_NONE;           // スチル用フォーカスモード表示エリア指定 (AF/MF)
     private int movieFocusArea = IShowInformation.AREA_NONE;         // ムービー用フォーカスモード表示エリア指定
     private int fullTimeAfArea = IShowInformation.AREA_NONE;         // フルタイムAF表示エリア指定
 
@@ -255,9 +255,15 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
         String propertyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.FOCUS_STILL));
         if (propertyValue != null)
         {
-            informationObject.setMessage(stillFocusArea, Color.WHITE, propertyValue);
+            if ("S-AF".equals(propertyValue))
+            {
+                informationObject.setMessage(stillFocusArea, Color.WHITE, "");
+            }
+            else
+            {
+                informationObject.setMessage(stillFocusArea, Color.WHITE, propertyValue);
+            }
         }
-
     }
 
     /**
@@ -567,7 +573,7 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
                 movieQualityArea = IShowInformation.AREA_NONE;        // 動画モードの品質表示エリア指定
                 shortMovieLengthArea = IShowInformation.AREA_NONE;    // 動画のショーとクリップ撮影秒数設定表示エリア指定
                 movieTakeModeArea = IShowInformation.AREA_NONE;       // 動画モード時の撮影モード表示エリア指定
-                stillFocusArea = IShowInformation.AREA_NONE;          // フォーカスモード静止画用の表示エリア指定
+                stillFocusArea = IShowInformation.AREA_NONE;              // フォーカスモード静止画用の表示エリア指定
                 movieFocusArea = IShowInformation.AREA_NONE;          // フォーカスモードムービー用の表示エリア指定
                 fullTimeAfArea = IShowInformation.AREA_NONE;          // フルタイムAFモード表示エリア指定
                 informationObject.setMessage(IShowInformation.AREA_8, Color.WHITE, "");
@@ -603,5 +609,6 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
         updateAeMode();
         updateAeLockState();
         updateArtFilter();
+        //updateStillFocusMode();
     }
 }
