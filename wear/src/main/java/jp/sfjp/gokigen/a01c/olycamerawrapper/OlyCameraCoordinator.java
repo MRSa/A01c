@@ -62,6 +62,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     private final OlyCameraConnection cameraConnection;
     private final ICameraStatusDisplay cameraStatusDisplay;
     private final LevelMeterHolder levelMeter;
+    private final ZoomLensHolder zoomLensHolder;
 
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
@@ -96,6 +97,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         camera.setRecordingListener(new CameraRecordingListenerImpl(context, showInformation));
         loadSaveCameraProperties = new LoadSaveCameraProperties(context, propertyProxy, this);
         loadSaveOperations = new CameraPropertyLoadSaveOperations(context, loadSaveCameraProperties, cameraStatusDisplay);
+        zoomLensHolder = new ZoomLensHolder(camera);
     }
 
     /**
@@ -438,6 +440,12 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     public IOlyCameraConnection getConnectionInterface()
     {
         return (cameraConnection);
+    }
+
+    @Override
+    public IZoomLensHolder getZoomLensHolder()
+    {
+        return (zoomLensHolder);
     }
 
     @Override

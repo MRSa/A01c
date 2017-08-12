@@ -100,6 +100,10 @@ public interface ICameraFeatureDispatcher
     int FEATURE_SHOT_BRACKET_ART_FILTER = 42;
     int FEATURE_SHOT_BRACKET_ISO = 43;
     int FEATURE_SHOW_FAVORITE_DIALOG = 44;
+    int FEATURE_LENS_ZOOMIN = 45;
+    int FEATURE_LENS_ZOOMOUT = 46;
+    int FEATURE_LENS_ZOOMIN_2X = 47;
+    int FEATURE_LENS_ZOOMOUT_2X = 48;
 
     // エリアタッチ時の機能(featureNumber)
     int FEATURE_AREA_ACTION_NONE = 100;

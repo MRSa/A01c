@@ -72,6 +72,9 @@ public interface IOlyCameraCoordinator
 
     IOlyCameraConnection getConnectionInterface();
 
+    /** ズームレンズの状態ホルダを応答 **/
+    IZoomLensHolder getZoomLensHolder();
+
     // デジタル水準器のホルダーを取得する
     ILevelGauge getLevelGauge();
 }

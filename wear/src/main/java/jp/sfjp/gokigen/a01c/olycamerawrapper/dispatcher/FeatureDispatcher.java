@@ -7,6 +7,7 @@ import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
@@ -237,6 +238,38 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
             case FEATURE_SHOW_FAVORITE_DIALOG:
                 // お気に入りのダイアログ表示を行う
                 showFavoriteDialog();
+                break;
+
+            case FEATURE_LENS_ZOOMIN:
+                // ズームイン（パワーズームレンズ装着時）
+                if (!driveZoomLens(1))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_LENS_ZOOMOUT:
+                // ズームアウト（パワーズームレンズ装着時）
+                if (!driveZoomLens(-1))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_LENS_ZOOMIN_2X:
+                // ズームイン（パワーズームレンズ装着時）
+                if (!driveZoomLens(2))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_LENS_ZOOMOUT_2X:
+                // ズームアウト（パワーズームレンズ装着時）
+                if (!driveZoomLens(-2))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
                 break;
 
             default:
@@ -736,6 +769,36 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     {
         // お気に入り設定表示画面を開く
         statusDrawer.showFavoriteSettingsDialog();
+    }
+
+    /**
+     *    ズームイン・ズームアウト操作を行う
+     *
+     * @param direction ズーム操作の方向
+     *
+     */
+    private boolean driveZoomLens(int direction)
+    {
+        boolean isExecute = false;
+        IZoomLensHolder zoom = camera.getZoomLensHolder();
+        if (zoom != null)
+        {
+            zoom.updateStatus();
+            if (zoom.canZoom())
+            {
+                // ズーム操作を行う
+                try
+                {
+                    zoom.driveZoomLens(direction);
+                    isExecute = true;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return (isExecute);
     }
 
     /**

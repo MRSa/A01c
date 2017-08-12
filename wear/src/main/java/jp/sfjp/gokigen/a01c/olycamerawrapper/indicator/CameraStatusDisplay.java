@@ -472,18 +472,21 @@ public class CameraStatusDisplay implements  ICameraStatusDisplay
      */
     private void updateButtonIcon(String takeMode)
     {
-        int btnResId;
-        if (takeMode.equals("Movie"))
+        if (takeMode != null)
         {
-            btnResId = R.drawable.btn_videocam;
-        }
-        else
-        {
-            btnResId = R.drawable.btn_ic_camera_alt;
-        }
-        if (shutterButtonId != 0)
-        {
-            informationObject.setButtonDrawable(shutterButtonId, btnResId);
+            int btnResId;
+            if (takeMode.equals("Movie"))
+            {
+                btnResId = R.drawable.btn_videocam;
+            }
+            else
+            {
+                btnResId = R.drawable.btn_ic_camera_alt;
+            }
+            if (shutterButtonId != 0)
+            {
+                informationObject.setButtonDrawable(shutterButtonId, btnResId);
+            }
         }
     }
 
