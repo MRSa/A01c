@@ -7,10 +7,12 @@ import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
+import jp.co.olympus.camerakit.OLYCameraKitException;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOLYCameraObjectProvider;
 
 /**
@@ -84,6 +86,7 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
     {
         Log.v(TAG, "loadCameraSettings() : START [" + idHeader + "]");
         //loadCameraSettingsBatch(idHeader);
+        //loadCameraSettingsMiniBatch(idHeader);
         loadCameraSettingsSequential(idHeader);
     }
 
@@ -142,7 +145,7 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
             Log.v(TAG, "loadCameraSettingsSequential() : END [" + idHeader + "]" + " " + setCount);
         }
     }
-/*
+/**/
     //// プロパティの一括設定
     private void loadCameraSettingsBatch(String idHeader)
     {
@@ -199,5 +202,61 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
             Log.v(TAG, "loadCameraSettingsBatch() : END [" + idHeader + "]" + " " + values.size());
         }
     }
-*/
+
+    //// プロパティの一括設定
+    private void loadCameraSettingsMiniBatch(String idHeader)
+    {
+        // Restores my settings.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(parent);
+        if (camera.isConnected())
+        {
+            String takeModeValue = preferences.getString(idHeader + TAKEMODE, null);
+            try
+            {
+                // TAKEMODE だけは先行して設定する（設定できないカメラプロパティもあるので...）
+                if (takeModeValue != null)
+                {
+                    camera.setCameraPropertyValue(TAKEMODE, takeModeValue);
+                    Log.v(TAG, "loadCameraSettings() TAKEMODE : " + takeModeValue);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Log.v(TAG, "loadCameraSettings() : setCameraPropertyValue() fail...");
+            }
+
+            Map<String, String> values = new HashMap<>();
+            Set<String> names = camera.getCameraPropertyNames();
+            for (String name : names)
+            {
+                String value = preferences.getString(idHeader + name, null);
+                if (value != null)
+                {
+                    if (propertyProvider.canSetCameraProperty(name))
+                    {
+                        // Read Onlyのプロパティを除外して登録
+                        values.put(name, value);
+                        Log.v(TAG, "loadCameraSettings(): " + value);
+                    }
+                }
+            }
+            if (values.size() > 0)
+            {
+                try
+                {
+                    camera.setCameraPropertyValues(values);
+                }
+                catch (OLYCameraKitException e)
+                {
+                    Log.w(TAG, "To change the camera properties is failed: " + e.getMessage());
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            Log.v(TAG, "loadCameraSettingsBatch() : END [" + idHeader + "]" + " " + values.size());
+        }
+    }
 }
