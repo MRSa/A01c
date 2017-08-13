@@ -272,6 +272,34 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 }
                 break;
 
+            case FEATURE_DIGITAL_ZOOM_RESET:
+                // デジタルズームのリセット
+                resetDigitalZoom();
+                break;
+
+            case FEATURE_DIGITAL_ZOOM_CHANGE:
+                // デジタルズームの設定 (繰り返し)
+                if (!driveDigitalZoom(0))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+            case FEATURE_DIGITAL_ZOOMIN:
+                // デジタルズーム ズームイン
+                if (!driveDigitalZoom(1))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_DIGITAL_ZOOMOUT:
+                // デジタルズーム ズームアウト
+                if (!driveDigitalZoom(-1))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
             default:
                 // 上記以外...なにもしない
                 duration =IShowInformation.VIBRATE_PATTERN_NONE;
@@ -797,6 +825,38 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                     e.printStackTrace();
                 }
             }
+        }
+        return (isExecute);
+    }
+
+    private void resetDigitalZoom()
+    {
+        IZoomLensHolder zoom = camera.getZoomLensHolder();
+        if (zoom != null)
+        {
+            zoom.updateStatus();
+            zoom.changeDigitalZoomScale(1.0f, false);
+        }
+    }
+
+    private boolean driveDigitalZoom(int zoomType)
+    {
+        boolean isExecute = false;
+        IZoomLensHolder zoom = camera.getZoomLensHolder();
+        if (zoom != null)
+        {
+            zoom.updateStatus();
+
+            float magnify = zoomType;
+            if (zoomType == 0)
+            {
+                magnify = 1.0f;
+            }
+
+            float currentScale = zoom.getCurrentDigitalZoomScale();
+            float targetScale = currentScale + magnify * 0.5f;
+            zoom.changeDigitalZoomScale(targetScale, (zoomType == 0));
+            isExecute = true;
         }
         return (isExecute);
     }

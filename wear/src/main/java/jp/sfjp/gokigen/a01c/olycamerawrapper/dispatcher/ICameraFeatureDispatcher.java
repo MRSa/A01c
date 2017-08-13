@@ -104,6 +104,11 @@ public interface ICameraFeatureDispatcher
     int FEATURE_LENS_ZOOMOUT = 46;
     int FEATURE_LENS_ZOOMIN_2X = 47;
     int FEATURE_LENS_ZOOMOUT_2X = 48;
+    int FEATURE_DIGITAL_ZOOM_RESET = 49;
+    int FEATURE_DIGITAL_ZOOM_CHANGE = 50;
+    int FEATURE_DIGITAL_ZOOMIN = 51;
+    int FEATURE_DIGITAL_ZOOMOUT = 52;
+
 
     // エリアタッチ時の機能(featureNumber)
     int FEATURE_AREA_ACTION_NONE = 100;

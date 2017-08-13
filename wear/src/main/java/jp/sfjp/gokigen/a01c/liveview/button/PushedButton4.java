@@ -57,7 +57,7 @@ class PushedButton4 implements IPushedButton
 
             case "iAuto":
                 preference_action_id = preference_action_id + ICameraFeatureDispatcher.MODE_IAUTO;
-                defaultAction = ICameraFeatureDispatcher.FEATURE_ACTION_NONE;
+                defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_DIGITAL_ZOOM_RESET : ICameraFeatureDispatcher.FEATURE_DIGITAL_ZOOMOUT;
                 break;
 
             case "Movie":

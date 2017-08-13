@@ -15,5 +15,6 @@ public interface IZoomLensHolder
     void driveZoomLens(float targetLength);
     void driveZoomLens(int direction);
     boolean isDrivingZoomLens();
-
+    float getCurrentDigitalZoomScale();
+    void changeDigitalZoomScale(float scale, boolean isCyclic);
 }

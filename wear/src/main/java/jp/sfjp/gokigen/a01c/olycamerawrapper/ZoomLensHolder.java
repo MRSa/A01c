@@ -2,6 +2,8 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.util.Log;
 
+import java.util.Map;
+
 import jp.co.olympus.camerakit.OLYCamera;
 
 /**
@@ -15,6 +17,9 @@ class ZoomLensHolder implements IZoomLensHolder
     private float minimumLength = 0.0f;
     private float maximumLength = 0.0f;
     private float currentLength = 0.0f;
+    private float minimumDigitalScale = 1.0f;
+    private float maximumDigitalScale = 1.0f;
+    private float currentDigitalScale = 1.0f;
     private final OLYCamera camera;
 
     ZoomLensHolder(OLYCamera camera)
@@ -28,7 +33,19 @@ class ZoomLensHolder implements IZoomLensHolder
         canZoom = false;
         try
         {
-            canZoom = ((camera != null) && (camera.getLensMountStatus()).contains("electriczoom"));
+            if (camera == null)
+            {
+                return;
+            }
+
+            // デジタルズームの情報
+            Map<String, Float> value = camera.getDigitalZoomScaleRange();
+            maximumDigitalScale = value.get(OLYCamera.DIGITAL_ZOOM_SCALE_RANGE_MAXIMUM_KEY);
+            minimumDigitalScale = value.get(OLYCamera.DIGITAL_ZOOM_SCALE_RANGE_MINIMUM_KEY);
+            Log.v(TAG, "DIGITAL ZOOM SCALE : " + minimumDigitalScale + " - " + maximumDigitalScale);
+
+            // 光学ズームの情報
+            canZoom = (camera.getLensMountStatus()).contains("electriczoom");
             if (canZoom)
             {
                 try
@@ -36,6 +53,7 @@ class ZoomLensHolder implements IZoomLensHolder
                     minimumLength = camera.getMinimumFocalLength();
                     maximumLength = camera.getMaximumFocalLength();
                     currentLength = camera.getActualFocalLength();
+                    Log.v(TAG, "OPTICAL ZOOM RANGE : " + minimumLength + " - " + maximumLength + " (" + currentLength + ")");
                 }
                 catch (Exception e)
                 {
@@ -125,7 +143,7 @@ class ZoomLensHolder implements IZoomLensHolder
     @Override
     public void driveZoomLens(int direction)
     {
-        float mag = Math.abs(direction);
+        float mag = Math.abs(direction) * 1.5f;
         driveZoomLens((direction < 0) ? (currentLength * (0.88f / mag)) : (currentLength * 1.15f * mag));
     }
 
@@ -140,4 +158,43 @@ class ZoomLensHolder implements IZoomLensHolder
         return  ((camera != null)&&(camera.isDrivingZoomLens()));
     }
 
+
+    /**
+     *   現在のデジタルズーム倍率を応答する
+     *
+     * @return  現在のデジタルズーム倍率
+     */
+    @Override
+    public float getCurrentDigitalZoomScale()
+    {
+        return (currentDigitalScale);
+    }
+
+    /**
+     *   デジタルズームを実行する
+     *
+     * @param scale ズーム倍率
+     */
+    @Override
+    public void changeDigitalZoomScale(float scale, boolean isCyclic)
+    {
+        float zoomScale = scale;
+        try
+        {
+            if (zoomScale <= minimumDigitalScale)
+            {
+                zoomScale = (isCyclic) ? maximumDigitalScale : minimumDigitalScale;
+            }
+            if (zoomScale >= maximumDigitalScale)
+            {
+                zoomScale = (isCyclic) ? minimumDigitalScale : maximumDigitalScale;
+            }
+            camera.changeDigitalZoomScale(zoomScale);
+            currentDigitalScale = zoomScale;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
