@@ -7,12 +7,12 @@ import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
-import jp.co.olympus.camerakit.OLYCameraKitException;
+//import jp.co.olympus.camerakit.OLYCameraKitException;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOLYCameraObjectProvider;
 
 /**
@@ -86,12 +86,12 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
     {
         Log.v(TAG, "loadCameraSettings() : START [" + idHeader + "]");
         //loadCameraSettingsBatch(idHeader);
-        //loadCameraSettingsMiniBatch(idHeader);
+        //loadCameraSettingsMiniBatch(idHeader, 5);
         loadCameraSettingsSequential(idHeader);
     }
 
     /**
-     *
+     *   カメラのプロパティを１つづつ個別設定
      *
      */
     private void loadCameraSettingsSequential(String idHeader)
@@ -145,7 +145,8 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
             Log.v(TAG, "loadCameraSettingsSequential() : END [" + idHeader + "]" + " " + setCount);
         }
     }
-/**/
+
+/*
     //// プロパティの一括設定
     private void loadCameraSettingsBatch(String idHeader)
     {
@@ -203,8 +204,8 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
         }
     }
 
-    //// プロパティの一括設定
-    private void loadCameraSettingsMiniBatch(String idHeader)
+    //// プロパティの一括設定 (ミニバッチ)
+    private void loadCameraSettingsMiniBatch(String idHeader, int batchSize)
     {
         // Restores my settings.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(parent);
@@ -226,6 +227,7 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
                 Log.v(TAG, "loadCameraSettings() : setCameraPropertyValue() fail...");
             }
 
+            int currentSize = 0;
             Map<String, String> values = new HashMap<>();
             Set<String> names = camera.getCameraPropertyNames();
             for (String name : names)
@@ -237,8 +239,28 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
                     {
                         // Read Onlyのプロパティを除外して登録
                         values.put(name, value);
-                        Log.v(TAG, "loadCameraSettings(): " + value);
+                        currentSize++;
+                        Log.v(TAG, "loadCameraSettings(): " + value + " [" + (currentSize) + "]");
                     }
+                }
+                if (currentSize >= batchSize)
+                {
+                    // バッチサイズの最大数到達...設定する
+                    try
+                    {
+                        camera.setCameraPropertyValues(values);
+                        Log.v(TAG, "setCameraPropertyValues() : " + currentSize);
+                    }
+                    catch (OLYCameraKitException e)
+                    {
+                        Log.w(TAG, "camera.setCameraPropertyValues() failed: " + e.getMessage());
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    currentSize = 0;
+                    values.clear();
                 }
             }
             if (values.size() > 0)
@@ -259,4 +281,5 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
             Log.v(TAG, "loadCameraSettingsBatch() : END [" + idHeader + "]" + " " + values.size());
         }
     }
+*/
 }
