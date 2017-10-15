@@ -23,8 +23,6 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
 {
     private final String TAG = toString();
 
-    private static final String TAKEMODE = "TAKEMODE";
-
     private final Context parent;
     private final OLYCamera camera;
     private final IOlyCameraPropertyProvider propertyProvider;
@@ -87,13 +85,15 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
         Log.v(TAG, "loadCameraSettings() : START [" + idHeader + "]");
         //loadCameraSettingsBatch(idHeader);
         //loadCameraSettingsMiniBatch(idHeader, 5);
-        loadCameraSettingsSequential(idHeader);
+        //loadCameraSettingsSequential(idHeader);
+        loadCameraSettingsOnlyDifferences(idHeader);
     }
 
-    /**
-     *   カメラのプロパティを１つづつ個別設定
-     *
-     */
+/*
+        ///**
+        // *   カメラのプロパティを１つづつ個別設定
+        // *
+        // *
     private void loadCameraSettingsSequential(String idHeader)
     {
         int setCount = 0;
@@ -146,7 +146,6 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
         }
     }
 
-/*
     //// プロパティの一括設定
     private void loadCameraSettingsBatch(String idHeader)
     {
@@ -282,4 +281,86 @@ public class LoadSaveCameraProperties implements ILoadSaveCameraProperties
         }
     }
 */
+    /**
+     *   カメラのプロパティを１つづつ個別設定（違っているものだけ設定する）
+     *
+     */
+    private boolean loadCameraSettingsOnlyDifferences(String idHeader)
+    {
+        boolean ret = false;
+        int setCount = 0;
+
+        // Restores my settings.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(parent);
+        if (camera.isConnected())
+        {
+
+            //  現在の設定値を全部とってくる
+            Map<String, String> propertyValues;
+            try
+            {
+                propertyValues = propertyProvider.getCameraPropertyValues(propertyProvider.getCameraPropertyNames());
+            }
+            catch (Exception e)
+            {
+                // 設定値が取得できなかった場合は、終了する。
+                e.printStackTrace();
+                return (false);
+            }
+            if (propertyValues == null)
+            {
+                // プロパティの取得が失敗していたら、何もせずに折り返す
+                return (false);
+            }
+
+            String takeModeValue = preferences.getString(idHeader + IOlyCameraProperty.TAKE_MODE, null);
+            try
+            {
+                // TAKEMODE だけは先行して設定する（設定できないカメラプロパティもあるので...）
+                if (takeModeValue != null)
+                {
+                    propertyProvider.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, takeModeValue);
+                    Log.v(TAG, "loadCameraSettingsOnlyDifferences() TAKEMODE : " + takeModeValue);
+                    setCount++;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Log.v(TAG, "loadCameraSettings() : loadCameraSettingsOnlyDifferences() fail...");
+            }
+
+            Set<String> names = propertyProvider.getCameraPropertyNames();
+            for (String name : names)
+            {
+                String value = preferences.getString(idHeader + name, null);
+                String currentValue = propertyValues.get(name);
+                if ((value != null)&&(currentValue != null)&&(!value.equals(currentValue)))
+                //if (value != null)
+                {
+                    if (propertyProvider.canSetCameraProperty(name))
+                    {
+                        // Read Onlyのプロパティを除外して登録
+                        try
+                        {
+                            // カメラプロパティを個別登録（全パラメータを一括登録すると何か落ちている
+                            Log.v(TAG, "loadCameraSettingsOnlyDifferences(): SET : " + value);
+                            propertyProvider.setCameraPropertyValue(name, value);
+                            setCount++;
+                            //Thread.sleep(5);   //　処理落ちしている？かもしれないので必要なら止める
+                            ret = true;
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            ret = false;
+                        }
+                    }
+                }
+            }
+            Log.v(TAG, "loadCameraSettingsOnlyDifferences() : END [" + idHeader + "]" + " " + setCount);
+        }
+        return (ret);
+    }
+
 }
