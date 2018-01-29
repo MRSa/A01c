@@ -337,6 +337,11 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 */
                 break;
 
+            case ICameraFeatureDispatcher.FEATURE_AREA_ACTION_CHECK_CONTAINS_AUTOFOCUS_AREA:
+                // AUTOFOCUS エリアに含まれているかどうかチェックする
+                ret = camera.isContainsAutoFocusPoint(event);
+                break;
+
             case FEATURE_AREA_ACTION_NONE:
             default:
                 // 何もしない

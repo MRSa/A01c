@@ -114,6 +114,9 @@ public interface ICameraFeatureDispatcher
     int FEATURE_AREA_ACTION_NONE = 100;
     int FEATURE_AREA_ACTION_NOT_CONNECTED = 101;
     int FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS = 102;
+    int FEATURE_AREA_ACTION_CHECK_CONTAINS_AUTOFOCUS_AREA = 103;
+
+
 
     // アクションインタフェース
     String getTakeMode();   // 撮影モードの取得

@@ -121,8 +121,89 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             Log.v(TAG, "onTouch() : prohibit operation");
             return ((operationMode == IShowInformation.operation.ONLY_CONNECT)&&(changeScene.showConnectionStatus()));
         }
-        // 現在のところ、タッチエリアの場合はオートフォーカス実行で固定
+
+        // 画面下部のエリア（オートフォーカスエリア外）をタッチした場合には、ボタン押下アクションに切り替える
+        int hookId = checkHookTouchedPosition(v, event);
+        if (hookId != 0)
+        {
+            boolean ret = false;
+            if (hookId == R.id.liveview)
+            {
+                //  何もしないパターン。。。
+                return (true);
+            }
+            try
+            {
+                IPushedButton button = buttonDispatcher.get(hookId);
+                if (button != null)
+                {
+                    // ボタンを押したことにする
+                    ret = button.pushedButton(false);
+                    //v.performClick();  // 本来はこっちで動かしたい。
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return (ret);
+        }
+
+        // オートフォーカスエリアに含まれていた場合には、オートフォーカスを実行する
         return ((id == R.id.liveview)&&(dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS)));
+    }
+
+    /**
+     *　  タッチエリアを確認しフックするかどうか確認する (0なら hook しない)
+     *
+     */
+    private int checkHookTouchedPosition(View v, MotionEvent event)
+    {
+        int hookId = 0;
+        try
+        {
+            // オートフォーカスエリア内かどうかチェックする
+            if (dispatcher.dispatchAreaAction(event, ICameraFeatureDispatcher.FEATURE_AREA_ACTION_CHECK_CONTAINS_AUTOFOCUS_AREA))
+            {
+                if (event.getAction() != MotionEvent.ACTION_DOWN)
+                {
+                    // オートフォーカスエリア内のときには、ACTION_DOWN のみを拾う
+                    return (R.id.liveview);
+                }
+                // オートフォーカスエリアに含まれているのでオートフォーカスする
+                return (0);
+            }
+            if (event.getAction() != MotionEvent.ACTION_UP)
+            {
+                // オートフォーカスエリア外のときには、 ACTION_UP のみを拾う
+                return (R.id.liveview);
+            }
+
+            // オートフォーカスエリア外なので、イベントをフックしてボタン操作に変える（当面は右下のみ）
+            float areaY = event.getY() / v.getHeight();
+            float areaX = event.getX() / v.getWidth();
+            Log.v(TAG, "HOOKED POSITION (areaX : " + areaX + " areaY : " + areaY + ")");
+            if (areaY > 0.66f)
+            {
+                if (areaX > 0.8333f)
+                {
+                    // 画面右下のオートフォーカスエリア外のときのみ、撮影ボタンを押したことにする
+                    // (0.66f ... 画面タッチエリアの下 1/3、0.8333f ... 画面タッチエリアの右側 1/6)
+                    return (R.id.btn_6);
+                }
+                else if (areaX < 0.1666f)
+                {
+                    return (R.id.btn_1);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // ちゃんとポジションが取れなかった...
+            e.printStackTrace();
+            hookId = 0;
+        }
+        return (hookId);
     }
 
     /**

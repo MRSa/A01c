@@ -44,7 +44,7 @@ class LevelMeterHolder implements ILevelGauge
         if (!isWatchingLevelGauge)
         {
             // レベルゲージの監視はしない
-            Log.v(TAG, "checkLevelGauge() : not watch");
+            // Log.v(TAG, "checkLevelGauge() : not watch");  // 結構ログが出るので消す
             return;
         }
         try

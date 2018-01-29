@@ -27,6 +27,9 @@ public interface IOlyCameraCoordinator
     boolean driveAutoFocus(MotionEvent event);
     void unlockAutoFocus();
 
+    /** ポイントがオートフォーカス可能なエリアかどうかチェックする **/
+    boolean isContainsAutoFocusPoint(MotionEvent event);  // trueならオートフォーカス可能
+
     /** シングル撮影機能の実行 **/
     void singleShot();
 

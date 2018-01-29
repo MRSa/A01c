@@ -2,6 +2,7 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
 import android.app.Activity;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
@@ -191,6 +192,36 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         }
         PointF point = focusFrameDisplay.getPointWithEvent(event);
         return ((focusFrameDisplay.isContainsPoint(point)) && autoFocus.lockAutoFocus(point));
+    }
+
+    /**
+     *   オートフォーカスのポイントに含まれているか確認する (trueだったら含まれる)
+     *
+     */
+    @Override
+    public boolean isContainsAutoFocusPoint(MotionEvent event)
+    {
+        //// 以下の機能は、タッチイベントの受信時のみ動作させる
+        //if (event.getAction() != MotionEvent.ACTION_DOWN)
+        //{
+        //    return (false);
+        //}
+        try
+        {
+            // タッチした位置を取得する
+            PointF point = focusFrameDisplay.getPointWithEvent(event);
+
+            // AFの有効座標を取得する
+            RectF rect = camera.getAutoFocusEffectiveArea();
+            //Log.v(TAG, "AF POINT (" + point.x + "," + point.y + ")");
+            //Log.v(TAG, "AF EFFECTIVE AREA (" + rect.left + "," + rect.left + ") - (" + rect.right + "," + rect.bottom + ")");
+            return (rect.contains(point.x, point.y));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
     }
 
     /**
