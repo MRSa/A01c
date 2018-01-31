@@ -653,13 +653,13 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                             vibrator.vibrate(150);
                             break;
                         case IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE:
-                            vibrator.vibrate(75);
+                            vibrator.vibrate(80);
                             break;
                         case IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT:
-                            vibrator.vibrate(20);
+                            vibrator.vibrate(30);
                             break;
                         case IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE:
-                            long[] pattern = { 10, 25, 20, 25, 0 };
+                            long[] pattern = { 10, 35, 30, 35, 0 };
                             vibrator.vibrate(pattern, -1);
                             break;
                         case IShowInformation.VIBRATE_PATTERN_NONE:
