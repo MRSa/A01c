@@ -26,6 +26,7 @@ public interface IShowInformation
     int BUTTON_4 = 4;
     int BUTTON_5 = 5;
     int BUTTON_6 = 6;
+    int LOWER_AREA = 7;
 
     int VIBRATE_PATTERN_NONE  = 0;
     int VIBRATE_PATTERN_SIMPLE_SHORT  = 1;

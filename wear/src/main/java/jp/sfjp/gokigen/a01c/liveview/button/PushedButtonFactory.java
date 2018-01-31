@@ -8,8 +8,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher
 
 public class PushedButtonFactory
 {
-    private final String TAG = toString();
-
+    //private final String TAG = toString();
     private SparseArray<IPushedButton> buttonMap;
 
     public PushedButtonFactory(Context context, ICameraFeatureDispatcher dispatcher)
@@ -25,6 +24,7 @@ public class PushedButtonFactory
         buttonMap.put(R.id.text_2, new PushedArea2(context, dispatcher));
         buttonMap.put(R.id.text_3, new PushedArea3(context, dispatcher));
         buttonMap.put(R.id.text_4, new PushedArea4(context, dispatcher));
+        buttonMap.put(R.id.liveview, new PushedLowerArea(context, dispatcher));
     }
 
     public SparseArray<IPushedButton> getButtonMap()

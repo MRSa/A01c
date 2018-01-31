@@ -127,24 +127,35 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         if (hookId != 0)
         {
             boolean ret = false;
-            if (hookId == R.id.liveview)
+            if (hookId == R.id.button_area)
             {
                 //  何もしないパターン。。。
                 return (true);
             }
             try
             {
-                IPushedButton button = buttonDispatcher.get(hookId);
+                IPushedButton button = buttonDispatcher.get(R.id.liveview);
                 if (button != null)
                 {
-                    // ボタンを押したことにする
-                    ret = button.pushedButton(false);
+                    if (hookId == R.id.btn_1)
+                    {
+                        // 左側のエリア → 長押し
+                        ret = button.pushedButton(true);
+                    }
+                    else // (hookId == R.id.btn_6)
+                    {
+                        // 右側のエリア → クリック
+                        ret = button.pushedButton(false);
+                    }
+                    //// ボタンを押したことにする
+                    ////ret = button.pushedButton(false);
                     //v.performClick();  // 本来はこっちで動かしたい。
                 }
             }
             catch (Exception e)
             {
                 e.printStackTrace();
+                v.performClick(); // exception のときだけ...ダミー処理
             }
             return (ret);
         }
@@ -154,12 +165,12 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
     }
 
     /**
-     *　  タッチエリアを確認しフックするかどうか確認する (0なら hook しない)
+     *　  タッチエリアを確認しフックするかどうか確認する
+     *    (0なら hook しない, 左のエリアは、R.id.btn_1, 右のエリアは、R.id.btn_2, 何もしない場合は R.id.area)
      *
      */
     private int checkHookTouchedPosition(View v, MotionEvent event)
     {
-        int hookId = 0;
         try
         {
             // オートフォーカスエリア内かどうかチェックする
@@ -168,7 +179,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
                 if (event.getAction() != MotionEvent.ACTION_DOWN)
                 {
                     // オートフォーカスエリア内のときには、ACTION_DOWN のみを拾う
-                    return (R.id.liveview);
+                    return (R.id.button_area);
                 }
                 // オートフォーカスエリアに含まれているのでオートフォーカスする
                 return (0);
@@ -176,14 +187,14 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             if (event.getAction() != MotionEvent.ACTION_UP)
             {
                 // オートフォーカスエリア外のときには、 ACTION_UP のみを拾う
-                return (R.id.liveview);
+                return (R.id.button_area);
             }
 
             // オートフォーカスエリア外なので、イベントをフックしてボタン操作に変える（当面は右下のみ）
             float areaY = event.getY() / v.getHeight();
             float areaX = event.getX() / v.getWidth();
             Log.v(TAG, "HOOKED POSITION (areaX : " + areaX + " areaY : " + areaY + ")");
-            if (areaY > 0.66f)
+            if (areaY > 0.75f)
             {
                 if (areaX > 0.8333f)
                 {
@@ -201,9 +212,9 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // ちゃんとポジションが取れなかった...
             e.printStackTrace();
-            hookId = 0;
         }
-        return (hookId);
+        // エリア外だけれどもオートフォーカスする
+        return (0);
     }
 
     /**

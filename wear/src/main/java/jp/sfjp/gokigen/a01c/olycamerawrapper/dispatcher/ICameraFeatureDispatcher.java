@@ -24,6 +24,7 @@ public interface ICameraFeatureDispatcher
     String ACTION_BUTTON4 = "B4";
     String ACTION_BUTTON5 = "B5";
     String ACTION_BUTTON6 = "B6";
+    String ACTION_BUTTONL = "LA";
 
     // エリアアクション
     String ACTION_AREA1 = "A1";
