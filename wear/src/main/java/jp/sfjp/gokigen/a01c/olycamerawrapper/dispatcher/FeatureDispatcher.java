@@ -300,6 +300,38 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
                 }
                 break;
 
+            case FEATURE_CHANGE_LIVEVIEW_MAGNIFY_X5:
+                // ライブビュー拡大（5倍）
+                if (!changeLiveViewMagnify(5))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_CHANGE_LIVEVIEW_MAGNIFY_X7:
+                // ライブビュー拡大（7倍）
+                if (!changeLiveViewMagnify(7))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_CHANGE_LIVEVIEW_MAGNIFY_X10:
+                // ライブビュー拡大（10倍）
+                if (!changeLiveViewMagnify(10))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
+            case FEATURE_CHANGE_LIVEVIEW_MAGNIFY_X14:
+                // ライブビュー拡大（14倍）
+                if (!changeLiveViewMagnify(14))
+                {
+                    duration =IShowInformation.VIBRATE_PATTERN_NONE;
+                }
+                break;
+
             default:
                 // 上記以外...なにもしない
                 duration =IShowInformation.VIBRATE_PATTERN_NONE;
@@ -862,6 +894,24 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
             float targetScale = currentScale + magnify * 0.5f;
             zoom.changeDigitalZoomScale(targetScale, (zoomType == 0));
             isExecute = true;
+        }
+        return (isExecute);
+    }
+
+
+    /**
+     *   ライブビューのサイズを指定した倍率に拡大する（拡大中の場合にはもとに戻す。）
+     *
+     * @param scale  拡大倍率
+     * @return  実行した場合true, 実行しなかった場合はfalse
+     */
+    private boolean changeLiveViewMagnify(int scale)
+    {
+        boolean isExecute = false;
+        IZoomLensHolder zoom = camera.getZoomLensHolder();
+        if (zoom != null)
+        {
+            isExecute = zoom.magnifyLiveView(scale);
         }
         return (isExecute);
     }

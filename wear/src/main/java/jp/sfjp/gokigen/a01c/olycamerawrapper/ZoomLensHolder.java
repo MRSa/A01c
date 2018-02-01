@@ -1,5 +1,6 @@
 package jp.sfjp.gokigen.a01c.olycamerawrapper;
 
+import android.graphics.PointF;
 import android.util.Log;
 
 import java.util.Map;
@@ -168,6 +169,45 @@ class ZoomLensHolder implements IZoomLensHolder
     public float getCurrentDigitalZoomScale()
     {
         return (currentDigitalScale);
+    }
+
+    public boolean magnifyLiveView(int scale)
+    {
+        try
+        {
+            if (camera != null)
+            {
+                if (camera.isMagnifyingLiveView())
+                {
+                    // ライブビュー拡大中の場合には、拡大をやめる。
+                    camera.stopMagnifyingLiveView();
+                    return(true);
+                }
+
+                // ライブビュー画像について、中心を指定されたサイズに拡大する
+                OLYCamera.MagnifyingLiveViewScale lvScale = OLYCamera.MagnifyingLiveViewScale.X14;
+                if (scale  == 5)
+                {
+                    lvScale = OLYCamera.MagnifyingLiveViewScale.X5;
+                }
+                else if (scale  == 7)
+                {
+                    lvScale = OLYCamera.MagnifyingLiveViewScale.X7;
+                }
+                else if (scale  == 10)
+                {
+                    lvScale = OLYCamera.MagnifyingLiveViewScale.X10;
+                }
+                camera.startMagnifyingLiveViewAtPoint(new PointF(0.5f, 0.5f), lvScale);
+
+                return (true);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
     }
 
     /**

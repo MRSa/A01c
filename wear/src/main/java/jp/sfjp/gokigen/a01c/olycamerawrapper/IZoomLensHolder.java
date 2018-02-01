@@ -16,5 +16,6 @@ public interface IZoomLensHolder
     void driveZoomLens(int direction);
     boolean isDrivingZoomLens();
     float getCurrentDigitalZoomScale();
+    boolean magnifyLiveView(int scale);
     void changeDigitalZoomScale(float scale, boolean isCyclic);
 }
