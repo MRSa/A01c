@@ -264,6 +264,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private boolean launchWifiSettingScreen()
     {
+        Log.v(TAG, "launchWifiSettingScreen()");
         try
         {
             // Wifi 設定画面を表示する... (SONY Smart Watch 3では開かないけど...)
@@ -292,6 +293,18 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                 catch (Exception ee)
                 {
                     ee.printStackTrace();
+                    try
+                    {
+                        // LG G Watch Rで開く場合のIntent...
+                        Intent intent = new Intent("android.intent.action.MAIN");
+                        intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.MainSettingsActivity");
+                        startActivity(intent);
+                        return (true);
+                    }
+                    catch (android.content.ActivityNotFoundException ex3)
+                    {
+                        ex3.printStackTrace();
+                    }
                 }
             }
             catch (Exception e)
