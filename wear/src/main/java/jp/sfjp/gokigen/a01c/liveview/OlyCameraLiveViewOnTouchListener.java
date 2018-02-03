@@ -194,7 +194,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             float areaY = event.getY() / v.getHeight();
             float areaX = event.getX() / v.getWidth();
             Log.v(TAG, "HOOKED POSITION (areaX : " + areaX + " areaY : " + areaY + ")");
-            if (areaY > 0.75f)
+            if (areaY > 0.70f)
             {
                 if (areaX > 0.8333f)
                 {
