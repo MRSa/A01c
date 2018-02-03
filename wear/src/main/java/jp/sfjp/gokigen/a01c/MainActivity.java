@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -38,6 +39,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     static final int REQUEST_NEED_PERMISSIONS = 1010;
     //static final int COMMAND_MY_PROPERTY = 0x00000100;
 
+    private PowerManager powerManager = null;
     private CameraLiveImageView liveView = null;
     private IOlyCameraCoordinator coordinator = null;
     private IMessageDrawer messageDrawer = null;
@@ -95,6 +97,9 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
 
         // バイブレータをつかまえる
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        // パワーマネージャをつかまえる
+        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
 
         setupCameraCoordinator();
         setupInitialButtonIcons();
@@ -185,49 +190,49 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private void setupActionListener()
     {
-        final ImageButton btn1 = (ImageButton) findViewById(R.id.btn_1);
+        final ImageButton btn1 = findViewById(R.id.btn_1);
         btn1.setOnClickListener(listener);
         btn1.setOnLongClickListener(listener);
 
-        final ImageButton btn2 = (ImageButton) findViewById(R.id.btn_2);
+        final ImageButton btn2 = findViewById(R.id.btn_2);
         btn2.setOnClickListener(listener);
         btn2.setOnLongClickListener(listener);
 
-        final ImageButton btn3 = (ImageButton) findViewById(R.id.btn_3);
+        final ImageButton btn3 = findViewById(R.id.btn_3);
         btn3.setOnClickListener(listener);
         btn3.setOnLongClickListener(listener);
 
-        final ImageButton btn4 = (ImageButton) findViewById(R.id.btn_4);
+        final ImageButton btn4 = findViewById(R.id.btn_4);
         btn4.setOnClickListener(listener);
         btn4.setOnLongClickListener(listener);
 
-        final ImageButton btn5 = (ImageButton) findViewById(R.id.btn_5);
+        final ImageButton btn5 = findViewById(R.id.btn_5);
         btn5.setOnClickListener(listener);
         btn5.setOnLongClickListener(listener);
 
-        final ImageButton btn6 = (ImageButton) findViewById(R.id.btn_6);
+        final ImageButton btn6 = findViewById(R.id.btn_6);
         btn6.setOnClickListener(listener);
         btn6.setOnLongClickListener(listener);
 
-        final TextView textArea1 = (TextView) findViewById(R.id.text_1);
+        final TextView textArea1 = findViewById(R.id.text_1);
         textArea1.setOnClickListener(listener);
         textArea1.setOnLongClickListener(listener);
 
-        final TextView textArea2 = (TextView) findViewById(R.id.text_2);
+        final TextView textArea2 = findViewById(R.id.text_2);
         textArea2.setOnClickListener(listener);
         textArea2.setOnLongClickListener(listener);
 
-        final TextView textArea3 = (TextView) findViewById(R.id.text_3);
+        final TextView textArea3 = findViewById(R.id.text_3);
         textArea3.setOnClickListener(listener);
         textArea3.setOnLongClickListener(listener);
 
-        final TextView textArea4 = (TextView) findViewById(R.id.text_4);
+        final TextView textArea4 = findViewById(R.id.text_4);
         textArea4.setOnClickListener(listener);
         textArea4.setOnLongClickListener(listener);
 
         if (liveView == null)
         {
-            liveView = (CameraLiveImageView) findViewById(R.id.liveview);
+            liveView = findViewById(R.id.liveview);
         }
         liveView.setOnTouchListener(listener);
         messageDrawer = liveView.getMessageDrawer();
@@ -327,7 +332,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     {
         if (liveView == null)
         {
-            liveView = (CameraLiveImageView) findViewById(R.id.liveview);
+            liveView = findViewById(R.id.liveview);
         }
         coordinator = null;
         coordinator = new OlyCameraCoordinator(this, liveView, this, this);
@@ -374,6 +379,13 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             // アンビエントモードの時（≒自分でアプリを終了しなかったとき）は、何もしない
             // (接続したままとする)
             Log.v(TAG, "keep liveview.");
+            return;
+        }
+
+        // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
+        if ((powerManager != null)&&(!powerManager.isInteractive()))
+        {
+            Log.v(TAG, "not interactive, keep liveview.");
             return;
         }
 
@@ -578,7 +590,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         {
              @Override
              public void run() {
-                 final TextView textArea = (TextView) findViewById(areaId);
+                 final TextView textArea = findViewById(areaId);
                  textArea.setTextColor(color);
                  textArea.setText(message);
                  textArea.invalidate();
@@ -624,7 +636,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         {
             @Override
             public void run() {
-                final ImageButton button = (ImageButton) findViewById(areaId);
+                final ImageButton button = findViewById(areaId);
                 button.setImageDrawable(getDrawable(labelId));
                 button.invalidate();
             }
