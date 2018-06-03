@@ -589,11 +589,15 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         runOnUiThread(new Runnable()
         {
              @Override
-             public void run() {
+             public void run()
+             {
                  final TextView textArea = findViewById(areaId);
-                 textArea.setTextColor(color);
-                 textArea.setText(message);
-                 textArea.invalidate();
+                 if (textArea != null)
+                 {
+                     textArea.setTextColor(color);
+                     textArea.setText(message);
+                     textArea.invalidate();
+                 }
              }
         });
     }
@@ -635,10 +639,14 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         runOnUiThread(new Runnable()
         {
             @Override
-            public void run() {
+            public void run()
+            {
                 final ImageButton button = findViewById(areaId);
-                button.setImageDrawable(getDrawable(labelId));
-                button.invalidate();
+                if (button != null)
+                {
+                    button.setImageDrawable(getDrawable(labelId));
+                    button.invalidate();
+                }
             }
         });
     }
