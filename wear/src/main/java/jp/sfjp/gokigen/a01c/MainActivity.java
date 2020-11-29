@@ -3,19 +3,21 @@ package jp.sfjp.gokigen.a01c;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
@@ -33,7 +35,7 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
  *   メインのActivity
  *
  */
-public class MainActivity extends WearableActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
+public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -47,7 +49,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     private FavoriteSettingSelectionDialog selectionDialog = null;
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
-    private boolean ambientMode = false;
+    //private boolean ambientMode = false;
 
     /**
      *
@@ -59,7 +61,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         Log.v(TAG, "onCreate()");
 
         // Ambientモードを許してみる...
-        setAmbientEnabled();
+        //setAmbientEnabled();
 
         //  画面全体の設定
         setContentView(R.layout.activity_main);
@@ -87,23 +89,30 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
                     REQUEST_NEED_PERMISSIONS);
         }
 
-        if (!hasGps())
+        try
         {
-            // GPS機能が搭載されていない場合...
-            Log.d(TAG, "This hardware doesn't have GPS.");
-            // Fall back to functionality that does not use location or
-            // warn the user that location function is not available.
+            if (!hasGps())
+            {
+                // GPS機能が搭載されていない場合...
+                Log.d(TAG, "This hardware doesn't have GPS.");
+                // Fall back to functionality that does not use location or
+                // warn the user that location function is not available.
+            }
+
+            // バイブレータをつかまえる
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+            // パワーマネージャをつかまえる
+            powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+
+            setupCameraCoordinator();
+            setupInitialButtonIcons();
+            setupActionListener();
         }
-
-        // バイブレータをつかまえる
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-        // パワーマネージャをつかまえる
-        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-
-        setupCameraCoordinator();
-        setupInitialButtonIcons();
-        setupActionListener();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -149,10 +158,7 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         exitApplication();
     }
 
-    /**
-     *
-     *
-     */
+/*
      @Override
      public void onEnterAmbient(Bundle ambientDetails)
      {
@@ -161,10 +167,6 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
          ambientMode =true;
      }
 
-    /**
-     *
-     *
-     */
     @Override
     public void onExitAmbient()
     {
@@ -173,16 +175,13 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
         ambientMode = false;
     }
 
-    /**
-     *
-     *
-     */
     @Override
     public void onUpdateAmbient()
     {
         super.onUpdateAmbient();
         Log.v(TAG, "onUpdateAmbient()");
     }
+*/
 
     /**
      *   ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
@@ -190,53 +189,60 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private void setupActionListener()
     {
-        final ImageButton btn1 = findViewById(R.id.btn_1);
-        btn1.setOnClickListener(listener);
-        btn1.setOnLongClickListener(listener);
-
-        final ImageButton btn2 = findViewById(R.id.btn_2);
-        btn2.setOnClickListener(listener);
-        btn2.setOnLongClickListener(listener);
-
-        final ImageButton btn3 = findViewById(R.id.btn_3);
-        btn3.setOnClickListener(listener);
-        btn3.setOnLongClickListener(listener);
-
-        final ImageButton btn4 = findViewById(R.id.btn_4);
-        btn4.setOnClickListener(listener);
-        btn4.setOnLongClickListener(listener);
-
-        final ImageButton btn5 = findViewById(R.id.btn_5);
-        btn5.setOnClickListener(listener);
-        btn5.setOnLongClickListener(listener);
-
-        final ImageButton btn6 = findViewById(R.id.btn_6);
-        btn6.setOnClickListener(listener);
-        btn6.setOnLongClickListener(listener);
-
-        final TextView textArea1 = findViewById(R.id.text_1);
-        textArea1.setOnClickListener(listener);
-        textArea1.setOnLongClickListener(listener);
-
-        final TextView textArea2 = findViewById(R.id.text_2);
-        textArea2.setOnClickListener(listener);
-        textArea2.setOnLongClickListener(listener);
-
-        final TextView textArea3 = findViewById(R.id.text_3);
-        textArea3.setOnClickListener(listener);
-        textArea3.setOnLongClickListener(listener);
-
-        final TextView textArea4 = findViewById(R.id.text_4);
-        textArea4.setOnClickListener(listener);
-        textArea4.setOnLongClickListener(listener);
-
-        if (liveView == null)
+        try
         {
-            liveView = findViewById(R.id.liveview);
+            final ImageButton btn1 = findViewById(R.id.btn_1);
+            btn1.setOnClickListener(listener);
+            btn1.setOnLongClickListener(listener);
+
+            final ImageButton btn2 = findViewById(R.id.btn_2);
+            btn2.setOnClickListener(listener);
+            btn2.setOnLongClickListener(listener);
+
+            final ImageButton btn3 = findViewById(R.id.btn_3);
+            btn3.setOnClickListener(listener);
+            btn3.setOnLongClickListener(listener);
+
+            final ImageButton btn4 = findViewById(R.id.btn_4);
+            btn4.setOnClickListener(listener);
+            btn4.setOnLongClickListener(listener);
+
+            final ImageButton btn5 = findViewById(R.id.btn_5);
+            btn5.setOnClickListener(listener);
+            btn5.setOnLongClickListener(listener);
+
+            final ImageButton btn6 = findViewById(R.id.btn_6);
+            btn6.setOnClickListener(listener);
+            btn6.setOnLongClickListener(listener);
+
+            final TextView textArea1 = findViewById(R.id.text_1);
+            textArea1.setOnClickListener(listener);
+            textArea1.setOnLongClickListener(listener);
+
+            final TextView textArea2 = findViewById(R.id.text_2);
+            textArea2.setOnClickListener(listener);
+            textArea2.setOnLongClickListener(listener);
+
+            final TextView textArea3 = findViewById(R.id.text_3);
+            textArea3.setOnClickListener(listener);
+            textArea3.setOnLongClickListener(listener);
+
+            final TextView textArea4 = findViewById(R.id.text_4);
+            textArea4.setOnClickListener(listener);
+            textArea4.setOnLongClickListener(listener);
+
+            if (liveView == null)
+            {
+                liveView = findViewById(R.id.liveview);
+            }
+            liveView.setOnTouchListener(listener);
+            messageDrawer = liveView.getMessageDrawer();
+            messageDrawer.setLevelGauge(coordinator.getLevelGauge());
         }
-        liveView.setOnTouchListener(listener);
-        messageDrawer = liveView.getMessageDrawer();
-        messageDrawer.setLevelGauge(coordinator.getLevelGauge());
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -245,21 +251,25 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private void setupInitialButtonIcons()
     {
-        if (coordinator != null)
+        try
         {
-            int resId;
-            SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-            if (preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, true))
+            if (coordinator != null)
             {
-                // ボタンをGrid OFFアイコンにする
-                resId = R.drawable.btn_ic_grid_off;
+                int resId;
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                if (preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, true)) {
+                    // ボタンをGrid OFFアイコンにする
+                    resId = R.drawable.btn_ic_grid_off;
+                } else {
+                    // ボタンをGrid ONアイコンにする
+                    resId = R.drawable.btn_ic_grid_on;
+                }
+                setButtonDrawable(IShowInformation.BUTTON_1, resId);
             }
-            else
-            {
-                // ボタンをGrid ONアイコンにする
-                resId = R.drawable.btn_ic_grid_on;
-            }
-            setButtonDrawable(IShowInformation.BUTTON_1, resId);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -330,16 +340,22 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
      */
     private void setupCameraCoordinator()
     {
-        if (liveView == null)
+        try
         {
-            liveView = findViewById(R.id.liveview);
+            if (liveView == null) {
+                liveView = findViewById(R.id.liveview);
+            }
+            coordinator = null;
+            coordinator = new OlyCameraCoordinator(this, liveView, this, this);
+            coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
+            listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
+            selectionDialog = new FavoriteSettingSelectionDialog(this, coordinator.getCameraPropertyLoadSaveOperations(), this);
+            connectToCamera();
         }
-        coordinator = null;
-        coordinator = new OlyCameraCoordinator(this, liveView, this, this);
-        coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-        listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
-        selectionDialog = new FavoriteSettingSelectionDialog(this, coordinator.getCameraPropertyLoadSaveOperations(), this);
-        connectToCamera();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -373,36 +389,45 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void exitApplication()
     {
-        Log.v(TAG, "exitApplication()");
-        if (ambientMode)
+        try
         {
-            // アンビエントモードの時（≒自分でアプリを終了しなかったとき）は、何もしない
-            // (接続したままとする)
-            Log.v(TAG, "keep liveview.");
-            return;
-        }
+            Log.v(TAG, "exitApplication()");
+/*
+            if (ambientMode)
+            {
+                // アンビエントモードの時（≒自分でアプリを終了しなかったとき）は、何もしない
+                // (接続したままとする)
+                Log.v(TAG, "keep liveview.");
+                return;
+            }
+*/
 
-        // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
-        if ((powerManager != null)&&(!powerManager.isInteractive()))
+            // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
+            if ((powerManager != null) && (!powerManager.isInteractive()))
+            {
+                Log.v(TAG, "not interactive, keep liveview.");
+                return;
+            }
+
+            // ライブビューを停止させる
+            coordinator.stopLiveView();
+
+            //  パラメータを確認し、カメラの電源を切る
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
+            {
+                Log.v(TAG, "Shutdown camera...");
+
+                // カメラの電源をOFFにする
+                coordinator.getConnectionInterface().disconnect(true);
+            }
+            //finish();
+            //finishAndRemoveTask();
+            //android.os.Process.killProcess(android.os.Process.myPid());
+        }
+        catch (Exception e)
         {
-            Log.v(TAG, "not interactive, keep liveview.");
-            return;
+            e.printStackTrace();
         }
-
-        // ライブビューを停止させる
-        coordinator.stopLiveView();
-
-        //  パラメータを確認し、カメラの電源を切る
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
-        {
-            Log.v(TAG, "Shutdown camera...");
-
-            // カメラの電源をOFFにする
-            coordinator.getConnectionInterface().disconnect(true);
-        }
-        //finish();
-        //finishAndRemoveTask();
-        //android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     /**
@@ -440,12 +465,18 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public boolean showConnectionStatus()
     {
-        if ((listener.isEnabledOperation() == IShowInformation.operation.ONLY_CONNECT)&&(cameraDisconnectedHappened))
+        try
         {
-            // カメラが切断されたとき、再接続を指示する
-            connectToCamera();
-            cameraDisconnectedHappened = false;
-            return (true);
+            if ((listener.isEnabledOperation() == IShowInformation.operation.ONLY_CONNECT) && (cameraDisconnectedHappened)) {
+                // カメラが切断されたとき、再接続を指示する
+                connectToCamera();
+                cameraDisconnectedHappened = false;
+                return (true);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
         return (false);
     }
@@ -466,13 +497,19 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onCameraConnected()
     {
         Log.v(TAG, "onCameraConnected()");
-
-        // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
-        coordinator.startLiveView();
-        coordinator.setRecViewMode(false);
-        listener.setEnableOperation(operation.ENABLE);
-        setMessage(IShowInformation.AREA_C, Color.WHITE, "");
-        coordinator.updateStatusAll();
+        try
+        {
+            // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
+            coordinator.startLiveView();
+            coordinator.setRecViewMode(false);
+            listener.setEnableOperation(operation.ENABLE);
+            setMessage(IShowInformation.AREA_C, Color.WHITE, "");
+            coordinator.updateStatusAll();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -483,9 +520,16 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onCameraDisconnected()
     {
         Log.v(TAG, "onCameraDisconnected()");
-        setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
-        listener.setEnableOperation(operation.ONLY_CONNECT);
-        cameraDisconnectedHappened = true;
+        try
+        {
+            setMessage(IShowInformation.AREA_C, Color.YELLOW, getString(R.string.camera_disconnected));
+            listener.setEnableOperation(operation.ONLY_CONNECT);
+            cameraDisconnectedHappened = true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -495,9 +539,17 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     public void onCameraOccursException(String message, Exception e)
     {
         Log.v(TAG, "onCameraOccursException()");
-        setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
-        listener.setEnableOperation(operation.ONLY_CONNECT);
-        cameraDisconnectedHappened = true;
+        try
+        {
+            setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
+            listener.setEnableOperation(operation.ONLY_CONNECT);
+            cameraDisconnectedHappened = true;
+        }
+        catch (Exception ee)
+        {
+            e.printStackTrace();
+            ee.printStackTrace();
+        }
     }
 
     /**s
@@ -641,11 +693,19 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
             @Override
             public void run()
             {
-                final ImageButton button = findViewById(areaId);
-                if (button != null)
+                try
                 {
-                    button.setImageDrawable(getDrawable(labelId));
-                    button.invalidate();
+                    final ImageButton button = findViewById(areaId);
+                    final Drawable drawTarget = ContextCompat.getDrawable(getApplicationContext(), labelId);
+                    if (button != null)
+                    {
+                        button.setImageDrawable(drawTarget);
+                        button.invalidate();
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
         });
@@ -740,11 +800,18 @@ public class MainActivity extends WearableActivity implements  IChangeScene, ISh
     @Override
     public void dialogDismissed(boolean isExecuted)
     {
-        if ((liveView != null)&&(listener != null))
+        try
         {
-            liveView.hideDialog();
-            listener.setEnableOperation(operation.ENABLE);
+            if ((liveView != null) && (listener != null))
+            {
+                liveView.hideDialog();
+                listener.setEnableOperation(operation.ENABLE);
 
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }

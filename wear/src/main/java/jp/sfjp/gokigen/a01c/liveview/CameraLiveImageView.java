@@ -10,7 +10,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -240,9 +240,16 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
 
             // Acquire a rotation degree of image.
             int orientation = ExifInterface.ORIENTATION_UNDEFINED;
-            if (metadata.containsKey(EXIF_ORIENTATION))
+            try
             {
-                orientation = Integer.parseInt((String) metadata.get(EXIF_ORIENTATION));
+                if (metadata.containsKey(EXIF_ORIENTATION))
+                {
+                    orientation = Integer.parseInt((String) metadata.get(EXIF_ORIENTATION));
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
             switch (orientation)
             {
@@ -946,7 +953,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     public void setShowGridFrame(boolean isShowGridFeature)
     {
         showGridFeature = isShowGridFeature;
-        SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, showGridFeature);
         editor.apply();
@@ -970,7 +977,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     {
         Log.v(TAG, "setShowLevelGauge : " + isShowLevelGaugeFeature);
         showLevelGaugeFeature = isShowLevelGaugeFeature;
-        SharedPreferences preferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
         editor.apply();

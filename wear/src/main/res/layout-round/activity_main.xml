@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.wearable.view.BoxInsetLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/box_inset_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context="jp.sfjp.gokigen.a01c.MainActivity"
     tools:deviceIds="wear_round">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="1dp"
+        app:layout_boxedEdges="all"
         app:layout_box="all">
 
         <jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView
@@ -140,4 +143,4 @@
         </LinearLayout>
     </FrameLayout>
 
-</android.support.wearable.view.BoxInsetLayout>
+</androidx.wear.widget.BoxInsetLayout>

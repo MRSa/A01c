@@ -2,12 +2,12 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper.property;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import java.text.DateFormat;
 import java.util.Date;
-//import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

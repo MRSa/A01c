@@ -7,10 +7,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
+
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
 
+import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
@@ -92,7 +95,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         bracketingShot = new BracketingShotControl(camera, focusFrameDisplay, this, showInformation);  // ブラケッティング＆インターバル撮影
         propertyProxy = new OlyCameraPropertyProxy(camera); // カメラプロパティ
         cameraStatusDisplay = new CameraStatusDisplay(propertyProxy, showInformation);  // 画面表示
-        this.levelMeter = new LevelMeterHolder(showInformation, android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
+        this.levelMeter = new LevelMeterHolder(showInformation, PreferenceManager.getDefaultSharedPreferences(context).getBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false));  // デジタル水準器
         camera.setCameraStatusListener(new CameraStatusListenerImpl(context, cameraStatusDisplay, levelMeter));
         camera.setCameraPropertyListener(new CameraPropertyListenerImpl(cameraStatusDisplay));
         camera.setRecordingListener(new CameraRecordingListenerImpl(context, showInformation));
@@ -468,7 +471,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     }
 
     @Override
-    public IOlyCameraConnection getConnectionInterface()
+    public ICameraConnection getConnectionInterface()
     {
         return (cameraConnection);
     }

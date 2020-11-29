@@ -4,6 +4,7 @@ import android.view.MotionEvent;
 
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.co.olympus.camerakit.OLYCameraStatusListener;
+import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
@@ -73,7 +74,7 @@ public interface IOlyCameraCoordinator
     // カメラの動作モード変更インタフェース
     ICameraRunMode getChangeRunModeExecutor();
 
-    IOlyCameraConnection getConnectionInterface();
+    ICameraConnection getConnectionInterface();
 
     /** ズームレンズの状態ホルダを応答 **/
     IZoomLensHolder getZoomLensHolder();

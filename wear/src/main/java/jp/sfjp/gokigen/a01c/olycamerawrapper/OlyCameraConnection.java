@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraConnectionListener;
 import jp.co.olympus.camerakit.OLYCameraKitException;
+import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 
@@ -32,7 +35,7 @@ import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
  *
  * Created by MRSa on 2017/02/28.
  */
-class OlyCameraConnection implements IOlyCameraConnection, OLYCameraConnectionListener
+class OlyCameraConnection implements ICameraConnection, OLYCameraConnectionListener
 {
     private final String TAG = toString();
     private final Activity context;
@@ -43,11 +46,11 @@ class OlyCameraConnection implements IOlyCameraConnection, OLYCameraConnectionLi
 
     private boolean isWatchingWifiStatus = false;
 
-    private ConnectivityManager connectivityManager;
+    private final ConnectivityManager connectivityManager;
     private ConnectivityManager.NetworkCallback networkCallback = null;
 
     // Handler for dealing with network connection timeouts.
-    private Handler networkConnectionTimeoutHandler;
+    private final Handler networkConnectionTimeoutHandler;
 
 
     // Message to notify the network request timout handler that too much time has passed.
@@ -196,7 +199,7 @@ class OlyCameraConnection implements IOlyCameraConnection, OLYCameraConnectionLi
      * (接続の実処理は onReceiveBroadcastOfConnection() で実施)
      */
     @Override
-    public void startWatchWifiStatus(Context context)
+    public void startWatchWifiStatus(@NonNull Context context)
     {
         Log.v(TAG, "startWatchWifiStatus()");
         statusReceiver.onStatusNotify("prepare");
@@ -212,7 +215,7 @@ class OlyCameraConnection implements IOlyCameraConnection, OLYCameraConnectionLi
      * Wifi接続状態の監視終了
      */
     @Override
-    public void stopWatchWifiStatus(Context context)
+    public void stopWatchWifiStatus(@NonNull Context context)
     {
         Log.v(TAG, "stopWatchWifiStatus()");
         context.unregisterReceiver(connectionReceiver);

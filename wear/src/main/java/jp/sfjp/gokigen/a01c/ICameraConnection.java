@@ -1,17 +1,19 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 
 /**
  *   カメラの接続/切断
  *
  * Created by MRSa on 2017/02/28.
  */
-public interface IOlyCameraConnection
+public interface ICameraConnection
 {
     // WIFI 接続系
-    void startWatchWifiStatus(Context context);
-    void stopWatchWifiStatus(Context context);
+    void startWatchWifiStatus(@NonNull Context context);
+    void stopWatchWifiStatus(@NonNull Context context);
     boolean isWatchWifiStatus();
 
     /** カメラ接続系 **/
