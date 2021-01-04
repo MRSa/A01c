@@ -19,9 +19,9 @@ class MyCameraPropertySetArrayAdapter  extends ArrayAdapter<MyCameraPropertySetI
 {
     private final String TAG = toString();
     private final Context context;
-    private LayoutInflater inflater = null;
+    private final LayoutInflater inflater;
     private final int textViewResourceId;
-    private List<MyCameraPropertySetItems> listItems = null;
+    private final List<MyCameraPropertySetItems> listItems;
     private final ILoadSaveMyCameraPropertyDialogDismiss dialogDismiss;
 
 
@@ -55,16 +55,16 @@ class MyCameraPropertySetArrayAdapter  extends ArrayAdapter<MyCameraPropertySetI
         {
             final MyCameraPropertySetItems item = listItems.get(position);
 
-            TextView idView = (TextView) view.findViewWithTag("id");
+            TextView idView = view.findViewWithTag("id");
             idView.setText(item.getItemId());
 
-            final EditText titleView = (EditText)view.findViewWithTag("title");
+            final EditText titleView = view.findViewWithTag("title");
             titleView.setText(item.getItemName());
 
-            TextView infoView = (TextView) view.findViewWithTag("info");
+            TextView infoView = view.findViewWithTag("info");
             infoView.setText(item.getItemInfo());
 
-            Button button = (Button) view.findViewWithTag("button");
+            Button button = view.findViewWithTag("button");
             button.setOnClickListener(new Button.OnClickListener()
             {
                 @Override

@@ -3,6 +3,11 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import jp.sfjp.gokigen.a01c.ConfirmationDialog;
+import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
@@ -11,6 +16,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
+import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
 
 
 /**
@@ -21,26 +27,32 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
 {
     private final String TAG = toString();
 
+    private final AppCompatActivity activity;
     private final IShowInformation statusDrawer;
     private final IOlyCameraCoordinator camera;
     private final ILiveImageStatusNotify liveImageView;
+    private final PreferenceAccessWrapper preferences;
 
-    public FeatureDispatcher(IShowInformation statusDrawer, IOlyCameraCoordinator camera, ILiveImageStatusNotify liveImageView)
+    public FeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull IOlyCameraCoordinator camera, ILiveImageStatusNotify liveImageView)
     {
+        this.activity = context;
         this.statusDrawer = statusDrawer;
         this.camera = camera;
         this.liveImageView = liveImageView;
+        this.preferences = new PreferenceAccessWrapper(context);
     }
 
     /**
      *   指定した機能を実行する
      *
      * @param objectId　　　　　操作したオブジェクト
-     * @param featureNumber　　操作する機能
+     * @param key　          　操作する機能
+     * @param defaultAction   標準機能
      */
     @Override
-    public boolean dispatchAction(int objectId, int featureNumber)
+    public boolean dispatchAction(int objectId, @NonNull String key, int defaultAction)
     {
+        int featureNumber = preferences.getInt(key, defaultAction);
         if (featureNumber <= ICameraFeatureDispatcher.FEATURE_ACTION_NONE)
         {
             // 何もしない
@@ -922,6 +934,20 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
      */
     private void showSettingsScreen()
     {
-        // TBD...
+        try
+        {
+            Log.v(TAG, " --- showSettingsScreen() ---");
+            ConfirmationDialog confirmation = new ConfirmationDialog(activity);
+            confirmation.show(R.string.change_title_from_opc_to_theta, R.string.change_message_from_opc_to_theta, new ConfirmationDialog.Callback() {
+                @Override
+                public void confirm() {
+                    Log.v(TAG, " --- CONFIRMED! --- ");
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

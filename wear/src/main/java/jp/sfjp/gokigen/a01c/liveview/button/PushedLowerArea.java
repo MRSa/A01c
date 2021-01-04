@@ -1,12 +1,7 @@
 package jp.sfjp.gokigen.a01c.liveview.button;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import androidx.preference.PreferenceManager;
-
 import jp.sfjp.gokigen.a01c.IShowInformation;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 
 
 /**
@@ -15,12 +10,9 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher
  */
 class PushedLowerArea implements IPushedButton
 {
-    private final SharedPreferences preferences;
     private final ICameraFeatureDispatcher dispatcher;
-
-    PushedLowerArea(Context context, ICameraFeatureDispatcher dispatcher)
+    PushedLowerArea(ICameraFeatureDispatcher dispatcher)
     {
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.dispatcher = dispatcher;
     }
 
@@ -72,6 +64,6 @@ class PushedLowerArea implements IPushedButton
                 defaultAction =  (isLongClick) ? ICameraFeatureDispatcher.FEATURE_CHANGE_LIVEVIEW_MAGNIFY_X5 : ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT;
                 break;
         }
-        return (dispatcher.dispatchAction(IShowInformation.LOWER_AREA, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.LOWER_AREA, preference_action_id, defaultAction));
     }
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import jp.co.olympus.camerakit.OLYCamera;
-//import jp.co.olympus.camerakit.OLYCameraKitException;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IOLYCameraObjectProvider;
 
 /**

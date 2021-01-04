@@ -14,7 +14,7 @@ public class ConfirmationDialog
 {
     private final Context context;
 
-    ConfirmationDialog(Context context)
+    public ConfirmationDialog(Context context)
     {
         this.context = context;
     }

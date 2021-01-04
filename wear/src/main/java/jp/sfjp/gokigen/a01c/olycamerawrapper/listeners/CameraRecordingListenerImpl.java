@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraAutoFocusResult;
 import jp.co.olympus.camerakit.OLYCameraRecordingListener;
@@ -17,7 +19,7 @@ public class CameraRecordingListenerImpl implements OLYCameraRecordingListener
     private final Context context;
     private final IShowInformation statusDrawer;
 
-    public CameraRecordingListenerImpl(Context context, IShowInformation statusDrawer)
+    public CameraRecordingListenerImpl(Context context, @NonNull IShowInformation statusDrawer)
     {
         this.context = context;
         this.statusDrawer = statusDrawer;

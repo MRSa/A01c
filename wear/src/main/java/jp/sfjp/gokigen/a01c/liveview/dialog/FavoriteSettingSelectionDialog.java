@@ -19,12 +19,12 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOpe
  */
 public class FavoriteSettingSelectionDialog implements IDialogDrawer
 {
+    private static final float WIDE_MARGIN = 10.0f;
+    private static final float HEIGHT_MARGIN = 27.0f;
     private final String TAG = toString();
     private final ICameraPropertyLoadSaveOperations propertyOperation;
     private final IDialogDismissedNotifier dismissNotifier;
     private final Context context;
-    private final float WIDE_MARGIN = 10.0f;
-    private final float HEIGHT_MARGIN = 27.0f;
     private int selectedId = 0;
     private boolean isSaveOperation = false;  // loadはfalse, saveがtrue
 
@@ -39,7 +39,6 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
         this.dismissNotifier = dismissNotifier;
     }
 
-
     /**
      *   画面上にダイアログを表示する
      *
@@ -47,6 +46,18 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
      */
     @Override
     public void drawDialog(Canvas canvas)
+    {
+        try
+        {
+            drawDialogImpl(canvas);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawDialogImpl(Canvas canvas)
     {
         final float STROKE_WIDTH = 2.0f;
 
@@ -273,7 +284,6 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
         }
     }
 
-
     /**
      *   プロパティの保存処理をする
      *
@@ -321,7 +331,7 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
         if (isExecute)
         {
             Log.v(TAG, "  EXECUTE OPERATION  : " + selectedId + " " + isSaveOperation);
-/**/
+
             // コマンドを実行する
             if (isSaveOperation)
             {
@@ -333,7 +343,6 @@ public class FavoriteSettingSelectionDialog implements IDialogDrawer
                 // プロパティの読み出し
                 loadProperties(selectedId + 1);
             }
-/**/
         }
         if (dismissNotifier != null)
         {

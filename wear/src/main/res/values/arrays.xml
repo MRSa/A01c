@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="connection_method">
+        <item >OPC (Olympus Air)</item>
+        <item >Ricoh THETA Series</item>
+    </string-array>
+
+    <string-array name="connection_method_value">
+        <item >OPC</item>
+        <item >THETA</item>
+    </string-array>
 </resources>

@@ -13,7 +13,7 @@ class ShowMessageHolder implements IMessageDrawer
     /**
      *
      */
-    private class messageHolder
+    private static class messageHolder
     {
         private String message = "";
         private int color = Color.BLUE;
@@ -50,15 +50,15 @@ class ShowMessageHolder implements IMessageDrawer
         }
     }
 
-    private messageHolder upperLeft = new messageHolder();
-    private messageHolder upperRight = new messageHolder();
-    private messageHolder upperCenter = new messageHolder();
-    private messageHolder center = new messageHolder();
-    private messageHolder lowerLeft = new messageHolder();
-    private messageHolder lowerRight = new messageHolder();
-    private messageHolder lowerCenter = new messageHolder();
-    private messageHolder centerLeft = new messageHolder();
-    private messageHolder centerRight = new messageHolder();
+    private final messageHolder upperLeft = new messageHolder();
+    private final messageHolder upperRight = new messageHolder();
+    private final messageHolder upperCenter = new messageHolder();
+    private final messageHolder center = new messageHolder();
+    private final messageHolder lowerLeft = new messageHolder();
+    private final messageHolder lowerRight = new messageHolder();
+    private final messageHolder lowerCenter = new messageHolder();
+    private final messageHolder centerLeft = new messageHolder();
+    private final messageHolder centerRight = new messageHolder();
 
     private ILevelGauge levelGauge = null;
 

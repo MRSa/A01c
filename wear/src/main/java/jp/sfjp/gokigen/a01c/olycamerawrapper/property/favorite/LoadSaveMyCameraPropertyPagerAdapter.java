@@ -3,6 +3,7 @@ package jp.sfjp.gokigen.a01c.olycamerawrapper.property.favorite;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -34,7 +35,7 @@ class LoadSaveMyCameraPropertyPagerAdapter extends FragmentPagerAdapter
     }
 
     @Override
-    public Fragment getItem(int position)
+    public @NonNull Fragment getItem(int position)
     {
         Log.v(TAG, "getItem :" + position);
         if ((loadFragment == null)||(saveFragment == null))

@@ -1,7 +1,6 @@
 package jp.sfjp.gokigen.a01c.liveview;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,8 +10,9 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import androidx.exifinterface.media.ExifInterface;
+import androidx.preference.PreferenceDataStore;
+
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -34,6 +34,7 @@ import jp.sfjp.gokigen.a01c.liveview.gridframe.GridFrameFactory;
 import jp.sfjp.gokigen.a01c.liveview.gridframe.IGridFrameDrawer;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
 import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
 
 /**
  *   CameraLiveImageView :
@@ -60,6 +61,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     private ShowMessageHolder messageHolder;
 
     private IDialogDrawer dialogDrawer = null;
+    private PreferenceDataStore preferences = null;
 
     /**
      *   コンストラクタ
@@ -99,12 +101,20 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         messageHolder = new ShowMessageHolder();
 
         imageScaleType = ImageView.ScaleType.FIT_CENTER;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
+        preferences = new PreferenceAccessWrapper(context);
         showGridFeature = preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, true);
         showLevelGaugeFeature = preferences.getBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, false);
 
-        int framingGridStatus = Integer.parseInt(preferences.getString(IPreferenceCameraPropertyAccessor.FRAME_GRID, IPreferenceCameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE));
+        int framingGridStatus = 0; // IPreferenceCameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE;
+        try
+        {
+            framingGridStatus = Integer.parseInt(preferences.getString(IPreferenceCameraPropertyAccessor.FRAME_GRID, IPreferenceCameraPropertyAccessor.FRAME_GRID_DEFAULT_VALUE));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         gridFrameDrawer = GridFrameFactory.getGridFrameDrawer(framingGridStatus);
 
         // ダミーのビットマップデータ読み込み...画面表示のテスト用ロジック
@@ -154,19 +164,25 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-
-        // 画像の表示
-        drawCanvas(canvas);
-
-        // ダイアログの表示
-        if (dialogDrawer != null)
+        try
         {
-            dialogDrawer.drawDialog(canvas);
-            return;
-        }
+            // 画像の表示
+            drawCanvas(canvas);
 
-        // メッセージの表示 (Overwrite)
-        drawInformationMessages(canvas);
+            // ダイアログの表示
+            if (dialogDrawer != null)
+            {
+                dialogDrawer.drawDialog(canvas);
+                return;
+            }
+
+            // メッセージの表示 (Overwrite)
+            drawInformationMessages(canvas);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -253,9 +269,6 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
             }
             switch (orientation)
             {
-                case ExifInterface.ORIENTATION_NORMAL:
-                    rotationDegrees = 0;
-                    break;
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     rotationDegrees = 90;
                     break;
@@ -265,6 +278,7 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     rotationDegrees = 270;
                     break;
+                case ExifInterface.ORIENTATION_NORMAL:
                 default:
                     rotationDegrees = 0;
                     break;
@@ -836,7 +850,8 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
         float ratioY = viewSizeHeight / imageSizeHeight;
         float scale;
 
-        switch (imageScaleType) {
+        switch (imageScaleType)
+        {
             case FIT_XY:
                 viewPointX *= ratioX;
                 viewPointY *= ratioY;
@@ -953,10 +968,14 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     public void setShowGridFrame(boolean isShowGridFeature)
     {
         showGridFeature = isShowGridFeature;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, showGridFeature);
-        editor.apply();
+        try
+        {
+            preferences.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS, showGridFeature);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -977,18 +996,22 @@ public class CameraLiveImageView extends View implements CameraLiveViewListenerI
     {
         Log.v(TAG, "setShowLevelGauge : " + isShowLevelGaugeFeature);
         showLevelGaugeFeature = isShowLevelGaugeFeature;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
-        editor.apply();
-        ILevelGauge levelGauge = messageHolder.getLevelGauge();
-        if (levelGauge == null)
+        try
         {
-            // デジタル水準器がとれない場合は、何もしない
-            Log.v(TAG, "setShowLevelGauge : levelGauge is null.");
-            return;
+            preferences.putBoolean(IPreferenceCameraPropertyAccessor.SHOW_LEVEL_GAUGE_STATUS, showLevelGaugeFeature);
+            ILevelGauge levelGauge = messageHolder.getLevelGauge();
+            if (levelGauge == null)
+            {
+                // デジタル水準器がとれない場合は、何もしない
+                Log.v(TAG, "setShowLevelGauge : levelGauge is null.");
+                return;
+            }
+            levelGauge.updateLevelGaugeChecking(isShowLevelGaugeFeature);
         }
-        levelGauge.updateLevelGaugeChecking(isShowLevelGaugeFeature);
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

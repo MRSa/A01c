@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="a01c_preferences">
+    <PreferenceCategory
+        android:title="@string/pref_cat_application_control">
+
+        <PreferenceScreen
+            android:key="exit_application"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="@string/pref_exit_power_off" />
+
+        <ListPreference
+            android:title="@string/pref_connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:entries="@array/connection_method"
+            android:key="connection_method"
+            android:defaultValue="OPC"/>
+
+        <PreferenceScreen
+            android:key="wifi_settings"
+            android:title="@string/pref_wifi_settings"
+            android:summary="@string/pref_summary_wifi_settings" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_cat_info">
+
+        <PreferenceScreen
+        android:key="camerakit_version"
+        android:title="@string/pref_camerakit_version"
+        android:selectable="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -286,50 +286,51 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             startActivity(new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"));
             return (true);
         }
-        catch (android.content.ActivityNotFoundException ex)
+        catch (Exception ex)
         {
-            Log.v(TAG, "android.content.ActivityNotFoundException... " + "com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
             try
             {
-                // SONY Smart Watch 3で開く場合のIntent...
-                Intent intent = new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
-                intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.wifi.WifiSettingsActivity");
-                startActivity(intent);
+                Log.v(TAG, "launchWifiSettingScreen() : ACTION_WIFI_SETTINGS");
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 return (true);
-            }
-            catch (android.content.ActivityNotFoundException ex2)
-            {
-                try
-                {
-                    // Wifi 設定画面を表示する...普通のAndroidの場合
-                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                    return (true);
-                }
-                catch (Exception ee)
-                {
-                    ee.printStackTrace();
-                    try
-                    {
-                        // LG G Watch Rで開く場合のIntent...
-                        Intent intent = new Intent("android.intent.action.MAIN");
-                        intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.MainSettingsActivity");
-                        startActivity(intent);
-                        return (true);
-                    }
-                    catch (android.content.ActivityNotFoundException ex3)
-                    {
-                        ex3.printStackTrace();
-                    }
-                }
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                Log.v(TAG, "android.content.ActivityNotFoundException... " + "com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
+                try
+                {
+                    // SONY Smart Watch 3で開く場合のIntent...
+                    Intent intent = new Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS");
+                    intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.wifi.WifiSettingsActivity");
+                    startActivity(intent);
+                    return (true);
+                }
+                catch (Exception ex2)
+                {
+                    try
+                    {
+                        // Wifi 設定画面を表示する...普通のAndroidの場合
+                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        return (true);
+                    }
+                    catch (Exception ee)
+                    {
+                        ee.printStackTrace();
+                        try
+                        {
+                            // LG G Watch Rで開く場合のIntent...
+                            Intent intent = new Intent("android.intent.action.MAIN");
+                            intent.setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.MainSettingsActivity");
+                            startActivity(intent);
+                            return (true);
+                        }
+                        catch (android.content.ActivityNotFoundException ex3)
+                        {
+                            ex3.printStackTrace();
+                        }
+                    }
+                }
             }
-        }
-        catch (Exception e2)
-        {
-            e2.printStackTrace();
         }
         return (false);
     }
@@ -348,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             coordinator = null;
             coordinator = new OlyCameraCoordinator(this, liveView, this, this);
             coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-            listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, coordinator, liveView), this);
+            listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, this, coordinator, liveView), this);
             selectionDialog = new FavoriteSettingSelectionDialog(this, coordinator.getCameraPropertyLoadSaveOperations(), this);
             connectToCamera();
         }

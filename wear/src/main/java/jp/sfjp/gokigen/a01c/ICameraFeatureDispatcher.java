@@ -1,6 +1,9 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher;
+package jp.sfjp.gokigen.a01c;
 
 import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceDataStore;
 
 /**
  *   機能とボタンの設定群
@@ -121,10 +124,8 @@ public interface ICameraFeatureDispatcher
     int FEATURE_AREA_ACTION_DRIVE_AUTOFOCUS = 102;
     int FEATURE_AREA_ACTION_CHECK_CONTAINS_AUTOFOCUS_AREA = 103;
 
-
-
     // アクションインタフェース
     String getTakeMode();   // 撮影モードの取得
-    boolean dispatchAction(int objectId, int featureNumber);  // コマンドの実行
-    boolean dispatchAreaAction(MotionEvent event, int areaFeatureNumber);  // タッチエリアアクションの実行
+    boolean dispatchAction(int objectId, @NonNull String key, int defaultAction);  // コマンドの実行
+    boolean dispatchAreaAction(MotionEvent event, int defaultAction);  // タッチエリアアクションの実行
 }

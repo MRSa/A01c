@@ -1,24 +1,16 @@
 package jp.sfjp.gokigen.a01c.liveview.button;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import androidx.preference.PreferenceManager;
-
 import jp.sfjp.gokigen.a01c.IShowInformation;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 
 class PushedButton2 implements IPushedButton
 {
-    private final SharedPreferences preferences;
     private final ICameraFeatureDispatcher dispatcher;
 
-    PushedButton2(Context context, ICameraFeatureDispatcher dispatcher)
+    PushedButton2(ICameraFeatureDispatcher dispatcher)
     {
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.dispatcher = dispatcher;
     }
-
 
     @Override
     public boolean pushedButton(boolean isLongClick)
@@ -70,8 +62,6 @@ class PushedButton2 implements IPushedButton
             default:
                 break;
         }
-        return (dispatcher.dispatchAction(IShowInformation.BUTTON_2, preferences.getInt(preference_action_id, defaultAction)));
+        return (dispatcher.dispatchAction(IShowInformation.BUTTON_2, preference_action_id, defaultAction));
     }
-
-
 }

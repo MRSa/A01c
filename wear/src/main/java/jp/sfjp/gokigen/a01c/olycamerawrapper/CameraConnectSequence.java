@@ -66,7 +66,7 @@ class CameraConnectSequence implements Runnable
                 cameraStatusReceiver.onStatusNotify(statusMessage);
                 camera.changeRunMode(OLYCamera.RunMode.Recording);
             }
-       }
+        }
         catch (OLYCameraKitException e)
         {
             cameraStatusReceiver.onCameraOccursException(statusMessage, e);

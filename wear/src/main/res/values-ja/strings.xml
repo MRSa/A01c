@@ -53,4 +53,21 @@
     <string name="title_dialog_ok">了解</string>
     <string name="title_dialog_cancel">中止</string>
 
+    <string name="pref_cat_application_control">アプリ制御</string>
+    <string name="pref_exit_power_off">アプリ終了(とカメラOFF)</string>
+
+    <string name="pref_connection_method">接続方式</string>
+
+    <string name="pref_wifi_settings">WiFi設定</string>
+    <string name="pref_summary_wifi_settings"> </string>
+
+    <string name="pref_cat_info">カメラ情報</string>
+    <string name="pref_camerakit_version">Camera kit Version</string>
+
+    <string name="change_title_from_opc_to_theta">Change To Theta</string>
+    <string name="change_message_from_opc_to_theta">Change To Theta, OK?</string>
+
+    <string name="change_title_from_theta_to_opc">Change To OPC</string>
+    <string name="change_message_from_theta_to_opc">Change To OPC, OK?</string>
+
 </resources>
