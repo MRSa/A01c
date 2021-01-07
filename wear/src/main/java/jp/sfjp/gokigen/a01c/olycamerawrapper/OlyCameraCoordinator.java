@@ -7,15 +7,17 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import jp.co.olympus.camerakit.OLYCamera;
-import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
-import jp.co.olympus.camerakit.OLYCameraStatusListener;
 
+import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.sfjp.gokigen.a01c.ICameraConnection;
+import jp.sfjp.gokigen.a01c.ICameraController;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
+import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.CameraStatusDisplay;
@@ -48,7 +50,7 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
  *    o. CameraInteractionCoordinator.ICameraCallback でカメラとの接続状態を通知する
  *
  */
-public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorControl, ICameraRunMode, IOLYCameraObjectProvider
+public class OlyCameraCoordinator implements ICameraController, IIndicatorControl, ICameraRunMode, IOLYCameraObjectProvider
 {
     private final String TAG = toString();
     private final IAutoFocusFrameDisplay focusFrameDisplay;
@@ -104,10 +106,8 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         zoomLensHolder = new ZoomLensHolder(camera);
     }
 
-    /**
-     * ライブビューの設定
-     */
-    public void setLiveViewListener(OLYCameraLiveViewListener listener)
+    @Override
+    public void setLiveViewListener(@NonNull CameraLiveViewListenerImpl listener)
     {
         Log.v(TAG, "setLiveViewListener()");
         try
@@ -392,6 +392,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
         return (propertyProxy.isExposureLocked());
     }
 
+/*
     @Override
     public void setCameraStatusListener(OLYCameraStatusListener listener)
     {
@@ -403,6 +404,7 @@ public class OlyCameraCoordinator implements IOlyCameraCoordinator, IIndicatorCo
     {
         return (decoder.getCameraStatusMessage(camera, ""));
     }
+*/
 
     /**
      *   ステータス表示をすべて更新する

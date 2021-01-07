@@ -2,6 +2,8 @@ package jp.sfjp.gokigen.a01c.liveview;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 import jp.co.olympus.camerakit.OLYCamera;
@@ -12,19 +14,17 @@ import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
  *  （LiveViewFragment用）
  *
  */
-public class CameraLiveViewListenerImpl implements OLYCameraLiveViewListener
+public class CameraLiveViewListenerImpl implements OLYCameraLiveViewListener, IImageDataReceiver
 {
-    private final String TAG = toString();
     private final IImageDataReceiver imageView;
 
     /**
      * コンストラクタ
      */
-    public CameraLiveViewListenerImpl(IImageDataReceiver target)
+    public CameraLiveViewListenerImpl(@NonNull IImageDataReceiver target)
     {
-        Log.v(TAG, "CameraLiveViewListenerImpl is created. ; " + target.toString());
+        Log.v(toString(), "CameraLiveViewListenerImpl is created. : " + target.toString());
         this.imageView = target;
-        //
     }
 
     /**
@@ -34,18 +34,18 @@ public class CameraLiveViewListenerImpl implements OLYCameraLiveViewListener
     @Override
     public void onUpdateLiveView(OLYCamera camera, byte[] data, Map<String, Object> metadata)
     {
-        //Log.v(TAG, "onUpdateLiveView()");
         if (imageView != null)
         {
             imageView.setImageData(data, metadata);
         }
     }
 
-    /**
-     * 　 CameraLiveImageView
-     */
-    interface IImageDataReceiver
+    @Override
+    public void setImageData(byte[] data, Map<String, Object> metadata)
     {
-        void setImageData(byte[] data, Map<String, Object> metadata);
+        if (imageView != null)
+        {
+            imageView.setImageData(data, metadata);
+        }
     }
 }

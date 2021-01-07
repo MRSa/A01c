@@ -26,10 +26,11 @@ import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDismissedNotifier;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
-import jp.sfjp.gokigen.a01c.liveview.OlyCameraLiveViewOnTouchListener;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
+import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
+import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController;
 
 /**
  *   メインのActivity
@@ -41,11 +42,14 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     static final int REQUEST_NEED_PERMISSIONS = 1010;
     //static final int COMMAND_MY_PROPERTY = 0x00000100;
 
+    private PreferenceAccessWrapper preferences = null;
     private PowerManager powerManager = null;
     private CameraLiveImageView liveView = null;
-    private IOlyCameraCoordinator coordinator = null;
+    private ICameraController currentCoordinator = null;
+    private ICameraController olyAirCoordinator = null;
+    private ICameraController thetaCoordinator = null;
     private IMessageDrawer messageDrawer = null;
-    private OlyCameraLiveViewOnTouchListener listener = null;
+    private CameraLiveViewOnTouchListener listener = null;
     private FavoriteSettingSelectionDialog selectionDialog = null;
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
@@ -237,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             }
             liveView.setOnTouchListener(listener);
             messageDrawer = liveView.getMessageDrawer();
-            messageDrawer.setLevelGauge(coordinator.getLevelGauge());
+            messageDrawer.setLevelGauge(currentCoordinator.getLevelGauge());
         }
         catch (Exception e)
         {
@@ -253,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     {
         try
         {
-            if (coordinator != null)
+            if (currentCoordinator != null)
             {
                 int resId;
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -343,14 +347,19 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     {
         try
         {
-            if (liveView == null) {
+            preferences = new PreferenceAccessWrapper(this);
+            preferences.initialize();
+            String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
+            if (liveView == null)
+            {
                 liveView = findViewById(R.id.liveview);
             }
-            coordinator = null;
-            coordinator = new OlyCameraCoordinator(this, liveView, this, this);
-            coordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-            listener = new OlyCameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, this, coordinator, liveView), this);
-            selectionDialog = new FavoriteSettingSelectionDialog(this, coordinator.getCameraPropertyLoadSaveOperations(), this);
+            olyAirCoordinator = new OlyCameraCoordinator(this, liveView, this, this);
+            thetaCoordinator = new ThetaCameraController(this, liveView, this, this);
+            currentCoordinator = olyAirCoordinator; // (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
+            currentCoordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
+            listener = new CameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
+            selectionDialog = new FavoriteSettingSelectionDialog(this, currentCoordinator.getCameraPropertyLoadSaveOperations(), this);
             connectToCamera();
         }
         catch (Exception e)
@@ -370,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             @Override
             public void run()
             {
-                coordinator.getConnectionInterface().connect();
+                currentCoordinator.getConnectionInterface().connect();
             }
         });
         try
@@ -411,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             }
 
             // ライブビューを停止させる
-            coordinator.stopLiveView();
+            currentCoordinator.stopLiveView();
 
             //  パラメータを確認し、カメラの電源を切る
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
@@ -419,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 Log.v(TAG, "Shutdown camera...");
 
                 // カメラの電源をOFFにする
-                coordinator.getConnectionInterface().disconnect(true);
+                currentCoordinator.getConnectionInterface().disconnect(true);
             }
             //finish();
             //finishAndRemoveTask();
@@ -435,13 +444,18 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
      *   接続機能を確認する
      */
     @Override
-    public boolean checkConnectionFeature(int id)
+    public boolean checkConnectionFeature(int id, int btnId)
     {
         boolean ret = false;
         if (id == 0)
         {
             // Wifi 設定画面を開く
             ret = launchWifiSettingScreen();
+        }
+        else if (id == 1)
+        {
+            // 接続の変更を確認する
+            changeConnectionMethod();
         }
         return (ret);
     }
@@ -501,11 +515,11 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
         try
         {
             // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
-            coordinator.startLiveView();
-            coordinator.setRecViewMode(false);
+            currentCoordinator.startLiveView();
+            currentCoordinator.setRecViewMode(false);
             listener.setEnableOperation(operation.ENABLE);
             setMessage(IShowInformation.AREA_C, Color.WHITE, "");
-            coordinator.updateStatusAll();
+            currentCoordinator.updateStatusAll();
         }
         catch (Exception e)
         {
@@ -814,5 +828,68 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
         {
             e.printStackTrace();
         }
+    }
+
+    private void updateConnectionMethod(String parameter, ICameraController method)
+    {
+        try
+        {
+            currentCoordinator = method;
+            preferences.putString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, parameter);
+            vibrate(IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *   接続方式を変更するか確認する
+     *
+     */
+    private void changeConnectionMethod()
+    {
+        final AppCompatActivity activity = this;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    int titleId = R.string.change_title_from_opc_to_theta;
+                    int messageId = R.string.change_message_from_opc_to_theta;
+                    boolean method = false;
+                    String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
+                    if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA))
+                    {
+                        titleId = R.string.change_title_from_theta_to_opc;
+                        messageId = R.string.change_message_from_theta_to_opc;
+                        method = true;
+                    }
+                    final boolean isTheta = method;
+                    ConfirmationDialog confirmation = new ConfirmationDialog(activity);
+                    confirmation.show(titleId, messageId, new ConfirmationDialog.Callback() {
+                        @Override
+                        public void confirm() {
+                            Log.v(TAG, " --- CONFIRMED! --- (theta:" + isTheta + ")");
+                            if (isTheta)
+                            {
+                                // 接続方式を OPC に切り替える
+                                updateConnectionMethod(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_OPC, olyAirCoordinator);
+                            }
+                            else
+                            {
+                                // 接続方式を Theta に切り替える
+                                updateConnectionMethod(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA, olyAirCoordinator);  // thetaCoordinator
+                            }
+                        }
+                    });
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

@@ -17,7 +17,7 @@ import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
  *   画面がタッチ・クリックされた時の処理分岐
  *
  */
-public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener
+public class CameraLiveViewOnTouchListener implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener
 {
     private final String TAG = toString();
 
@@ -30,7 +30,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
      *   コンストラクタの整理
      *
      */
-    public OlyCameraLiveViewOnTouchListener(Context context, ICameraFeatureDispatcher dispatcher, IChangeScene changeScene)
+    public CameraLiveViewOnTouchListener(Context context, ICameraFeatureDispatcher dispatcher, IChangeScene changeScene)
     {
         this.dispatcher = dispatcher;
         this.changeScene = changeScene;
@@ -51,7 +51,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
             Log.v(TAG, "onClick() : prohibit operation");
             if (operationMode == IShowInformation.operation.ONLY_CONNECT)
             {
-                changeScene.checkConnectionFeature(0);
+                changeScene.checkConnectionFeature(0, id);
             }
             return;
         }
@@ -84,7 +84,7 @@ public class OlyCameraLiveViewOnTouchListener  implements View.OnClickListener, 
         {
             // 操作禁止の指示がされていた場合は何もしない
             Log.v(TAG, "onLongClick() : prohibit operation");
-            return  ((operationMode == IShowInformation.operation.ONLY_CONNECT)&&(changeScene.checkConnectionFeature(1)));
+            return  ((operationMode == IShowInformation.operation.ONLY_CONNECT)&&(changeScene.checkConnectionFeature(1, id)));
         }
         try
         {

@@ -7,6 +7,11 @@ package jp.sfjp.gokigen.a01c.preference;
  */
 public interface IPreferenceCameraPropertyAccessor
 {
+    String CONNECTION_METHOD = "connection_method";
+    String CONNECTION_METHOD_OPC = "OPC";
+    String CONNECTION_METHOD_THETA = "THETA";
+    String CONNECTION_METHOD_DEFAULT_VALUE = CONNECTION_METHOD_OPC;
+
     String FRAME_GRID = "frame_grid";
     String FRAME_GRID_DEFAULT_VALUE = "0";
 

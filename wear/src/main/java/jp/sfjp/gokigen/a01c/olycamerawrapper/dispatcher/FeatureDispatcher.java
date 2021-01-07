@@ -11,7 +11,7 @@ import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IOlyCameraCoordinator;
+import jp.sfjp.gokigen.a01c.ICameraController;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
@@ -29,17 +29,17 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
 
     private final AppCompatActivity activity;
     private final IShowInformation statusDrawer;
-    private final IOlyCameraCoordinator camera;
+    private final ICameraController camera;
     private final ILiveImageStatusNotify liveImageView;
     private final PreferenceAccessWrapper preferences;
 
-    public FeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull IOlyCameraCoordinator camera, ILiveImageStatusNotify liveImageView)
+    public FeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceAccessWrapper preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView)
     {
         this.activity = context;
         this.statusDrawer = statusDrawer;
         this.camera = camera;
         this.liveImageView = liveImageView;
-        this.preferences = new PreferenceAccessWrapper(context);
+        this.preferences = preferenceAccessWrapper;
     }
 
     /**
@@ -937,13 +937,6 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
         try
         {
             Log.v(TAG, " --- showSettingsScreen() ---");
-            ConfirmationDialog confirmation = new ConfirmationDialog(activity);
-            confirmation.show(R.string.change_title_from_opc_to_theta, R.string.change_message_from_opc_to_theta, new ConfirmationDialog.Callback() {
-                @Override
-                public void confirm() {
-                    Log.v(TAG, " --- CONFIRMED! --- ");
-                }
-            });
         }
         catch (Exception e)
         {

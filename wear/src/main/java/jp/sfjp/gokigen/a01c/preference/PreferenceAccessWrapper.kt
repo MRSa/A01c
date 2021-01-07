@@ -5,9 +5,21 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceManager
 
-class PreferenceAccessWrapper(context : Context) : PreferenceDataStore()
+class PreferenceAccessWrapper(private val context : Context) : PreferenceDataStore()
 {
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    fun initialize()
+    {
+        try
+        {
+            PreferenceInitializer().initializePreferences(context)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     override fun getString(key : String, defaultValue : String?) : String
     {

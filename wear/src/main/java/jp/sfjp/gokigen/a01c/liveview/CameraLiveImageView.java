@@ -41,7 +41,7 @@ import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
  *    (OLYMPUS の ImageCaptureSample をカスタマイズ)
  *
  */
-public class CameraLiveImageView extends View implements CameraLiveViewListenerImpl.IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, IDialogController
+public class CameraLiveImageView extends View implements IImageDataReceiver, IAutoFocusFrameDisplay, ILiveImageStatusNotify, IDialogController
 {
     private final String TAG = toString();
 

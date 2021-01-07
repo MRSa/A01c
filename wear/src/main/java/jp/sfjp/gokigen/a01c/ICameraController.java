@@ -1,10 +1,13 @@
-package jp.sfjp.gokigen.a01c.olycamerawrapper;
+package jp.sfjp.gokigen.a01c;
 
 import android.view.MotionEvent;
 
-import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
-import jp.co.olympus.camerakit.OLYCameraStatusListener;
-import jp.sfjp.gokigen.a01c.ICameraConnection;
+import androidx.annotation.NonNull;
+
+import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
@@ -13,11 +16,11 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOpe
  *
  *
  */
-public interface IOlyCameraCoordinator
+public interface ICameraController
 {
     /** ライブビュー関係 **/
+    void setLiveViewListener(@NonNull CameraLiveViewListenerImpl listener);
     void changeLiveViewSize(String size);
-    void setLiveViewListener(OLYCameraLiveViewListener listener);
     void startLiveView();
     void stopLiveView();
 
@@ -53,14 +56,14 @@ public interface IOlyCameraCoordinator
     boolean isAFLock();
     boolean isAELock();
 
-    /** カメラの状態変化リスナの設定 **/
-    void setCameraStatusListener(OLYCameraStatusListener listener);
+    ///** カメラの状態変化リスナの設定 **/
+    //void setCameraStatusListener(OLYCameraStatusListener listener);
 
     /** カメラ状態の表示をすべて更新する **/
     void updateStatusAll();
 
-    /** カメラの状態サマリ(のテキスト情報)を取得する **/
-    String getCameraStatusSummary(ICameraStatusSummary decoder);
+    ///** カメラの状態サマリ(のテキスト情報)を取得する **/
+    //String getCameraStatusSummary(ICameraStatusSummary decoder);
 
     // カメラプロパティアクセスインタフェース
     IOlyCameraPropertyProvider getCameraPropertyProvider();

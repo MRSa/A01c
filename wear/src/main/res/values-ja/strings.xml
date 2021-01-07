@@ -64,10 +64,10 @@
     <string name="pref_cat_info">カメラ情報</string>
     <string name="pref_camerakit_version">Camera kit Version</string>
 
-    <string name="change_title_from_opc_to_theta">Change To Theta</string>
-    <string name="change_message_from_opc_to_theta">Change To Theta, OK?</string>
+    <string name="change_title_from_opc_to_theta">THETAと接続</string>
+    <string name="change_message_from_opc_to_theta">接続方式をTHETAにしますか？</string>
 
-    <string name="change_title_from_theta_to_opc">Change To OPC</string>
-    <string name="change_message_from_theta_to_opc">Change To OPC, OK?</string>
+    <string name="change_title_from_theta_to_opc">OPCに接続</string>
+    <string name="change_message_from_theta_to_opc">接続方式をOPCにしますか？</string>
 
 </resources>
