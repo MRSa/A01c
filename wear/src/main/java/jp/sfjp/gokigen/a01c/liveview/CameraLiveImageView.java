@@ -120,7 +120,20 @@ public class CameraLiveImageView extends View implements IImageDataReceiver, IAu
         // ダミーのビットマップデータ読み込み...画面表示のテスト用ロジック
         try
         {
-            imageBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.momonga);
+            int imageId = R.drawable.momonga;
+            try
+            {
+                String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
+                if (connectionMethod != null)
+                {
+                    imageId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.drawable.kamakura : R.drawable.momonga;
+                }
+            }
+            catch (Throwable tt)
+            {
+                tt.printStackTrace();
+            }
+            imageBitmap = BitmapFactory.decodeResource(context.getResources(), imageId);
         }
         catch (Throwable t)
         {

@@ -821,8 +821,21 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             {
                 liveView.hideDialog();
                 listener.setEnableOperation(operation.ENABLE);
-
             }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateConnectionMethodMessage()
+    {
+        try
+        {
+            String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
+            int methodId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.string.connection_method_theta : R.string.connection_method_opc;
+            setMessage(IShowInformation.AREA_5, Color.MAGENTA, getString(methodId));
         }
         catch (Exception e)
         {
@@ -845,7 +858,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     }
 
     /**
-     *   接続方式を変更するか確認する
+     *   接続方式を変更するか確認する (OPC ⇔ THETA)
      *
      */
     private void changeConnectionMethod()
@@ -882,6 +895,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                                 // 接続方式を Theta に切り替える
                                 updateConnectionMethod(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA, olyAirCoordinator);  // thetaCoordinator
                             }
+                            updateConnectionMethodMessage();
                         }
                     });
                 }
