@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+
+import androidx.annotation.NonNull;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.preference.PreferenceDataStore;
 
@@ -118,28 +120,7 @@ public class CameraLiveImageView extends View implements IImageDataReceiver, IAu
         gridFrameDrawer = GridFrameFactory.getGridFrameDrawer(framingGridStatus);
 
         // ダミーのビットマップデータ読み込み...画面表示のテスト用ロジック
-        try
-        {
-            int imageId = R.drawable.momonga;
-            try
-            {
-                String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
-                if (connectionMethod != null)
-                {
-                    imageId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.drawable.kamakura : R.drawable.momonga;
-                }
-            }
-            catch (Throwable tt)
-            {
-                tt.printStackTrace();
-            }
-            imageBitmap = BitmapFactory.decodeResource(context.getResources(), imageId);
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            imageBitmap = null;
-        }
+        setupInitialBackgroundImage(context);
     }
 
     /**
@@ -383,6 +364,32 @@ public class CameraLiveImageView extends View implements IImageDataReceiver, IAu
                     hideFocusFrame();
                 }
             }, (long) (duration * 1000));
+        }
+    }
+
+    public void setupInitialBackgroundImage(@NonNull Context context)
+    {
+        try
+        {
+            int imageId = R.drawable.momonga;
+            try
+            {
+                String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
+                if (connectionMethod != null)
+                {
+                    imageId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.drawable.kamakura : R.drawable.momonga;
+                }
+            }
+            catch (Throwable tt)
+            {
+                tt.printStackTrace();
+            }
+            imageBitmap = BitmapFactory.decodeResource(context.getResources(), imageId);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            imageBitmap = null;
         }
     }
 

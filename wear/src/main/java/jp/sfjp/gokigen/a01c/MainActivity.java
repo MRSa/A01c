@@ -835,7 +835,13 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
         {
             String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
             int methodId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.string.connection_method_theta : R.string.connection_method_opc;
-            setMessage(IShowInformation.AREA_5, Color.MAGENTA, getString(methodId));
+            setMessage(IShowInformation.AREA_7, Color.MAGENTA, getString(methodId));
+            if (liveView == null)
+            {
+                liveView = findViewById(R.id.liveview);
+            }
+            liveView.setupInitialBackgroundImage(this);
+            liveView.invalidate();
         }
         catch (Exception e)
         {
