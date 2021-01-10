@@ -16,6 +16,7 @@ import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
  */
 public class CameraLiveViewListenerImpl implements OLYCameraLiveViewListener, IImageDataReceiver
 {
+    private final String TAG = toString();
     private final IImageDataReceiver imageView;
 
     /**
@@ -43,9 +44,10 @@ public class CameraLiveViewListenerImpl implements OLYCameraLiveViewListener, II
     @Override
     public void setImageData(byte[] data, Map<String, Object> metadata)
     {
+        // Log.v(TAG, " setImageData len : " + data.length);
         if (imageView != null)
         {
-            imageView.setImageData(data, metadata);
+            imageView.setImageData(data, null);
         }
     }
 }

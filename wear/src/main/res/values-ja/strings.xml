@@ -74,4 +74,7 @@
     <string name="connection_method_opc">OPC</string>
     <string name="connection_method_theta">THETA</string>
 
+    <string name="theta_connect_response_ng">応答がありません。</string>
+    <string name="camera_not_found">カメラ未発見</string>
+
 </resources>

@@ -233,49 +233,54 @@ public class CameraLiveImageView extends View implements IImageDataReceiver, IAu
     public void setImageData(byte[] data, Map<String, Object> metadata)
     {
         Bitmap bitmap;
-        int rotationDegrees;
+        int rotationDegrees = 0;
 
-        if (data != null && metadata != null)
+        if (data != null)
         {
-            // Create a bitmap.
             try
             {
                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             }
-            catch (OutOfMemoryError e)
+            catch (Throwable e)
             {
                 e.printStackTrace();
                 return;
             }
 
-            // Acquire a rotation degree of image.
-            int orientation = ExifInterface.ORIENTATION_UNDEFINED;
-            try
+            if (metadata != null)
             {
-                if (metadata.containsKey(EXIF_ORIENTATION))
+                int orientation = ExifInterface.ORIENTATION_UNDEFINED;
+                try
                 {
-                    orientation = Integer.parseInt((String) metadata.get(EXIF_ORIENTATION));
+                    if (metadata.containsKey(EXIF_ORIENTATION))
+                    {
+                        String degree = (String) metadata.get(EXIF_ORIENTATION);
+                        if (degree != null)
+                        {
+                            orientation = Integer.parseInt(degree);
+                        }
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            switch (orientation)
-            {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotationDegrees = 90;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotationDegrees = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotationDegrees = 270;
-                    break;
-                case ExifInterface.ORIENTATION_NORMAL:
-                default:
-                    rotationDegrees = 0;
-                    break;
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                switch (orientation)
+                {
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        rotationDegrees = 90;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        rotationDegrees = 180;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        rotationDegrees = 270;
+                        break;
+                    case ExifInterface.ORIENTATION_NORMAL:
+                    default:
+                        rotationDegrees = 0;
+                        break;
+                }
             }
             imageBitmap = bitmap;
             imageRotationDegrees = rotationDegrees;

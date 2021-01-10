@@ -4,6 +4,7 @@ package jp.sfjp.gokigen.a01c.utils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -351,7 +352,7 @@ public class SimpleLiveviewSlicer
      *
      *
      */
-    public Payload nextPayloadForMotionJpeg()
+    public @Nullable Payload nextPayloadForMotionJpeg()
     {
         int searchIndex = 0;
         int[] endmarker = { 0xff, 0xd9 };

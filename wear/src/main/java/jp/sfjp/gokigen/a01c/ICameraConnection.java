@@ -7,10 +7,17 @@ import androidx.annotation.NonNull;
 /**
  *   カメラの接続/切断
  *
- * Created by MRSa on 2017/02/28.
  */
 public interface ICameraConnection
 {
+    enum CameraConnectionStatus
+    {
+        UNKNOWN,
+        DISCONNECTED,
+        CONNECTING,
+        CONNECTED
+    };
+
     // WIFI 接続系
     void startWatchWifiStatus(@NonNull Context context);
     void stopWatchWifiStatus(@NonNull Context context);

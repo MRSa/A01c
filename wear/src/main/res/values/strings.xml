@@ -72,4 +72,7 @@
     <string name="connection_method_opc">OPC</string>
     <string name="connection_method_theta">THETA</string>
 
+    <string name="theta_connect_response_ng">Did not receive any response.</string>
+    <string name="camera_not_found">Not Found&#8230;</string>
+
 </resources>

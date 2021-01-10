@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -355,8 +356,8 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 liveView = findViewById(R.id.liveview);
             }
             olyAirCoordinator = new OlyCameraCoordinator(this, liveView, this, this);
-            thetaCoordinator = new ThetaCameraController(this, liveView, this, this);
-            currentCoordinator = olyAirCoordinator; // (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
+            thetaCoordinator = new ThetaCameraController(this, liveView, this, this, preferences);
+            currentCoordinator = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
             currentCoordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
             listener = new CameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
             selectionDialog = new FavoriteSettingSelectionDialog(this, currentCoordinator.getCameraPropertyLoadSaveOperations(), this);
@@ -548,10 +549,29 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     }
 
     /**
+     *  カメラと接続失敗
+     */
+    @Override
+    public void onCameraConnectError(@NonNull String message)
+    {
+        Log.v(TAG, "onCameraOccursException()");
+        try
+        {
+            setMessage(IShowInformation.AREA_C, Color.YELLOW, message);
+            listener.setEnableOperation(operation.ONLY_CONNECT);
+            cameraDisconnectedHappened = true;
+        }
+        catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+
+    /**
      *  カメラに例外発生
      */
     @Override
-    public void onCameraOccursException(String message, Exception e)
+    public void onCameraOccursException(@NonNull String message, Exception e)
     {
         Log.v(TAG, "onCameraOccursException()");
         try
@@ -899,7 +919,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                             else
                             {
                                 // 接続方式を Theta に切り替える
-                                updateConnectionMethod(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA, olyAirCoordinator);  // thetaCoordinator
+                                updateConnectionMethod(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA, thetaCoordinator);
                             }
                             updateConnectionMethodMessage();
                         }

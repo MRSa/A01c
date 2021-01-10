@@ -498,6 +498,12 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     }
 
     @Override
+    public void onShootingStatusUpdate(shootingStatus status)
+    {
+        Log.v(TAG, " ShootingStatus : " + status);
+    }
+
+    @Override
     public OLYCamera getOLYCamera()
     {
         return (camera);
