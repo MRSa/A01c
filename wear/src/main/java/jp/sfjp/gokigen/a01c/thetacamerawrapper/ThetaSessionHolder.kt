@@ -1,5 +1,7 @@
 package jp.sfjp.gokigen.a01c.thetacamerawrapper
 
+import android.util.Log
+
 class ThetaSessionHolder : IThetaSessionIdProvider, IThetaSessionIdNotifier
 {
     private var sessionId : String = ""
@@ -11,14 +13,21 @@ class ThetaSessionHolder : IThetaSessionIdProvider, IThetaSessionIdNotifier
 
     override fun receivedSessionId(sessionId: String?)
     {
-        if (sessionId != null)
+        if (!(sessionId.isNullOrEmpty()))
         {
+            Log.v(TAG, " SESSION ID : $sessionId")
             this.sessionId = sessionId
         }
     }
 
     fun isApiLevelV21() : Boolean
     {
-        return (!(sessionId.isNotEmpty()))
+        return (sessionId.isEmpty())
     }
+
+    companion object
+    {
+        private val TAG = ThetaSessionHolder::class.java.simpleName
+    }
+
 }

@@ -94,6 +94,10 @@ public class SimpleLiveviewSlicer
             {
                 mInputStream = mHttpConn.getInputStream();
             }
+            else
+            {
+                Log.v(TAG, " RESPONSE NG : " + mHttpConn.getResponseCode() + " " + mHttpConn.getResponseMessage());
+            }
         }
         catch (Exception e)
         {
@@ -355,7 +359,7 @@ public class SimpleLiveviewSlicer
     public @Nullable Payload nextPayloadForMotionJpeg()
     {
         int searchIndex = 0;
-        int[] endmarker = { 0xff, 0xd9 };
+        int[] endMarker = { 0xff, 0xd9 };
         Payload payload = null;
         try
         {
@@ -373,10 +377,10 @@ public class SimpleLiveviewSlicer
                         // 1byteづつの読み込み... 本当は複数バイト読み出しで処理したい
                         int data = mInputStream.read();
                         tmpByteArray.write(data);
-                        if (data == endmarker[searchIndex])
+                        if (data == endMarker[searchIndex])
                         {
                             searchIndex++;
-                            if (searchIndex >= endmarker.length)
+                            if (searchIndex >= endMarker.length)
                             {
                                 break;
                             }

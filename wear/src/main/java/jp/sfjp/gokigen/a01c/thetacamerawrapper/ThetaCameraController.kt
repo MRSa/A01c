@@ -23,7 +23,10 @@ import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.connection.ThetaCameraConnection
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.liveview.ThetaLiveViewControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaDummyOperation
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaMovieRecordingControl
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
+import java.util.*
 
 class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl
 {
@@ -33,10 +36,13 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, receiver, sessionIdHolder)
     private val singleShot = ThetaSingleShotControl(sessionIdHolder, this, this)
+    private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
+    private val optionSet = ThetaOptionUpdateControl(sessionIdHolder, this, this)
 
     override fun setLiveViewListener(listener: CameraLiveViewListenerImpl)
     {
-        this.liveViewControl = ThetaLiveViewControl(sessionIdHolder, listener)
+        Log.v(TAG, " setLiveViewListener() : ${sessionIdHolder.isApiLevelV21()} ")
+        this.liveViewControl = ThetaLiveViewControl(listener)
     }
 
     override fun changeLiveViewSize(size: String?)
@@ -47,9 +53,20 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
 
     override fun startLiveView()
     {
-        if (::liveViewControl.isInitialized)
+        try
         {
-            liveViewControl.startLiveView()
+            // スチルモードに切り替える
+            changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
+
+            // ライブビューの表示...
+            if (::liveViewControl.isInitialized)
+            {
+                liveViewControl.startLiveView(sessionIdHolder)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
         }
     }
 
@@ -63,7 +80,45 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
 
     override fun updateTakeMode()
     {
-        // なにもしない
+        if (::featureDispatcher.isInitialized)
+        {
+            when (featureDispatcher.takeMode)
+            {
+                "P" -> changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
+                "Movie" -> changeCaptureVideoMode(sessionIdHolder.isApiLevelV21())
+            }
+        }
+    }
+
+    private fun changeCaptureImageMode(apiV21 : Boolean)
+    {
+        try
+        {
+            optionSet.setOptions("\"captureMode\" : \"image\"", apiV21)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun changeCaptureVideoMode(apiV21 : Boolean)
+    {
+        try
+        {
+            if (apiV21)
+            {
+                optionSet.setOptions("\"captureMode\" : \"video\"", apiV21)
+            }
+            else
+            {
+                optionSet.setOptions("\"captureMode\" : \"_video\"", apiV21)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun driveAutoFocus(event: MotionEvent?): Boolean
@@ -88,7 +143,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
 
     override fun movieControl()
     {
-        // TODO("Not yet implemented")
+        movieShot.movieControl(sessionIdHolder.isApiLevelV21())
     }
 
     override fun bracketingShot(bracketingStyle: Int, bracketingCount: Int, durationSeconds: Int)
@@ -183,5 +238,22 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     override fun onShootingStatusUpdate(status: IIndicatorControl.shootingStatus?)
     {
         //TODO("Not yet implemented")
+    }
+
+    private fun waitMs(waitMs: Int)
+    {
+        try
+        {
+            Thread.sleep(waitMs.toLong())
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    companion object
+    {
+        private val TAG = ThetaCameraController::class.java.simpleName
     }
 }

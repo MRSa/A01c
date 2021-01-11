@@ -5,11 +5,11 @@ import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.IThetaSessionIdProvider
 import jp.sfjp.gokigen.a01c.utils.SimpleLiveviewSlicer
 
-class ThetaLiveViewControl(private val sessionIdProvider: IThetaSessionIdProvider, private val liveViewListener: CameraLiveViewListenerImpl)
+class ThetaLiveViewControl(private val liveViewListener: CameraLiveViewListenerImpl)
 {
     private var whileFetching = false
 
-    fun startLiveView()
+    fun startLiveView(sessionIdProvider: IThetaSessionIdProvider)
     {
         Log.v(TAG, " startLiveView()")
         try
@@ -18,7 +18,7 @@ class ThetaLiveViewControl(private val sessionIdProvider: IThetaSessionIdProvide
                 try
                 {
 
-                    start(!(sessionIdProvider.sessionId.isEmpty()))
+                    start(sessionIdProvider.sessionId)
                 }
                 catch (e: Exception)
                 {
@@ -39,7 +39,7 @@ class ThetaLiveViewControl(private val sessionIdProvider: IThetaSessionIdProvide
         whileFetching = false
     }
 
-    private fun start(useOscV2 : Boolean)
+    private fun start(sessionId : String)
     {
         if (whileFetching)
         {
@@ -57,12 +57,13 @@ class ThetaLiveViewControl(private val sessionIdProvider: IThetaSessionIdProvide
                 try
                 {
                     val streamUrl = "http://192.168.1.1/osc/commands/execute"
-                    val paramData = if (useOscV2) "{\"name\":\"camera.getLivePreview\",\"parameters\":{\"timeout\":0}}" else "{\"name\":\"camera._getLivePreview\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.getSessionId().toString() + "\"}}"
-                    Log.v(TAG, " >>>>> START THETA PREVIEW : $streamUrl $paramData")
+                    val paramData = if (sessionId.isEmpty()) "{\"name\":\"camera.getLivePreview\",\"parameters\":{\"timeout\":0}}" else "{\"name\":\"camera._getLivePreview\",\"parameters\":{\"sessionId\": \"$sessionId\"}}"
+                    Log.v(TAG, " >>>>> START THETA PREVIEW($sessionId) : $streamUrl $paramData")
 
                     // Create Slicer to open the stream and parse it.
                     slicer.open(streamUrl, paramData, "application/json;charset=utf-8")
-                    while (whileFetching) {
+                    while (whileFetching)
+                    {
                         val payload: SimpleLiveviewSlicer.Payload? = slicer.nextPayloadForMotionJpeg()
                         if (payload == null)
                         {
@@ -90,7 +91,7 @@ class ThetaLiveViewControl(private val sessionIdProvider: IThetaSessionIdProvide
                     {
                         // 再度ライブビューのスタートをやってみる。
                         whileFetching = false
-                        start(useOscV2)
+                        start(sessionId)
                     }
                 }
             }

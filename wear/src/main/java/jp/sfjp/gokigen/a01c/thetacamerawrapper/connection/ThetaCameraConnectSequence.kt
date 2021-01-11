@@ -56,9 +56,15 @@ class ThetaCameraConnectSequence(private val context: AppCompatActivity, private
                 for (index in 0 until size)
                 {
                     val api = apiLevelArray.getInt(index)
+                    if (api == 1)  //if (api == 1 && useThetaV21)
+                    {
+                        apiLevelIsV21 = false
+                        break
+                    }
                     if (api == 2)  //if (api == 2 && useThetaV21)
                     {
                         apiLevelIsV21 = true
+                        break
                     }
                 }
             }
@@ -111,12 +117,14 @@ class ThetaCameraConnectSequence(private val context: AppCompatActivity, private
         }
     }
 
-    private fun connectApiV21() {
+    private fun connectApiV21()
+    {
         val commandsExecuteUrl = "http://192.168.1.1/osc/commands/execute"
         val startSessionData = "{\"name\":\"camera.startSession\",\"parameters\":{\"timeout\":0}}"
         val getStateUrl = "http://192.168.1.1/osc/state"
         val timeoutMs = 5000
-        try {
+        try
+        {
             val responseS: String? = httpClient.httpPostWithHeader(commandsExecuteUrl, startSessionData, null, "application/json;charset=utf-8", timeoutMs)
             Log.v(TAG, " [ $httpClient ] $startSessionData ::: $responseS")
             val response: String? = httpClient.httpPostWithHeader(getStateUrl, "", null, null, timeoutMs)
@@ -125,19 +133,26 @@ class ThetaCameraConnectSequence(private val context: AppCompatActivity, private
             {
                 var apiLevel = 1
                 var sessionId: String? = null
-                val `object` = JSONObject(response)
-                try {
-                    apiLevel = `object`.getJSONObject("state").getInt("_apiVersion")
-                } catch (e: Exception) {
+                val jsonObject = JSONObject(response)
+                try
+                {
+                    apiLevel = jsonObject.getJSONObject("state").getInt("_apiVersion")
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
                 }
-                try {
-                    sessionId = `object`.getJSONObject("state").getString("sessionId")
+                try
+                {
+                    sessionId = jsonObject.getJSONObject("state").getString("sessionId")
                     sessionIdNotifier.receivedSessionId(sessionId)
-                } catch (e: Exception) {
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
                 }
-                if (apiLevel != 2) {
+                if (apiLevel != 2)
+                {
                     val setApiLevelData = "{\"name\":\"camera.setOptions\",\"parameters\":{\"sessionId\" : \"$sessionId\", \"options\":{ \"clientVersion\":2}}}"
                     val response3: String? = httpClient.httpPostWithHeader(commandsExecuteUrl, setApiLevelData, null, "application/json;charset=utf-8", timeoutMs)
                     Log.v(TAG, " $commandsExecuteUrl $setApiLevelData $response3")

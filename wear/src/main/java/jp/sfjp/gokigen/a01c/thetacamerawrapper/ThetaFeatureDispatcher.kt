@@ -1,5 +1,6 @@
 package jp.sfjp.gokigen.a01c.thetacamerawrapper
 
+import android.graphics.Color
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle
 
 class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify): ICameraFeatureDispatcher
 {
+    private var takeMode : String = "P"
 
     /**
      * 指定した機能を実行する
@@ -34,17 +36,21 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
         // 機能実行の割り当て...
         var duration = IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT
         when (featureNumber) {
-            ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID ->                  // グリッド標示ON/OFF
+            ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_GRID ->                    // グリッド標示ON/OFF
                 changeShowGrid(objectId)
-            ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT ->                 // シャッター
+            ICameraFeatureDispatcher.FEATURE_SHUTTER_SINGLESHOT ->                  // シャッター(一枚撮影)
                 pushShutterButton()
             ICameraFeatureDispatcher.FEATURE_SETTINGS -> {
-                showSettingsScreen()                                              // 設定画面を開く
+                showSettingsScreen()                                                // 設定画面を開く
                 duration = IShowInformation.VIBRATE_PATTERN_NONE
             }
-/*
+            ICameraFeatureDispatcher.FEATURE_CONTROL_MOVIE ->                       // 動画の撮影・撮影終了
+                movieControl()
             ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE ->                    // 撮影モードの変更
                 changeTakeMode()
+            ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE_REVERSE ->            // 撮影モードの変更（逆順）
+                changeTakeModeReverse()
+/*
             ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // AE LOCKのON/OFF切り替え
                 changeAeLockMode()
             ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN ->                 // 露出補正を１段階下げる
@@ -69,10 +75,6 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
                 changeArtFilterUp()
             ICameraFeatureDispatcher.FEATURE_TOGGLE_SHOW_LEVEL_GAUGE ->                 // デジタル水準器の表示・非表示
                 changeShowLevelGauge()
-            ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE_REVERSE ->                 // 撮影モードの変更（逆順）
-                changeTakeModeReverse()
-            ICameraFeatureDispatcher.FEATURE_CONTROL_MOVIE ->                 // 動画の撮影・撮影終了
-                movieControl()
             ICameraFeatureDispatcher.FEATURE_AE_DOWN ->                 // AE(測光方式)を選択
                 changeAEModeDown()
             ICameraFeatureDispatcher.FEATURE_AE_UP ->                 // AE(測光方式)を選択
@@ -204,7 +206,7 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     override fun getTakeMode(): String?
     {
-        return ("P")   // 暫定でプログラムモード
+        return (takeMode)   // 暫定でプログラムモード
 
         //val propertyProxy = camera.cameraPropertyProvider
         //return propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
@@ -216,6 +218,20 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeTakeMode()
     {
+        if (takeMode.contains("P"))
+        {
+            takeMode = "Movie"
+        }
+        else
+        {
+            takeMode = "P"
+        }
+        statusDrawer.setMessage(IShowInformation.AREA_1, Color.WHITE, takeMode)
+
+        //  撮影モードの更新
+        camera.updateTakeMode();
+
+/*
         val propertyProxy = camera.cameraPropertyProvider
         val propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
                 ?: // データ取得失敗
@@ -231,12 +247,11 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
             "iAuto" -> "$targetMode/P>"
             else -> "$targetMode/P>"
         }
+
         Log.v(TAG, "changeTakeMode() $targetMode")
         propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode)
         camera.unlockAutoFocus()
-
-        //  撮影モードの更新
-        //camera.updateTakeMode();
+*/
     }
 
     /**
@@ -245,6 +260,8 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeTakeModeReverse()
     {
+        changeTakeMode()
+/*
         val propertyProxy = camera.cameraPropertyProvider
         val propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
                 ?: // データ取得失敗
@@ -266,6 +283,7 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
 
         //  撮影モードの更新
         //camera.updateTakeMode();
+*/
     }
 
     /**
