@@ -114,6 +114,12 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     }
 
     @Override
+    public void connectFinished()
+    {
+        // 何もしない
+    }
+
+    @Override
     public void setLiveViewListener(@NonNull CameraLiveViewListenerImpl listener)
     {
         Log.v(TAG, "setLiveViewListener()");

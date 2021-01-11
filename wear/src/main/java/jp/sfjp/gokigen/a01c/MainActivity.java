@@ -516,6 +516,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
         try
         {
             // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
+            currentCoordinator.connectFinished();
             currentCoordinator.startLiveView();
             currentCoordinator.setRecViewMode(false);
             listener.setEnableOperation(operation.ENABLE);

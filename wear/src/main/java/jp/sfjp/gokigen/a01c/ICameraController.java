@@ -22,6 +22,9 @@ import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
  */
 public interface ICameraController
 {
+    /** 接続終了(ライブビュースタート前の準備) **/
+    void connectFinished();
+
     /** ライブビュー関係 **/
     void setLiveViewListener(@NonNull CameraLiveViewListenerImpl listener);
     void changeLiveViewSize(String size);

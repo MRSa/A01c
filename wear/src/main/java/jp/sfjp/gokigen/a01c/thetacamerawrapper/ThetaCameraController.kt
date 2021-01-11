@@ -39,6 +39,19 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
     private val optionSet = ThetaOptionUpdateControl(sessionIdHolder, this, this)
 
+    override fun connectFinished()
+    {
+        try
+        {
+            // スチルモードに切り替える
+            changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun setLiveViewListener(listener: CameraLiveViewListenerImpl)
     {
         Log.v(TAG, " setLiveViewListener() : ${sessionIdHolder.isApiLevelV21()} ")
@@ -55,9 +68,6 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     {
         try
         {
-            // スチルモードに切り替える
-            changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
-
             // ライブビューの表示...
             if (::liveViewControl.isInitialized)
             {
