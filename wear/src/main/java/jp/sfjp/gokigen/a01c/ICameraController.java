@@ -3,14 +3,18 @@ package jp.sfjp.gokigen.a01c;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceDataStore;
 
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
+import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
+import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
 
 /**
  *
@@ -84,4 +88,7 @@ public interface ICameraController
 
     // デジタル水準器のホルダーを取得する
     ILevelGauge getLevelGauge();
+
+    // 機能の処理を行うクラスを取得する
+    @NonNull ICameraFeatureDispatcher getFeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceDataStore preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView);
 }

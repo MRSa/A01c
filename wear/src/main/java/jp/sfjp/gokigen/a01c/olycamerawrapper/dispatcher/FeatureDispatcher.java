@@ -5,8 +5,8 @@ import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceDataStore;
 
-import jp.sfjp.gokigen.a01c.ConfirmationDialog;
 import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
@@ -16,8 +16,6 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle;
-import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
-
 
 /**
  *   カメラ機能の実行
@@ -31,9 +29,9 @@ public class FeatureDispatcher implements ICameraFeatureDispatcher
     private final IShowInformation statusDrawer;
     private final ICameraController camera;
     private final ILiveImageStatusNotify liveImageView;
-    private final PreferenceAccessWrapper preferences;
+    private final PreferenceDataStore preferences;
 
-    public FeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceAccessWrapper preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView)
+    public FeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceDataStore preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView)
     {
         this.activity = context;
         this.statusDrawer = statusDrawer;

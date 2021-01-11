@@ -359,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             thetaCoordinator = new ThetaCameraController(this, liveView, this, this, preferences);
             currentCoordinator = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
             currentCoordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
-            listener = new CameraLiveViewOnTouchListener(this, new FeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
+            listener = new CameraLiveViewOnTouchListener(this, currentCoordinator.getFeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
             selectionDialog = new FavoriteSettingSelectionDialog(this, currentCoordinator.getCameraPropertyLoadSaveOperations(), this);
             connectToCamera();
         }

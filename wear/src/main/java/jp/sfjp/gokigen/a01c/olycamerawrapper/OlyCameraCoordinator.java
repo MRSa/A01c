@@ -8,6 +8,8 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceManager;
 
 import jp.co.olympus.camerakit.OLYCamera;
@@ -15,11 +17,14 @@ import jp.co.olympus.camerakit.OLYCamera;
 import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.ICameraController;
+import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
+import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
+import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.CameraStatusDisplay;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.indicator.ICameraStatusDisplay;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.listeners.CameraPropertyListenerImpl;
@@ -73,6 +78,8 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     private boolean isManualFocus = false;
     private boolean isAutoFocusLocked = false;
     //private boolean isExposureLocked = false;
+
+    private FeatureDispatcher featureDispatcher = null;
 
 
     /**
@@ -488,6 +495,16 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     public ILevelGauge getLevelGauge()
     {
         return (levelMeter);
+    }
+
+    @Override
+    public @NonNull ICameraFeatureDispatcher getFeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceDataStore preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView)
+    {
+        if (featureDispatcher == null)
+        {
+            featureDispatcher = new FeatureDispatcher(context, statusDrawer, camera, preferenceAccessWrapper, liveImageView);
+        }
+        return (featureDispatcher);
     }
 
     @Override

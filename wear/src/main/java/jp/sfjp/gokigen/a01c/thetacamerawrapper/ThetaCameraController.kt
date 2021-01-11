@@ -3,12 +3,15 @@ package jp.sfjp.gokigen.a01c.thetacamerawrapper
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceDataStore
 import jp.sfjp.gokigen.a01c.ICameraConnection
 import jp.sfjp.gokigen.a01c.ICameraController
+import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher
 import jp.sfjp.gokigen.a01c.IShowInformation
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver
+import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode
 import jp.sfjp.gokigen.a01c.olycamerawrapper.IIndicatorControl
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge
@@ -24,7 +27,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
 
 class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl
 {
-    //private lateinit var listener : CameraLiveViewListenerImpl
+    private lateinit var featureDispatcher : ThetaFeatureDispatcher
     private lateinit var liveViewControl : ThetaLiveViewControl
     private val dummyOperation = ThetaDummyOperation()
     private val sessionIdHolder = ThetaSessionHolder()
@@ -161,6 +164,15 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     override fun getLevelGauge(): ILevelGauge
     {
         return (dummyOperation)
+    }
+
+    override fun getFeatureDispatcher(context: AppCompatActivity, statusDrawer: IShowInformation, camera: ICameraController, accessWrapper: PreferenceDataStore, liveImageView: ILiveImageStatusNotify): ICameraFeatureDispatcher
+    {
+        if (!(::featureDispatcher.isInitialized))
+        {
+            featureDispatcher = ThetaFeatureDispatcher(context, statusDrawer, camera, accessWrapper, liveImageView)
+        }
+        return (featureDispatcher)
     }
 
     override fun onAfLockUpdate(isAfLocked: Boolean)
