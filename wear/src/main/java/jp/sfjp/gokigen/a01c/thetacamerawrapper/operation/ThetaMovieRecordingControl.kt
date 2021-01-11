@@ -57,15 +57,6 @@ class ThetaMovieRecordingControl(val context: Context, private val sessionIdProv
                     {
                         Log.v(TAG, " startCapture() : $result")
                         indicator.onShootingStatusUpdate(IIndicatorControl.shootingStatus.Starting)
-
-                        // 画像処理が終わるまで待つ
-                        //waitChangeStatus()
-
-                        // ライブビューのの再実行を指示する
-                        //indicator.onShootingStatusUpdate(IIndicatorControl.shootingStatus.Stopping)
-                        //liveViewControl.stopLiveView()
-                        //waitMs(300) // ちょっと待つ...
-                        //liveViewControl.startLiveView()
                     }
                     else
                     {
@@ -109,9 +100,13 @@ class ThetaMovieRecordingControl(val context: Context, private val sessionIdProv
 
                         // ライブビューのの再実行を指示する
                         indicator.onShootingStatusUpdate(IIndicatorControl.shootingStatus.Stopping)
-                        liveViewControl.stopLiveView()
-                        waitMs(300) // ちょっと待つ...
-                        liveViewControl.startLiveView()
+                        if (useOSCv2)
+                        {
+                            // THETA V / THETA Z1 は、videoモードでライブビューができるので...
+                            liveViewControl.stopLiveView()
+                            waitMs(300) // ちょっと待つ...
+                            liveViewControl.startLiveView()
+                        }
                     }
                     else
                     {

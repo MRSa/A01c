@@ -26,7 +26,6 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaDummyOperation
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaMovieRecordingControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
-import java.util.*
 
 class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl
 {
@@ -105,6 +104,8 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
         try
         {
             optionSet.setOptions("\"captureMode\" : \"image\"", apiV21)
+            waitMs(200);
+            startLiveView()
         }
         catch (e : Exception)
         {
@@ -123,6 +124,10 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
             else
             {
                 optionSet.setOptions("\"captureMode\" : \"_video\"", apiV21)
+
+                // API Level 1 の対応機種では、Videoモードでライブビューが動かないので止める
+                waitMs(200);
+                stopLiveView()
             }
         }
         catch (e : Exception)
