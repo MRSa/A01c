@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceManager;
@@ -18,6 +19,7 @@ import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.ICameraController;
 import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
+import jp.sfjp.gokigen.a01c.ICameraStatusWatcher;
 import jp.sfjp.gokigen.a01c.IShowInformation;
 import jp.sfjp.gokigen.a01c.R;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
@@ -427,6 +429,13 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     public void updateStatusAll()
     {
         cameraStatusDisplay.updateCameraStatusAll();
+    }
+
+    @Nullable
+    @Override
+    public ICameraStatusWatcher getStatusWatcher()
+    {
+        return (null);
     }
 
     @Override

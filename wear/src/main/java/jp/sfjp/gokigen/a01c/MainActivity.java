@@ -37,7 +37,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController;
  *   メインのActivity
  *
  */
-public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
+public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier, ICameraStatusUpdateNotify
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -423,6 +423,13 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             // ライブビューを停止させる
             currentCoordinator.stopLiveView();
 
+            // ステータス監視を止める
+            ICameraStatusWatcher watcher = currentCoordinator.getStatusWatcher();
+            if (watcher != null)
+            {
+                watcher.stopStatusWatch();
+            }
+
             //  パラメータを確認し、カメラの電源を切る
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT, true))
             {
@@ -522,6 +529,11 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             listener.setEnableOperation(operation.ENABLE);
             setMessage(IShowInformation.AREA_C, Color.WHITE, "");
             currentCoordinator.updateStatusAll();
+            ICameraStatusWatcher watcher = currentCoordinator.getStatusWatcher();
+            if (watcher != null)
+            {
+                watcher.startStatusWatch(this);
+            }
         }
         catch (Exception e)
         {
@@ -932,5 +944,40 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 }
             }
         });
+    }
+
+    @Override
+    public void updateCameraStatus(String message)
+    {
+        try
+        {
+            setMessage(IShowInformation.AREA_8, Color.WHITE, message);
+        }
+        catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateRemainBattery(double percentageDouble)
+    {
+        int color = Color.YELLOW;
+        if (percentageDouble < 0.5d)
+        {
+            if (percentageDouble < 0.3d)
+            {
+                color = Color.RED;
+            }
+            try
+            {
+                int percentage = (int) Math.ceil(percentageDouble * 100.0d);
+                setMessage(IShowInformation.AREA_7, color, "Bat: " + percentage + "%");
+            }
+            catch (Exception ee)
+            {
+                ee.printStackTrace();
+            }
+        }
     }
 }

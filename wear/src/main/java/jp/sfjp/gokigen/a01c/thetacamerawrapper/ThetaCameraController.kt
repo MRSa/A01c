@@ -4,10 +4,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceDataStore
-import jp.sfjp.gokigen.a01c.ICameraConnection
-import jp.sfjp.gokigen.a01c.ICameraController
-import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher
-import jp.sfjp.gokigen.a01c.IShowInformation
+import jp.sfjp.gokigen.a01c.*
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl
 import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver
@@ -26,6 +23,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaDummyOperation
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaMovieRecordingControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.status.ThetaCameraStatusWatcher
 
 class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl
 {
@@ -37,6 +35,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     private val singleShot = ThetaSingleShotControl(sessionIdHolder, this, this)
     private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
     private val optionSet = ThetaOptionUpdateControl(sessionIdHolder, this, this)
+    private val statusWatcher = ThetaCameraStatusWatcher()
 
     override fun connectFinished()
     {
@@ -199,6 +198,11 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     override fun updateStatusAll()
     {
         // なにもしない
+    }
+
+    override fun getStatusWatcher(): ICameraStatusWatcher
+    {
+        return (statusWatcher)
     }
 
     override fun getCameraPropertyProvider(): IOlyCameraPropertyProvider

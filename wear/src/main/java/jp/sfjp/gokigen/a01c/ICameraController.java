@@ -3,6 +3,7 @@ package jp.sfjp.gokigen.a01c;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceDataStore;
 
@@ -68,6 +69,10 @@ public interface ICameraController
 
     /** カメラ状態の表示をすべて更新する **/
     void updateStatusAll();
+
+
+    // ステータス監視のタスクを取得する
+    @Nullable ICameraStatusWatcher getStatusWatcher();
 
     ///** カメラの状態サマリ(のテキスト情報)を取得する **/
     //String getCameraStatusSummary(ICameraStatusSummary decoder);
