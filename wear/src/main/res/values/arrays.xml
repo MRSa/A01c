@@ -9,4 +9,37 @@
         <item >OPC</item>
         <item >THETA</item>
     </string-array>
+
+    <string-array name="exposure_compensation">
+        <item>-2.0</item>
+        <item>-1.7</item>
+        <item>-1.3</item>
+        <item>-1.0</item>
+        <item>-0.7</item>
+        <item>-0.3</item>
+        <item>0.0</item>
+        <item>0.3</item>
+        <item>0.7</item>
+        <item>1.0</item>
+        <item>1.3</item>
+        <item>1.7</item>
+        <item>2.0</item>
+    </string-array>
+
+    <string-array name="exposure_compensation_value">
+        <item>"exposureCompensation" : -2.0</item>
+        <item>"exposureCompensation" : -1.7</item>
+        <item>"exposureCompensation" : -1.3</item>
+        <item>"exposureCompensation" : -1.0</item>
+        <item>"exposureCompensation" : -0.7</item>
+        <item>"exposureCompensation" : -0.3</item>
+        <item>"exposureCompensation" : 0.0</item>
+        <item>"exposureCompensation" : 0.3</item>
+        <item>"exposureCompensation" : 0.7</item>
+        <item>"exposureCompensation" : 1.0</item>
+        <item>"exposureCompensation" : 1.3</item>
+        <item>"exposureCompensation" : 1.7</item>
+        <item>"exposureCompensation" : 2.0</item>
+    </string-array>
+
 </resources>

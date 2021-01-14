@@ -19,7 +19,15 @@ public interface ICameraStatus
     String THETA_SHOOTING_FUNCTION = "_function";
     String THETA_CAMERA_ERROR = "_cameraError";
 
-/*
+    String THETA_APERTURE = "aperture";
+    String THETA_CAPTURE_MODE = "captureMode";
+    String THETA_EXPOSURE_COMPENSATION = "exposureCompensation";
+    String THETA_EXPOSURE_PROGRAM = "exposureProgram";
+    String THETA_ISO_SENSITIVITY = "iso";
+    String THETA_SHUTTER_SPEED = "shutterSpeed";
+    String THETA_WHITE_BALANCE = "whiteBalance";
+
+    /*
     String BATTERY = "battery";
     String STATE = "state";
     String FOCUS_MODE = "focusMode";

@@ -25,7 +25,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateContro
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.status.ThetaCameraStatusWatcher
 
-class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl
+class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl, IThetaSessionIdProvider, IThetaStatusHolder
 {
     private lateinit var featureDispatcher : ThetaFeatureDispatcher
     private lateinit var liveViewControl : ThetaLiveViewControl
@@ -34,8 +34,9 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     private val cameraConnection = ThetaCameraConnection(context, receiver, sessionIdHolder)
     private val singleShot = ThetaSingleShotControl(sessionIdHolder, this, this)
     private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
-    private val optionSet = ThetaOptionUpdateControl(sessionIdHolder, this, this)
-    private val statusWatcher = ThetaCameraStatusWatcher()
+    private val optionSet = ThetaOptionUpdateControl(sessionIdHolder)
+    private val statusWatcher = ThetaCameraStatusWatcher(this, this)
+    private var takeMode = "P"
 
     override fun connectFinished()
     {
@@ -90,11 +91,26 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     {
         if (::featureDispatcher.isInitialized)
         {
-            when (featureDispatcher.takeMode)
+            Log.v(TAG, " MODE CHANGE FROM $takeMode")
+            when (takeMode)
             {
-                "P" -> changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
-                "Movie" -> changeCaptureVideoMode(sessionIdHolder.isApiLevelV21())
+                "Movie" -> changeCaptureImageMode(sessionIdHolder.isApiLevelV21())
+                "P" -> changeCaptureVideoMode(sessionIdHolder.isApiLevelV21())
             }
+        }
+    }
+
+    override fun getCaptureMode() : String
+    {
+        return (takeMode)
+    }
+
+    override fun setCaptureMode(captureMode : String)
+    {
+        when (captureMode) {
+            "image" -> takeMode = "P"
+            "video" -> takeMode = "Movie"
+            "_video" -> takeMode = "Movie"
         }
     }
 
@@ -103,7 +119,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
         try
         {
             optionSet.setOptions("\"captureMode\" : \"image\"", apiV21)
-            waitMs(200);
+            waitMs(200)
             startLiveView()
         }
         catch (e : Exception)
@@ -244,7 +260,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     {
         if (!(::featureDispatcher.isInitialized))
         {
-            featureDispatcher = ThetaFeatureDispatcher(context, statusDrawer, camera, accessWrapper, liveImageView)
+            featureDispatcher = ThetaFeatureDispatcher(context, statusDrawer, camera, accessWrapper, liveImageView, optionSet, sessionIdHolder.isApiLevelV21(), this)
         }
         return (featureDispatcher)
     }
@@ -274,5 +290,10 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     companion object
     {
         private val TAG = ThetaCameraController::class.java.simpleName
+    }
+
+    override fun getSessionId(): String
+    {
+        return (sessionIdHolder.sessionId)
     }
 }

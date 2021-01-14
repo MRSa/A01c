@@ -532,6 +532,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             ICameraStatusWatcher watcher = currentCoordinator.getStatusWatcher();
             if (watcher != null)
             {
+                watcher.prepareStatusWatch();
                 watcher.startStatusWatch(this);
             }
         }
@@ -947,11 +948,37 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     }
 
     @Override
+    public void updateCaptureMode(String message)
+    {
+        try
+        {
+            setMessage(IShowInformation.AREA_1, Color.WHITE, message);
+        }
+        catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+
+    @Override
     public void updateCameraStatus(String message)
     {
         try
         {
-            setMessage(IShowInformation.AREA_8, Color.WHITE, message);
+            setMessage(IShowInformation.AREA_5, Color.WHITE, message);
+        }
+        catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updatedExposureCompensation(String xv)
+    {
+        try
+        {
+            setMessage(IShowInformation.AREA_6, Color.WHITE, xv);
         }
         catch (Exception ee)
         {

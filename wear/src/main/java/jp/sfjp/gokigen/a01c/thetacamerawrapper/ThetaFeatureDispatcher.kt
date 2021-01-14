@@ -1,6 +1,5 @@
 package jp.sfjp.gokigen.a01c.thetacamerawrapper
 
-import android.graphics.Color
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +11,11 @@ import jp.sfjp.gokigen.a01c.R
 import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 
-class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify): ICameraFeatureDispatcher
+class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify, val optionSet : ThetaOptionUpdateControl, val useOSCv2 : Boolean, val statusHolder : IThetaStatusHolder): ICameraFeatureDispatcher
 {
-    private var takeMode : String = "P"
+    private var exposureCompensation : Int = 6
 
     /**
      * 指定した機能を実行する
@@ -50,13 +50,13 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
                 changeTakeMode()
             ICameraFeatureDispatcher.FEATURE_CHANGE_TAKEMODE_REVERSE ->            // 撮影モードの変更（逆順）
                 changeTakeModeReverse()
-/*
-            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // AE LOCKのON/OFF切り替え
-                changeAeLockMode()
             ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_DOWN ->                 // 露出補正を１段階下げる
                 changeExposureBiasValueDown()
             ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP ->                   // 露出補正を１段階上げる
                 changeExposureBiasValueUp()
+/*
+            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // AE LOCKのON/OFF切り替え
+                changeAeLockMode()
             ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN ->                      // 絞り値を１段階下げる
                 changeApertureValueDown()
             ICameraFeatureDispatcher.FEATURE_APERTURE_UP ->                        // 絞り値を１段階上げる
@@ -204,54 +204,18 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      * 撮影モードの取得
      *
      */
-    override fun getTakeMode(): String?
+    override fun getTakeMode(): String
     {
-        return (takeMode)   // 暫定でプログラムモード
-
-        //val propertyProxy = camera.cameraPropertyProvider
-        //return propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
+        return (statusHolder.captureMode)
     }
 
     /**
      * 撮影モードの変更指示
-     * (P > A > S > M > ART > movie > iAuto > ...)
      */
     private fun changeTakeMode()
     {
-        if (takeMode.contains("P"))
-        {
-            takeMode = "Movie"
-        }
-        else
-        {
-            takeMode = "P"
-        }
-        statusDrawer.setMessage(IShowInformation.AREA_1, Color.WHITE, takeMode)
-
         //  撮影モードの更新
         camera.updateTakeMode();
-
-/*
-        val propertyProxy = camera.cameraPropertyProvider
-        val propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
-                ?: // データ取得失敗
-                return
-        var targetMode = "<" + IOlyCameraProperty.TAKE_MODE // 変更先モード
-        targetMode = when (propetyValue) {
-            "P" -> "$targetMode/A>"
-            "A" -> "$targetMode/S>"
-            "S" -> "$targetMode/M>"
-            "M" -> "$targetMode/ART>"
-            "ART" -> "$targetMode/movie>"
-            "Movie" -> "$targetMode/iAuto>"
-            "iAuto" -> "$targetMode/P>"
-            else -> "$targetMode/P>"
-        }
-
-        Log.v(TAG, "changeTakeMode() $targetMode")
-        propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode)
-        camera.unlockAutoFocus()
-*/
     }
 
     /**
@@ -261,29 +225,6 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     private fun changeTakeModeReverse()
     {
         changeTakeMode()
-/*
-        val propertyProxy = camera.cameraPropertyProvider
-        val propetyValue = propertyProxy.getCameraPropertyValueTitle(propertyProxy.getCameraPropertyValue(IOlyCameraProperty.TAKE_MODE))
-                ?: // データ取得失敗
-                return
-        var targetMode = "<" + IOlyCameraProperty.TAKE_MODE // 変更先モード
-        targetMode = when (propetyValue) {
-            "P" -> "$targetMode/iAuto>"
-            "A" -> "$targetMode/P>"
-            "S" -> "$targetMode/A>"
-            "M" -> "$targetMode/S>"
-            "ART" -> "$targetMode/M>"
-            "Movie" -> "$targetMode/ART>"
-            "iAuto" -> "$targetMode/movie>"
-            else -> "$targetMode/movie>"
-        }
-        Log.v(TAG, "changeTakeMode() $targetMode")
-        propertyProxy.setCameraPropertyValue(IOlyCameraProperty.TAKE_MODE, targetMode)
-        camera.unlockAutoFocus()
-
-        //  撮影モードの更新
-        //camera.updateTakeMode();
-*/
     }
 
     /**
@@ -363,8 +304,20 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeExposureBiasValueDown()
     {
-        val propertyProxy = camera.cameraPropertyProvider
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.EXPOSURE_COMPENSATION)
+        try
+        {
+            if (exposureCompensation > 0)
+            {
+                exposureCompensation--
+
+                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensation]
+                optionSet.setOptions(optionStr, useOSCv2)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -373,8 +326,20 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeExposureBiasValueUp()
     {
-        val propertyProxy = camera.cameraPropertyProvider
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.EXPOSURE_COMPENSATION)
+        try
+        {
+            if (exposureCompensation < MAX_EXPOSURE_COMPENSATION)
+            {
+                exposureCompensation++
+
+                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensation]
+                optionSet.setOptions(optionStr, useOSCv2)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -715,5 +680,7 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     companion object
     {
         private val TAG = ThetaFeatureDispatcher::class.java.simpleName
+
+        private const val MAX_EXPOSURE_COMPENSATION = 12 // exposureCompensation
     }
 }
