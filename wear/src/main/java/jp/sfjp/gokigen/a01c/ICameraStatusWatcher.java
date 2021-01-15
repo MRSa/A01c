@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 public interface ICameraStatusWatcher
 {
-    void prepareStatusWatch();
-    void startStatusWatch(@NonNull ICameraStatusUpdateNotify notifier);
+    void startStatusWatch();
     void stopStatusWatch();
 }

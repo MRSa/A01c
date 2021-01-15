@@ -13,9 +13,12 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 
-class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify, val optionSet : ThetaOptionUpdateControl, val useOSCv2 : Boolean, val statusHolder : IThetaStatusHolder): ICameraFeatureDispatcher
+class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify, val optionSet : ThetaOptionUpdateControl, val statusHolder : IThetaStatusHolder, val sessionIdProvider : IThetaSessionIdProvider): ICameraFeatureDispatcher
 {
-    private var exposureCompensation : Int = 6
+    private var exposureCompensationIndex : Int = 6
+    private var exposureProgramIndex : Int = 1
+    private var thetaFilterModeIndex : Int = 0
+    private var thetaWhiteBalanceIndex : Int = 0
 
     /**
      * 指定した機能を実行する
@@ -54,9 +57,16 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
                 changeExposureBiasValueDown()
             ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP ->                   // 露出補正を１段階上げる
                 changeExposureBiasValueUp()
+            ICameraFeatureDispatcher.FEATURE_SHOW_FAVORITE_DIALOG ->               // FILTER MODE (SHOW_FAVORITE_DIALOG)
+                changeFilterMode()
+            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // Exposure Program(AE LOCKのON/OFF切り替え)
+                changeExposureProgram()
+            ICameraFeatureDispatcher.FEATURE_WB_DOWN ->                            // ホワイトバランスを選択
+                changeWhiteBalanceDown()
+            ICameraFeatureDispatcher.FEATURE_WB_UP ->                              // ホワイトバランスを選択
+                changeWhiteBalanceUp()
+
 /*
-            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // AE LOCKのON/OFF切り替え
-                changeAeLockMode()
             ICameraFeatureDispatcher.FEATURE_APERTURE_DOWN ->                      // 絞り値を１段階下げる
                 changeApertureValueDown()
             ICameraFeatureDispatcher.FEATURE_APERTURE_UP ->                        // 絞り値を１段階上げる
@@ -83,10 +93,6 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
                 changeIsoSensitivityDown()
             ICameraFeatureDispatcher.FEATURE_ISO_UP ->                 // ISO感度を選択
                 changeIsoSensitivityUp()
-            ICameraFeatureDispatcher.FEATURE_WB_DOWN ->                 // ホワイトバランスを選択
-                changeWhiteBalanceDown()
-            ICameraFeatureDispatcher.FEATURE_WB_UP ->                 // ホワイトバランスを選択
-                changeWhiteBalanceUp()
             ICameraFeatureDispatcher.FEATURE_QUALITY_MOVIE_DOWN ->                 // 動画撮影クオリティを選択
                 changeMovieQualityModeDown()
             ICameraFeatureDispatcher.FEATURE_QUALITY_MOVIE_UP ->                 // 動画撮影クオリティを選択
@@ -247,6 +253,50 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     }
 
     /**
+     *   フィルター
+     *
+     */
+    private fun changeFilterMode()
+    {
+        try
+        {
+            thetaFilterModeIndex++
+            if (thetaFilterModeIndex > MAX_FILTER_SELECTION)
+            {
+                thetaFilterModeIndex = 0
+            }
+            val optionStr = context.resources.getStringArray(R.array.theta_filter_set_value)[thetaFilterModeIndex]
+            optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     *   Exposure Program
+     *
+     */
+    private fun changeExposureProgram()
+    {
+        try
+        {
+            exposureProgramIndex++
+            if (exposureProgramIndex > MAX_EXPOSURE_PROGRAM)
+            {
+                exposureProgramIndex = 0
+            }
+            val optionStr = context.resources.getStringArray(R.array.exposure_program_value)[exposureProgramIndex]
+            optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    /**
      * AF/MFの切り替えを行う
      */
     private fun toggleAfMf()
@@ -306,12 +356,12 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     {
         try
         {
-            if (exposureCompensation > 0)
+            if (exposureCompensationIndex > 0)
             {
-                exposureCompensation--
+                exposureCompensationIndex--
 
-                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensation]
-                optionSet.setOptions(optionStr, useOSCv2)
+                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensationIndex]
+                optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
             }
         }
         catch (e : Exception)
@@ -328,12 +378,12 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     {
         try
         {
-            if (exposureCompensation < MAX_EXPOSURE_COMPENSATION)
+            if (exposureCompensationIndex < MAX_EXPOSURE_COMPENSATION)
             {
-                exposureCompensation++
+                exposureCompensationIndex++
 
-                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensation]
-                optionSet.setOptions(optionStr, useOSCv2)
+                val optionStr = context.resources.getStringArray(R.array.exposure_compensation_value)[exposureCompensationIndex]
+                optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
             }
         }
         catch (e : Exception)
@@ -477,8 +527,20 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeWhiteBalanceDown()
     {
-        val propertyProxy = camera.cameraPropertyProvider
-        propertyProxy.updateCameraPropertyDown(IOlyCameraProperty.WB_MODE)
+        try
+        {
+            if (thetaWhiteBalanceIndex > 0)
+            {
+                thetaWhiteBalanceIndex--
+
+                val optionStr = context.resources.getStringArray(R.array.white_balance_value)[thetaWhiteBalanceIndex]
+                optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -487,8 +549,20 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
      */
     private fun changeWhiteBalanceUp()
     {
-        val propertyProxy = camera.cameraPropertyProvider
-        propertyProxy.updateCameraPropertyUp(IOlyCameraProperty.WB_MODE)
+        try
+        {
+            if (thetaWhiteBalanceIndex < MAX_WHITE_BALANCE)
+            {
+                thetaWhiteBalanceIndex++
+
+                val optionStr = context.resources.getStringArray(R.array.white_balance_value)[thetaWhiteBalanceIndex]
+                optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -682,5 +756,9 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
         private val TAG = ThetaFeatureDispatcher::class.java.simpleName
 
         private const val MAX_EXPOSURE_COMPENSATION = 12 // exposureCompensation
+        private const val MAX_EXPOSURE_PROGRAM = 4 // exposureProgram
+        private const val MAX_FILTER_SELECTION = 4 // _filter
+        private const val MAX_WHITE_BALANCE = 11 // whiteBalance
+
     }
 }

@@ -15,15 +15,15 @@ class ThetaOptionUpdateControl(private val sessionIdProvider: IThetaSessionIdPro
      */
     fun setOptions(options: String, useOSCv2: Boolean, callBack: IOperationCallback? = null)
     {
-        Log.v(TAG, "setOptions() useOSCv2 : $useOSCv2  MSG : $options")
+        Log.v(TAG, "setOptions() OSCv2:$useOSCv2 MSG : $options")
         try
         {
             val thread = Thread {
                 try
                 {
                     val setOptionsUrl = "http://192.168.1.1/osc/commands/execute"
-                    val postData = if (useOSCv2) "{\"name\":\"camera.setOptions\",\"parameters\":{\"timeout\":0, \"options\": {\"$options\"}}}" else "{\"name\":\"camera.setOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"options\": { $options }}}"
-                    Log.v(TAG, " OPTIONS : $postData")
+                    val postData = if (useOSCv2) "{\"name\":\"camera.setOptions\",\"parameters\":{\"timeout\":0, \"options\": {$options}}}" else "{\"name\":\"camera.setOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"options\": { $options }}}"
+                    // Log.v(TAG, " OPTIONS : $postData")
                     val result: String? = httpClient.httpPostWithHeader(setOptionsUrl, postData, null, "application/json;charset=utf-8", timeoutMs)
                     if ((result != null) && (result.isNotEmpty()))
                     {
@@ -32,7 +32,7 @@ class ThetaOptionUpdateControl(private val sessionIdProvider: IThetaSessionIdPro
                     }
                     else
                     {
-                        Log.v(TAG, "setOptions() reply is null or empty.")
+                        Log.v(TAG, "setOptions() reply is null or empty.  $postData")
                         callBack?.operationExecuted(-1, "")
                     }
                 }

@@ -35,7 +35,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     private val singleShot = ThetaSingleShotControl(sessionIdHolder, this, this)
     private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
     private val optionSet = ThetaOptionUpdateControl(sessionIdHolder)
-    private val statusWatcher = ThetaCameraStatusWatcher(this, this)
+    private val statusWatcher = ThetaCameraStatusWatcher(this, this, showInformation)
     private var takeMode = "P"
 
     override fun connectFinished()
@@ -260,7 +260,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     {
         if (!(::featureDispatcher.isInitialized))
         {
-            featureDispatcher = ThetaFeatureDispatcher(context, statusDrawer, camera, accessWrapper, liveImageView, optionSet, sessionIdHolder.isApiLevelV21(), this)
+            featureDispatcher = ThetaFeatureDispatcher(context, statusDrawer, camera, accessWrapper, liveImageView, optionSet, this, this)
         }
         return (featureDispatcher)
     }

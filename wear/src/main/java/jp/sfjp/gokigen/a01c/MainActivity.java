@@ -37,7 +37,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController;
  *   メインのActivity
  *
  */
-public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier, ICameraStatusUpdateNotify
+public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -532,8 +532,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             ICameraStatusWatcher watcher = currentCoordinator.getStatusWatcher();
             if (watcher != null)
             {
-                watcher.prepareStatusWatch();
-                watcher.startStatusWatch(this);
+                watcher.startStatusWatch();
             }
         }
         catch (Exception e)
@@ -945,66 +944,5 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 }
             }
         });
-    }
-
-    @Override
-    public void updateCaptureMode(String message)
-    {
-        try
-        {
-            setMessage(IShowInformation.AREA_1, Color.WHITE, message);
-        }
-        catch (Exception ee)
-        {
-            ee.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateCameraStatus(String message)
-    {
-        try
-        {
-            setMessage(IShowInformation.AREA_5, Color.WHITE, message);
-        }
-        catch (Exception ee)
-        {
-            ee.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updatedExposureCompensation(String xv)
-    {
-        try
-        {
-            setMessage(IShowInformation.AREA_6, Color.WHITE, xv);
-        }
-        catch (Exception ee)
-        {
-            ee.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateRemainBattery(double percentageDouble)
-    {
-        int color = Color.YELLOW;
-        if (percentageDouble < 0.5d)
-        {
-            if (percentageDouble < 0.3d)
-            {
-                color = Color.RED;
-            }
-            try
-            {
-                int percentage = (int) Math.ceil(percentageDouble * 100.0d);
-                setMessage(IShowInformation.AREA_7, color, "Bat: " + percentage + "%");
-            }
-            catch (Exception ee)
-            {
-                ee.printStackTrace();
-            }
-        }
     }
 }
