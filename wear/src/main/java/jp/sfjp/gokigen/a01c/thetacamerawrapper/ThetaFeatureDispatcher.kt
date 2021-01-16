@@ -13,7 +13,7 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraProperty
 import jp.sfjp.gokigen.a01c.olycamerawrapper.takepicture.IBracketingShotStyle
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
 
-class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: IShowInformation, val camera: ICameraController, private val preferences: PreferenceDataStore, val liveImageView: ILiveImageStatusNotify, val optionSet : ThetaOptionUpdateControl, val statusHolder : IThetaStatusHolder, val sessionIdProvider : IThetaSessionIdProvider): ICameraFeatureDispatcher
+class ThetaFeatureDispatcher(private val context: AppCompatActivity, private val statusDrawer: IShowInformation, private val camera: ICameraController, private val preferences: PreferenceDataStore, private val liveImageView: ILiveImageStatusNotify, private val optionSet : ThetaOptionUpdateControl, private val statusHolder : IThetaStatusHolder, private val sessionIdProvider : IThetaSessionIdProvider): ICameraFeatureDispatcher
 {
     private var exposureCompensationIndex : Int = 6
     private var exposureProgramIndex : Int = 1
@@ -36,6 +36,11 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
             return false
         }
 
+        // AREA1: Movie/Video切替
+        // AREA2: Exposure Program
+        // AREA3: Filter
+        // AREA4: Settings (未実装)
+
         // 機能実行の割り当て...
         var duration = IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT
         when (featureNumber) {
@@ -57,10 +62,12 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
                 changeExposureBiasValueDown()
             ICameraFeatureDispatcher.FEATURE_EXPOSURE_BIAS_UP ->                   // 露出補正を１段階上げる
                 changeExposureBiasValueUp()
-            ICameraFeatureDispatcher.FEATURE_SHOW_FAVORITE_DIALOG ->               // FILTER MODE (SHOW_FAVORITE_DIALOG)
-                changeFilterMode()
-            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // Exposure Program(AE LOCKのON/OFF切り替え)
+            ICameraFeatureDispatcher.FEATURE_SHOW_FAVORITE_DIALOG ->               // Exposure Program(SHOW_FAVORITE_DIALOG)
                 changeExposureProgram()
+            ICameraFeatureDispatcher.FEATURE_CHAGE_AE_LOCK_MODE ->                 // FILTER MODE (AE LOCKのON/OFF切り替え)
+                changeFilterMode()
+            ICameraFeatureDispatcher.FEATURE_CHANGE_AE ->                          // FILTER MODE AE(測光方式)を選択
+                changeFilterMode()
             ICameraFeatureDispatcher.FEATURE_WB_DOWN ->                            // ホワイトバランスを選択
                 changeWhiteBalanceDown()
             ICameraFeatureDispatcher.FEATURE_WB_UP ->                              // ホワイトバランスを選択
@@ -221,7 +228,7 @@ class ThetaFeatureDispatcher(val context: AppCompatActivity, val statusDrawer: I
     private fun changeTakeMode()
     {
         //  撮影モードの更新
-        camera.updateTakeMode();
+        camera.updateTakeMode()
     }
 
     /**
