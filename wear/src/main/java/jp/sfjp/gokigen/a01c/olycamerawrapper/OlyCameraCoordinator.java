@@ -15,7 +15,6 @@ import androidx.preference.PreferenceManager;
 
 import jp.co.olympus.camerakit.OLYCamera;
 
-import jp.co.olympus.camerakit.OLYCameraLiveViewListener;
 import jp.sfjp.gokigen.a01c.ICameraConnection;
 import jp.sfjp.gokigen.a01c.ICameraController;
 import jp.sfjp.gokigen.a01c.ICameraFeatureDispatcher;
