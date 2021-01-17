@@ -1,14 +1,16 @@
 package jp.sfjp.gokigen.a01c.thetacamerawrapper.operation
 
 import android.util.Log
+import android.widget.Toast
 import jp.sfjp.gokigen.a01c.ICameraController
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IIndicatorControl
+import jp.sfjp.gokigen.a01c.IShowInformation
+import jp.sfjp.gokigen.a01c.R
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.IThetaSessionIdProvider
 import jp.sfjp.gokigen.a01c.utils.SimpleHttpClient
 import org.json.JSONObject
 
 
-class ThetaSingleShotControl(private val sessionIdProvider: IThetaSessionIdProvider, private val indicator: IIndicatorControl, private val liveViewControl: ICameraController)
+class ThetaSingleShotControl(private val sessionIdProvider: IThetaSessionIdProvider, private val showInformation: IShowInformation, private val liveViewControl: ICameraController)
 {
     private val httpClient = SimpleHttpClient()
 
@@ -30,13 +32,17 @@ class ThetaSingleShotControl(private val sessionIdProvider: IThetaSessionIdProvi
                     if ((result != null)&&(result.isNotEmpty()))
                     {
                         Log.v(TAG, " singleShot() : $result")
-                        indicator.onShootingStatusUpdate(IIndicatorControl.shootingStatus.Starting)
 
                         // 画像処理が終わるまで待つ
                         waitChangeStatus()
 
+                        // 撮影成功をバイブレータで知らせる
+                        showInformation.vibrate(IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE)
+
+                        // 撮影成功の表示をToastで行う
+                        showInformation.showToast(R.string.shoot_camera, "", Toast.LENGTH_SHORT)
+
                         // ライブビューのの再実行を指示する
-                        indicator.onShootingStatusUpdate(IIndicatorControl.shootingStatus.Stopping)
                         liveViewControl.stopLiveView()
                         waitMs(300) // ちょっと待つ...
                         liveViewControl.startLiveView()

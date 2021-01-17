@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceDataStore
 import jp.sfjp.gokigen.a01c.*
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl
-import jp.sfjp.gokigen.a01c.liveview.IAutoFocusFrameDisplay
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver
 import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify
 import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode
@@ -16,24 +15,21 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider
-import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.connection.ThetaCameraConnection
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.liveview.ThetaLiveViewControl
-import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaDummyOperation
-import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaMovieRecordingControl
-import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaOptionUpdateControl
-import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.ThetaSingleShotControl
+import jp.sfjp.gokigen.a01c.thetacamerawrapper.operation.*
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.status.ThetaCameraStatusWatcher
 
-class ThetaCameraController(val context: AppCompatActivity, private val focusFrameDisplay: IAutoFocusFrameDisplay, private val showInformation: IShowInformation, private val receiver: ICameraStatusReceiver, private val preferences: PreferenceAccessWrapper) : ICameraController, IIndicatorControl, IThetaSessionIdProvider, IThetaStatusHolder
+class ThetaCameraController(val context: AppCompatActivity, showInformation: IShowInformation, receiver: ICameraStatusReceiver) : ICameraController, IIndicatorControl, IThetaSessionIdProvider, IThetaStatusHolder
 {
     private lateinit var featureDispatcher : ThetaFeatureDispatcher
     private lateinit var liveViewControl : ThetaLiveViewControl
     private val dummyOperation = ThetaDummyOperation()
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, receiver, sessionIdHolder)
-    private val singleShot = ThetaSingleShotControl(sessionIdHolder, this, this)
-    private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, this, showInformation, this)
+    private val singleShot = ThetaSingleShotControl(sessionIdHolder, showInformation, this)
+    private val movieShot = ThetaMovieRecordingControl(context, sessionIdHolder, showInformation, this)
+    private val bracketShot = ThetaBracketingControl(context, sessionIdHolder, showInformation, this)
     private val optionSet = ThetaOptionUpdateControl(sessionIdHolder)
     private val statusWatcher = ThetaCameraStatusWatcher(this, this, showInformation)
     private var takeMode = "P"
@@ -141,7 +137,7 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
                 optionSet.setOptions("\"captureMode\" : \"_video\"", apiV21)
 
                 // API Level 1 の対応機種では、Videoモードでライブビューが動かないので止める
-                waitMs(200);
+                waitMs(200)
                 stopLiveView()
             }
         }
@@ -174,6 +170,11 @@ class ThetaCameraController(val context: AppCompatActivity, private val focusFra
     override fun movieControl()
     {
         movieShot.movieControl(sessionIdHolder.isApiLevelV21())
+    }
+
+    override fun bracketingControl()
+    {
+        bracketShot.bracketingControl(sessionIdHolder.isApiLevelV21())
     }
 
     override fun bracketingShot(bracketingStyle: Int, bracketingCount: Int, durationSeconds: Int)

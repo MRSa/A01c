@@ -41,6 +41,7 @@
     <string name="shoot_camera">Capture!</string>
     <string name="shoot_camera_failure">FAILED!</string>
     <string name="video_recording">&#9679;REC</string>
+    <string name="capturing">CAPTURE</string>
     <string name="video_failure">FAILED!</string>
     <string name="message_none">---</string>
 

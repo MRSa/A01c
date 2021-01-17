@@ -15,7 +15,6 @@ import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
-import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
 
 /**
  *
@@ -47,6 +46,9 @@ public interface ICameraController
 
     /** ムービー撮影機能の実行(開始・終了) **/
     void movieControl();
+
+    /** ブラケット撮影(開始・終了) **/
+    void bracketingControl();
 
     /** インターバル＆ブラケッティング撮影の実行 **/
     void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds);

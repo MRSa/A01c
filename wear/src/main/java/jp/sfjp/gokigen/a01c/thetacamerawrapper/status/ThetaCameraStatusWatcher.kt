@@ -327,6 +327,11 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
                     {
                         showInformation.setMessage(IShowInformation.AREA_8, Color.WHITE, captureStatus)
                     }
+                    else
+                    {
+                        showInformation.setMessage(IShowInformation.AREA_8, Color.WHITE, "")
+                    }
+                    showInformation.invalidate()
                     currentCaptureStatus = captureStatus
                 }
             }
@@ -342,6 +347,7 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
                     Log.v(TAG, " BATTERY : $currentBatteryLevel => $batteryLevel")
                     currentBatteryLevel = batteryLevel
                     updateRemainBattery(currentBatteryLevel)
+                    showInformation.invalidate()
                 }
             }
             catch (e: Exception)
@@ -385,7 +391,7 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
     companion object
     {
         private val TAG = ThetaCameraStatusWatcher::class.java.simpleName
-        private const val timeoutMs = 1500
+        private const val timeoutMs = 3300
         private const val loopWaitMs : Long = 450
     }
 }

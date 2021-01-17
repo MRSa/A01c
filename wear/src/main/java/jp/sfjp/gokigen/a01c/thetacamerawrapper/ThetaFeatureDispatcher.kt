@@ -82,6 +82,8 @@ class ThetaFeatureDispatcher(private val context: AppCompatActivity, private val
                 changeIsoSensitivityDown()
             ICameraFeatureDispatcher.FEATURE_ISO_UP ->                             // ISO感度を選択
                 changeIsoSensitivityUp()
+            ICameraFeatureDispatcher.FEATURE_SHOT_BRACKET_EXPOSURE ->              // ブラケット撮影
+                bracketingControl()
             else ->                 // 上記以外...なにもしない
                 duration = IShowInformation.VIBRATE_PATTERN_NONE
         }
@@ -152,6 +154,15 @@ class ThetaFeatureDispatcher(private val context: AppCompatActivity, private val
     private fun movieControl()
     {
         camera.movieControl()
+    }
+
+    /**
+     * ブラケット撮影・停止を行う
+     *
+     */
+    private fun bracketingControl()
+    {
+        camera.bracketingControl()
     }
 
     /**
@@ -296,7 +307,7 @@ class ThetaFeatureDispatcher(private val context: AppCompatActivity, private val
     {
         try
         {
-            if (thetaShutterSpeedIndex > MAX_SHUTTER_SPEED)
+            if (thetaShutterSpeedIndex < MAX_SHUTTER_SPEED)
             {
                 thetaShutterSpeedIndex++
 
@@ -318,13 +329,10 @@ class ThetaFeatureDispatcher(private val context: AppCompatActivity, private val
     {
         try
         {
-            if (thetaIsoSensitivityIndex == MAX_ISO_SENSITIVITY)
+            thetaIsoSensitivityIndex++
+            if (thetaIsoSensitivityIndex > MAX_ISO_SENSITIVITY)
             {
                 thetaIsoSensitivityIndex = 0
-            }
-            else
-            {
-                thetaIsoSensitivityIndex++
             }
             val optionStr = context.resources.getStringArray(R.array.theta_iso_sensitivity_value)[thetaIsoSensitivityIndex]
             optionSet.setOptions(optionStr, sessionIdProvider.sessionId.isEmpty())

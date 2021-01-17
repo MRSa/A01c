@@ -274,6 +274,16 @@ public class OlyCameraCoordinator implements ICameraController, IIndicatorContro
     }
 
     /**
+     *   ブラケット撮影
+     *
+     */
+    @Override
+    public void bracketingControl()
+    {
+        // ダミー
+    }
+
+    /**
      *   インターバル＆ブラケッティング撮影の実行
      *
      *     @param bracketingStyle : ブラケッティングスタイル

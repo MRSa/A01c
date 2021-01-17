@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +25,6 @@ import jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
 import jp.sfjp.gokigen.a01c.liveview.dialog.FavoriteSettingSelectionDialog;
 import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDismissedNotifier;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.dispatcher.FeatureDispatcher;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewOnTouchListener;
@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 liveView = findViewById(R.id.liveview);
             }
             olyAirCoordinator = new OlyCameraCoordinator(this, liveView, this, this);
-            thetaCoordinator = new ThetaCameraController(this, liveView, this, this, preferences);
+            thetaCoordinator = new ThetaCameraController(this, this, this);
             currentCoordinator = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
             currentCoordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
             listener = new CameraLiveViewOnTouchListener(this, currentCoordinator.getFeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
@@ -838,6 +838,54 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
         {
             listener.setEnableOperation(operation.ENABLE_ONLY_TOUCHED_POSITION);
             liveView.showDialog(selectionDialog);
+        }
+    }
+
+    @Override
+    public void showToast(final int rscId, @NonNull final String appendMessage, final int duration)
+    {
+        try
+        {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        String message = (rscId != 0) ? getString(rscId) + appendMessage : appendMessage;
+                        Toast.makeText(getApplicationContext(), message, duration).show();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void invalidate()
+    {
+        try
+        {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (liveView != null)
+                    {
+                        liveView.invalidate();
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 

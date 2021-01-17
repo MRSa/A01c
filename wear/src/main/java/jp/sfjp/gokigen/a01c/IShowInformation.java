@@ -1,5 +1,7 @@
 package jp.sfjp.gokigen.a01c;
 
+import androidx.annotation.NonNull;
+
 /**
  *
  */
@@ -51,4 +53,8 @@ public interface IShowInformation
     void setEnabledOperation(operation operation);
 
     void showFavoriteSettingsDialog();
+
+    void showToast(int rscId, @NonNull String appendMessage, int duration);
+
+    void invalidate();
 }

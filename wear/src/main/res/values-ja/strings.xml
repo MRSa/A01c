@@ -42,6 +42,7 @@
     <string name="shoot_camera">撮影!</string>
     <string name="shoot_camera_failure">失敗です&#8230;</string>
     <string name="video_recording">&#9679;REC</string>
+    <string name="capturing">CAPTURE</string>
     <string name="video_failure">失敗です&#8230;</string>
     <string name="message_none">---</string>
 
