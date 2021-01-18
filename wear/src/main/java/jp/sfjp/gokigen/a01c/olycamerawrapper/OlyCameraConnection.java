@@ -12,6 +12,7 @@ import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -52,7 +53,6 @@ class OlyCameraConnection implements ICameraConnection, OLYCameraConnectionListe
     // Handler for dealing with network connection timeouts.
     private final Handler networkConnectionTimeoutHandler;
 
-
     // Message to notify the network request timout handler that too much time has passed.
     private static final int MESSAGE_CONNECTIVITY_TIMEOUT = 1;
 
@@ -86,7 +86,7 @@ class OlyCameraConnection implements ICameraConnection, OLYCameraConnectionListe
         this.context = context;
         this.camera = camera;
         this.connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.networkConnectionTimeoutHandler = new Handler()
+        this.networkConnectionTimeoutHandler = new Handler(Looper.getMainLooper())
         {
             @Override
             public void handleMessage(Message msg)

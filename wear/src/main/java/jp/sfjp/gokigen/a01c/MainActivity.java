@@ -37,7 +37,7 @@ import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController;
  *   メインのActivity
  *
  */
-public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier
+public class MainActivity extends AppCompatActivity implements  IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier, IWifiConnection
 {
     private final String TAG = toString();
     static final int REQUEST_NEED_PERMISSIONS = 1010;
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     private FavoriteSettingSelectionDialog selectionDialog = null;
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
+    private WifiConnection wifiConnection = null;
     //private boolean ambientMode = false;
 
     /**
@@ -113,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             setupCameraCoordinator();
             setupInitialButtonIcons();
             setupActionListener();
+
+            wifiConnection = new WifiConnection(this, this);
         }
         catch (Exception e)
         {
@@ -128,6 +131,12 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     {
         super.onResume();
         Log.v(TAG, "onResume()");
+        if (wifiConnection != null)
+        {
+            // ネットワークを要求する！
+            wifiConnection.requestNetwork();
+            wifiConnection.startWatchWifiStatus();
+        }
     }
 
     /**
@@ -992,5 +1001,18 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 }
             }
         });
+    }
+
+    @Override
+    public void onConnectedToWifi()
+    {
+        try
+        {
+            Log.v(TAG, "onConnectedToWifi()");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
