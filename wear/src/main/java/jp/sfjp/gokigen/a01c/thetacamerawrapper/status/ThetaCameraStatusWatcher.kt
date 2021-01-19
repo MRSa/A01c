@@ -42,23 +42,32 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
                 {
                     val getOptionsUrl = "http://192.168.1.1/osc/commands/execute"
                     val getStateUrl = "http://192.168.1.1/osc/state"
-                    val postData = if (sessionIdProvider.sessionId.isEmpty()) "{\"name\":\"camera.getOptions\",\"parameters\":{\"timeout\":0, \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"_filter\",\"whiteBalance\"] }" else "{\"name\":\"camera.getOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"_filter\",\"whiteBalance\"] }}"
-                    Log.v(TAG, " >>>>> START STATUS WATCH : $getOptionsUrl $postData")
+
+                    val postDataCaptureMode = if (sessionIdProvider.sessionId.isEmpty()) "{\"name\":\"camera.getOptions\",\"parameters\":{\"timeout\":0, \"optionNames\" : [ \"captureMode\"] }}" else "{\"name\":\"camera.getOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"optionNames\" : [ \"captureMode\" ] }}"
+                    val postDataImage = if (sessionIdProvider.sessionId.isEmpty()) "{\"name\":\"camera.getOptions\",\"parameters\":{\"timeout\":0, \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"_filter\",\"whiteBalance\"] }}" else "{\"name\":\"camera.getOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"_filter\",\"whiteBalance\"] }}"
+                    val postDataVideo = if (sessionIdProvider.sessionId.isEmpty()) "{\"name\":\"camera.getOptions\",\"parameters\":{\"timeout\":0, \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"whiteBalance\"] }}" else "{\"name\":\"camera.getOptions\",\"parameters\":{\"sessionId\": \"" + sessionIdProvider.sessionId + "\", \"optionNames\" : [ \"aperture\",\"captureMode\",\"exposureCompensation\",\"exposureProgram\",\"iso\",\"shutterSpeed\",\"_filter\",\"whiteBalance\"] }}"
+                    Log.v(TAG, " >>>>> START STATUS WATCH : $getOptionsUrl")
                     while (whileFetching)
                     {
-                        val response: String? = httpClient.httpPostWithHeader(getOptionsUrl, postData, null, "application/json;charset=utf-8", timeoutMs)
-                        if (!(response.isNullOrEmpty()))
+                        val response0: String? = httpClient.httpPostWithHeader(getOptionsUrl, postDataCaptureMode, null, "application/json;charset=utf-8", timeoutMs)
+                        if (!(response0.isNullOrEmpty()))
                         {
                             // 設定データ受信、解析する
-                            checkStatus1(response)
+                            checkStatus0(response0)
+                        }
+                        val postData = if (currentCaptureMode != "image") { postDataVideo } else { postDataImage }
+                        val response1: String? = httpClient.httpPostWithHeader(getOptionsUrl, postData, null, "application/json;charset=utf-8", timeoutMs)
+                        if (!(response1.isNullOrEmpty()))
+                        {
+                            // 設定データ受信、解析する
+                            checkStatus1(response1)
                         }
                         val response2: String? = httpClient.httpPostWithHeader(getStateUrl, "", null, "application/json;charset=utf-8", timeoutMs)
                         if (!(response2.isNullOrEmpty()))
                         {
                             // ステータスデータ受信、解析する
-                            checkStatus0(response2)
+                            checkStatus2(response2)
                         }
-
                         try
                         {
                             // ちょっと休む
@@ -83,11 +92,39 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         }
     }
 
+    private fun checkStatus0(response: String)
+    {
+        try
+        {
+            //Log.v(TAG, " STATUS0 : $response")
+            val stateObject = JSONObject(response).getJSONObject("results").getJSONObject("options")
+            try
+            {
+                val captureMode = stateObject.getString(THETA_CAPTURE_MODE)
+                if (captureMode != currentCaptureMode)
+                {
+                    Log.v(TAG, " CapMode : $currentCaptureMode -> $captureMode")
+                    currentCaptureMode = captureMode
+                    statusHolder.captureMode = captureMode
+                    showInformation.setMessage(IShowInformation.AREA_1, Color.WHITE, captureMode)
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     private fun checkStatus1(response: String)
     {
         try
         {
-            //Log.v(TAG, " STATUS : $response")
+            //Log.v(TAG, " STATUS1 : $response")
             val stateObject = JSONObject(response).getJSONObject("results").getJSONObject("options")
             try
             {
@@ -136,22 +173,6 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
 
             try
             {
-                val captureMode = stateObject.getString(THETA_CAPTURE_MODE)
-                if (captureMode != currentCaptureMode)
-                {
-                    Log.v(TAG, " CapMode : $currentCaptureMode -> $captureMode")
-                    currentCaptureMode = captureMode
-                    statusHolder.captureMode = captureMode
-                    showInformation.setMessage(IShowInformation.AREA_1, Color.WHITE, captureMode)
-                }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-
-            try
-            {
                 val exposureProgram = stateObject.getString(THETA_EXPOSURE_PROGRAM)
                 if (exposureProgram != currentExposureProgram)
                 {
@@ -174,26 +195,33 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
                 e.printStackTrace()
             }
 
-            try
+            if (currentCaptureMode == "image")
             {
-                val filterValue = stateObject.getString(THETA_FILTER)
-                if (filterValue != currentFilter)
+                try
                 {
-                    Log.v(TAG, " FILTER : $currentFilter -> $filterValue")
-                    currentFilter = filterValue
-                    if (currentFilter == "off")
+                    val filterValue = stateObject.getString(THETA_FILTER)
+                    if (filterValue != currentFilter)
                     {
-                        showInformation.setMessage(IShowInformation.AREA_5, Color.WHITE, "")
-                    }
-                    else
-                    {
-                        showInformation.setMessage(IShowInformation.AREA_5, Color.WHITE, currentFilter)
+                        Log.v(TAG, " FILTER : $currentFilter -> $filterValue")
+                        currentFilter = filterValue
+                        if (currentFilter == "off")
+                        {
+                            showInformation.setMessage(IShowInformation.AREA_5, Color.WHITE, "")
+                        }
+                        else
+                        {
+                            showInformation.setMessage(IShowInformation.AREA_5, Color.WHITE, currentFilter)
+                        }
                     }
                 }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
             }
-            catch (e: Exception)
+            else
             {
-                e.printStackTrace()
+                currentFilter = ""
             }
 
             try
@@ -311,11 +339,11 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         return (stringValue)
     }
 
-    private fun checkStatus0(response: String)
+    private fun checkStatus2(response: String)
     {
         try
         {
-            //Log.v(TAG, " STATUS : $response")
+            //Log.v(TAG, " STATUS2 : $response")
             val stateObject = JSONObject(response).getJSONObject("state")
             try
             {
@@ -392,6 +420,6 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
     {
         private val TAG = ThetaCameraStatusWatcher::class.java.simpleName
         private const val timeoutMs = 3300
-        private const val loopWaitMs : Long = 450
+        private const val loopWaitMs : Long = 400
     }
 }
