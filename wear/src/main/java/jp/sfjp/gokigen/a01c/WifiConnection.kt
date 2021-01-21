@@ -154,6 +154,7 @@ class WifiConnection(private val context: AppCompatActivity, private val callbac
             val action = intent.action
             if (action == ConnectivityManager.CONNECTIVITY_ACTION)
             {
+                Log.v(TAG, " CONNECTIVITY_ACTION")
                 val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
                 val info = wifiManager.connectionInfo
                 if (wifiManager.isWifiEnabled)
