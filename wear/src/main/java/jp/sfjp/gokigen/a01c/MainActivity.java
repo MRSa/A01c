@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             setupActionListener();
 
             wifiConnection = new WifiConnection(this, this);
+            wifiConnection.requestNetwork();
         }
         catch (Exception e)
         {

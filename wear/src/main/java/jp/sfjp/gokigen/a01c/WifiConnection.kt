@@ -61,7 +61,7 @@ class WifiConnection(private val context: AppCompatActivity, private val callbac
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities)
         {
-            context.runOnUiThread { Log.d(TAG, "Network capabilities changed") }
+            Log.d(TAG, "Network capabilities changed")
         }
 
         override fun onLost(network: Network)
@@ -182,7 +182,6 @@ class WifiConnection(private val context: AppCompatActivity, private val callbac
      * Wifi接続状態の監視
      * (接続の実処理は onReceiveBroadcastOfConnection() で実施)
      */
-    @Suppress("DEPRECATION")
     fun startWatchWifiStatus()
     {
         Log.v(TAG, "startWatchWifiStatus()")
@@ -215,23 +214,49 @@ class WifiConnection(private val context: AppCompatActivity, private val callbac
 
     private fun requestHighBandwidthNetwork()
     {
-        // Before requesting a high-bandwidth network, ensure prior requests are invalidated.
-        unregisterNetworkCallback()
-        Log.d(TAG, "requestHighBandwidthNetwork(): Requesting high-bandwidth network")
+        try
+        {
+            val bandwidth: Int = connectivityManager.activeNetwork?.let { activeNetwork ->
+                connectivityManager.getNetworkCapabilities(activeNetwork)?.linkDownstreamBandwidthKbps
+            } ?: -1
+            Log.v(TAG, " requestHighBandwidthNetwork() (Bandwidth: $bandwidth)")
+            when
+            {
+                bandwidth < 0 -> {
+                    // No active network
+                }
+                bandwidth in (0 until MIN_NETWORK_BANDWIDTH_KBPS) -> {
+                    // Request a high-bandwidth network
+                }
+                else -> {
+                    // すでにつながっているので、何もしない。
+                    Log.d(TAG, " already connected with high-bandwidth network")
+                    return
+                }
+            }
 
-        // Requesting an unmetered network may prevent you from connecting to the cellular
-        // network on the user's watch or phone; however, unless you explicitly ask for permission
-        // to a access the user's cellular network, you should request an unmetered network.
-        val request = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .build()
+            // Before requesting a high-bandwidth network, ensure prior requests are invalidated.
+            unregisterNetworkCallback()
+            Log.d(TAG, "requestHighBandwidthNetwork(): Requesting high-bandwidth network")
 
-        // requires android.permission.CHANGE_NETWORK_STATE
-        connectivityManager.requestNetwork(request, networkCallback)
-        networkConnectionTimeoutHandler.sendMessageDelayed(networkConnectionTimeoutHandler.obtainMessage(MESSAGE_CONNECTIVITY_TIMEOUT), NETWORK_CONNECTIVITY_TIMEOUT_MS)
+            // Requesting an unmetered network may prevent you from connecting to the cellular
+            // network on the user's watch or phone; however, unless you explicitly ask for permission
+            // to a access the user's cellular network, you should request an unmetered network.
+            val request = NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    .build()
+
+            // requires android.permission.CHANGE_NETWORK_STATE
+            connectivityManager.requestNetwork(request, networkCallback)
+            networkConnectionTimeoutHandler.sendMessageDelayed(networkConnectionTimeoutHandler.obtainMessage(MESSAGE_CONNECTIVITY_TIMEOUT), NETWORK_CONNECTIVITY_TIMEOUT_MS)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     companion object
