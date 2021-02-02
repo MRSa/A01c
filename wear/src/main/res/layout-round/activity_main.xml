@@ -16,6 +16,14 @@
         app:layout_boxedEdges="all"
         app:layout_box="all">
 
+        <jp.sfjp.gokigen.a01c.liveview.glview.GokigenGLView
+            android:id="@+id/glview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            />
+
         <jp.sfjp.gokigen.a01c.liveview.CameraLiveImageView
             android:id="@+id/liveview"
             android:layout_width="match_parent"

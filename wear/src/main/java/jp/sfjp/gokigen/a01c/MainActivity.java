@@ -28,6 +28,8 @@ import jp.sfjp.gokigen.a01c.liveview.dialog.IDialogDismissedNotifier;
 import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewOnTouchListener;
+import jp.sfjp.gokigen.a01c.liveview.glview.GokigenGLView;
+import jp.sfjp.gokigen.a01c.liveview.glview.ILiveViewRefresher;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     private PreferenceAccessWrapper preferences = null;
     private PowerManager powerManager = null;
     private CameraLiveImageView liveView = null;
+    private GokigenGLView glView = null;
+    private ILiveViewRefresher glViewRefresher = null;
     private ICameraController currentCoordinator = null;
     private ICameraController olyAirCoordinator = null;
     private ICameraController thetaCoordinator = null;
@@ -365,10 +369,19 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             {
                 liveView = findViewById(R.id.liveview);
             }
+            CameraLiveViewListenerImpl liveViewListener = new CameraLiveViewListenerImpl(liveView);
+/*
+            if (glView == null)
+            {
+                glView = findViewById(R.id.glview);
+                glViewRefresher = glView;
+                glView.setImageProvider(liveViewListener);
+            }
+*/
             olyAirCoordinator = new OlyCameraCoordinator(this, liveView, this, this);
             thetaCoordinator = new ThetaCameraController(this, this, this);
             currentCoordinator = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
-            currentCoordinator.setLiveViewListener(new CameraLiveViewListenerImpl(liveView));
+            currentCoordinator.setLiveViewListener(liveViewListener);
             listener = new CameraLiveViewOnTouchListener(this, currentCoordinator.getFeatureDispatcher(this, this, currentCoordinator, preferences, liveView), this);
             selectionDialog = new FavoriteSettingSelectionDialog(this, currentCoordinator.getCameraPropertyLoadSaveOperations(), this);
             connectToCamera();
