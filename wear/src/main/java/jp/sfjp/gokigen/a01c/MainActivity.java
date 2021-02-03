@@ -10,6 +10,8 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.Manifest;
@@ -29,11 +31,11 @@ import jp.sfjp.gokigen.a01c.liveview.ICameraStatusReceiver;
 import jp.sfjp.gokigen.a01c.liveview.IMessageDrawer;
 import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewOnTouchListener;
 import jp.sfjp.gokigen.a01c.liveview.glview.GokigenGLView;
-import jp.sfjp.gokigen.a01c.liveview.glview.ILiveViewRefresher;
 import jp.sfjp.gokigen.a01c.olycamerawrapper.OlyCameraCoordinator;
 import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor;
 import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper;
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController;
+import jp.sfjp.gokigen.a01c.utils.GestureParser;
 
 /**
  *   メインのActivity
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     private PowerManager powerManager = null;
     private CameraLiveImageView liveView = null;
     private GokigenGLView glView = null;
-    private ILiveViewRefresher glViewRefresher = null;
+    private GestureParser gestureParser = null;
     private ICameraController currentCoordinator = null;
     private ICameraController olyAirCoordinator = null;
     private ICameraController thetaCoordinator = null;
@@ -368,16 +370,28 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             if (liveView == null)
             {
                 liveView = findViewById(R.id.liveview);
+                liveView.setVisibility(View.VISIBLE);
             }
             CameraLiveViewListenerImpl liveViewListener = new CameraLiveViewListenerImpl(liveView);
-/*
-            if (glView == null)
+            gestureParser = null;
+            glView = null;
+            boolean enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false);
+            if ((enableGlView)&&(connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)))
             {
-                glView = findViewById(R.id.glview);
-                glViewRefresher = glView;
-                glView.setImageProvider(liveViewListener);
+                if (glView == null)
+                {
+                    // GL VIEW に切り替える
+                    glView = findViewById(R.id.glview);
+                }
+                if (glView != null)
+                {
+                    // GL VIEW に切り替える
+                    gestureParser = new GestureParser(getApplicationContext(), glView);
+                    glView.setImageProvider(liveViewListener);
+                    glView.setVisibility(View.VISIBLE);
+                    liveView.setVisibility(View.GONE);
+                }
             }
-*/
             olyAirCoordinator = new OlyCameraCoordinator(this, liveView, this, this);
             thetaCoordinator = new ThetaCameraController(this, this, this);
             currentCoordinator = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? thetaCoordinator : olyAirCoordinator;
@@ -792,6 +806,23 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     }
 
     /**
+     *   タッチイベントをフックする
+     *
+     *
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event)
+    {
+        //Log.v(TAG, " dispatchTouchEvent() ");
+        if (gestureParser != null)
+        {
+            //Log.v(TAG, " onTouch() ");
+            gestureParser.onTouch(event);
+        }
+        return (super.dispatchTouchEvent(event));
+    }
+
+    /**
      *
      *
      */
@@ -945,7 +976,17 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 liveView = findViewById(R.id.liveview);
             }
             liveView.setupInitialBackgroundImage(this);
+            liveView.setVisibility(View.VISIBLE);
             liveView.invalidate();
+
+            if (glView != null)
+            {
+                glView.setVisibility(View.GONE);
+                glView = null;
+            }
+
+
+
         }
         catch (Exception e)
         {

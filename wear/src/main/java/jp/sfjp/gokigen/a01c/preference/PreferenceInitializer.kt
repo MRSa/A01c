@@ -32,6 +32,10 @@ class PreferenceInitializer
                         IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE
                 )
             }
+            if (!items.containsKey(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW))
+            {
+                editor.putBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false)
+            }
             editor.apply()
         }
         catch (e : Exception)

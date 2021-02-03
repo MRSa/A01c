@@ -15,6 +15,8 @@ public interface IPreferenceCameraPropertyAccessor
     String FRAME_GRID = "frame_grid";
     String FRAME_GRID_DEFAULT_VALUE = "0";
 
+    String THETA_GL_VIEW = "theta_gl_view";
+
     String IMAGE_CONVERTER = "image_converter";
     String IMAGE_CONVERTER_DEFAULT_VALUE = "0";
 
