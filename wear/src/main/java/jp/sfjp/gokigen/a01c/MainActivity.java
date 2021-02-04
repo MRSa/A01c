@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     private Vibrator vibrator = null;
     private boolean cameraDisconnectedHappened = false;
     private WifiConnection wifiConnection = null;
+    private CameraLiveViewListenerImpl liveViewListener =null;
+    private boolean enableGlView = false;
     //private boolean ambientMode = false;
 
     /**
@@ -372,21 +374,21 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
                 liveView = findViewById(R.id.liveview);
                 liveView.setVisibility(View.VISIBLE);
             }
-            CameraLiveViewListenerImpl liveViewListener = new CameraLiveViewListenerImpl(liveView);
-            gestureParser = null;
-            glView = null;
-            boolean enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false);
-            if ((enableGlView)&&(connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)))
+            liveViewListener = new CameraLiveViewListenerImpl(liveView);
+            if (glView == null)
             {
-                if (glView == null)
+                glView = findViewById(R.id.glview);
+            }
+            if (glView != null)
+            {
+                if (gestureParser == null)
                 {
-                    // GL VIEW に切り替える
-                    glView = findViewById(R.id.glview);
-                }
-                if (glView != null)
-                {
-                    // GL VIEW に切り替える
                     gestureParser = new GestureParser(getApplicationContext(), glView);
+                }
+                enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false);
+                if ((enableGlView)&&(connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)))
+                {
+                    // GL VIEW に切り替える
                     glView.setImageProvider(liveViewListener);
                     glView.setVisibility(View.VISIBLE);
                     liveView.setVisibility(View.GONE);
@@ -814,7 +816,7 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
     public boolean dispatchTouchEvent(MotionEvent event)
     {
         //Log.v(TAG, " dispatchTouchEvent() ");
-        if (gestureParser != null)
+        if (enableGlView)
         {
             //Log.v(TAG, " onTouch() ");
             gestureParser.onTouch(event);
@@ -971,22 +973,12 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             String connectionMethod = preferences.getString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE);
             int methodId = (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) ? R.string.connection_method_theta : R.string.connection_method_opc;
             setMessage(IShowInformation.AREA_7, Color.MAGENTA, getString(methodId));
-            if (liveView == null)
+            if (liveView != null)
             {
-                liveView = findViewById(R.id.liveview);
+                liveView.setupInitialBackgroundImage(this);
+                liveView.setVisibility(View.VISIBLE);
+                liveView.invalidate();
             }
-            liveView.setupInitialBackgroundImage(this);
-            liveView.setVisibility(View.VISIBLE);
-            liveView.invalidate();
-
-            if (glView != null)
-            {
-                glView.setVisibility(View.GONE);
-                glView = null;
-            }
-
-
-
         }
         catch (Exception e)
         {
@@ -1001,6 +993,38 @@ public class MainActivity extends AppCompatActivity implements  IChangeScene, IS
             currentCoordinator = method;
             preferences.putString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, parameter);
             vibrate(IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE);
+            enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false);
+            if ((enableGlView)&&(parameter.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)))
+            {
+                if (glView == null)
+                {
+                    // GL VIEW に切り替える
+                    glView = findViewById(R.id.glview);
+                }
+                if (glView != null)
+                {
+                    // GL VIEW に切り替える
+                    gestureParser = new GestureParser(getApplicationContext(), glView);
+                    glView.setImageProvider(liveViewListener);
+                    glView.setVisibility(View.VISIBLE);
+                    liveView.setVisibility(View.GONE);
+                }
+            }
+            else
+            {
+                if (liveView == null)
+                {
+                    liveView = findViewById(R.id.liveview);
+                }
+                if (liveView != null)
+                {
+                    if (glView != null)
+                    {
+                        glView.setVisibility(View.GONE);
+                    }
+                    liveView.setVisibility(View.VISIBLE);
+                }
+            }
         }
         catch (Exception e)
         {

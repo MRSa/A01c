@@ -12,7 +12,7 @@ import javax.microedition.khronos.opengles.GL10
 import kotlin.math.cos
 import kotlin.math.sin
 
-class EquirectangularDrawer(context: Context) : IGraphicsDrawer
+class SphereDrawer(context: Context) : IGraphicsDrawer
 {
     private lateinit var imageProvider : IImageProvider
 

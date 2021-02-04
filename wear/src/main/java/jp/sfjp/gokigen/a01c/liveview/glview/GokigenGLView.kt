@@ -8,7 +8,7 @@ import android.util.Log
 
 class GokigenGLView : GLSurfaceView, ILiveViewRefresher
 {
-    private var graphicsDrawer : IGraphicsDrawer = EquirectangularDrawer(context)
+    private var graphicsDrawer : IGraphicsDrawer = SphereDrawer(context)
     private lateinit var imageProvider : IImageProvider
 
     companion object
@@ -18,18 +18,18 @@ class GokigenGLView : GLSurfaceView, ILiveViewRefresher
 
     constructor(context: Context) : super(context)
     {
-        initializeSelf(context, null)
+        initializeSelf(context)
     }
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     {
-        initializeSelf(context, attrs)
+        initializeSelf(context)
     }
 
     /**
      * クラスの初期化処理...レンダラを設定する
      *
      */
-    private fun initializeSelf(context: Context, attrs: AttributeSet?)
+    private fun initializeSelf(context: Context)
     {
         try
         {
