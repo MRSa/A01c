@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat">
         <!--android:theme="@android:style/Theme.DeviceDefault"-->
         <uses-library android:name="com.google.android.wearable" android:required="false" />
         <meta-data android:name="com.google.android.wearable.standalone" android:value="true" />
@@ -28,7 +28,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

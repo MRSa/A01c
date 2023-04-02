@@ -7,8 +7,8 @@ android {
         applicationId "jp.sfjp.gokigen.a01c"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 43
-        versionName "1.4.3"
+        versionCode 61
+        versionName "2.0.0"
     }
     buildTypes {
         release {

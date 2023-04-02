@@ -127,7 +127,7 @@ public class CameraLiveViewOnTouchListener implements View.OnClickListener, View
         if (hookId != 0)
         {
             boolean ret = false;
-            if (hookId == R.id.button_area)
+            if (hookId == R.id.button_area1)
             {
                 //  何もしないパターン。。。
                 return (true);
@@ -179,7 +179,7 @@ public class CameraLiveViewOnTouchListener implements View.OnClickListener, View
                 if (event.getAction() != MotionEvent.ACTION_DOWN)
                 {
                     // オートフォーカスエリア内のときには、ACTION_DOWN のみを拾う
-                    return (R.id.button_area);
+                    return (R.id.button_area1);
                 }
                 // オートフォーカスエリアに含まれているのでオートフォーカスする
                 return (0);
@@ -187,7 +187,7 @@ public class CameraLiveViewOnTouchListener implements View.OnClickListener, View
             if (event.getAction() != MotionEvent.ACTION_UP)
             {
                 // オートフォーカスエリア外のときには、 ACTION_UP のみを拾う
-                return (R.id.button_area);
+                return (R.id.button_area1);
             }
 
             // オートフォーカスエリア外なので、イベントをフックしてボタン操作に変える（当面は右下のみ）

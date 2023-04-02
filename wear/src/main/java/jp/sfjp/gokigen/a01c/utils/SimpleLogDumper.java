@@ -36,8 +36,7 @@ public class SimpleLogDumper
         }
 
         int index = 0;
-        StringBuffer message;
-        message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
         for (byte item : data)
         {
             index++;
@@ -46,7 +45,7 @@ public class SimpleLogDumper
             {
                 Log.v(TAG, header + " " + message);
                 index = 0;
-                message = new StringBuffer();
+                message = new StringBuilder();
             }
         }
         if (index != 0)

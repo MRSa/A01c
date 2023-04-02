@@ -22,6 +22,12 @@ public interface IShowInformation
     int AREA_B = 12;
     int AREA_D = 13;
 
+    int AREA_1_2 = 22;
+    int AREA_2_2 = 23;
+    int AREA_3_2 = 24;
+    int AREA_4_2 = 25;
+    int AREA_5_2 = 26;
+
     int BUTTON_1 = 1;
     int BUTTON_2 = 2;
     int BUTTON_3 = 3;
@@ -29,7 +35,8 @@ public interface IShowInformation
     int BUTTON_5 = 5;
     int BUTTON_6 = 6;
     int LOWER_AREA = 7;
-
+    int BUTTON_7 = 8;
+    int BUTTON_8 = 9;
     int VIBRATE_PATTERN_NONE  = 0;
     int VIBRATE_PATTERN_SIMPLE_SHORT  = 1;
     int VIBRATE_PATTERN_SIMPLE_MIDDLE  = 2;

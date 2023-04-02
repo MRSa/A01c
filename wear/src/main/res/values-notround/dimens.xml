@@ -23,6 +23,6 @@
     <dimen name="list_top_padding">0dp</dimen>
     <dimen name="list_bottom_padding">0dp</dimen>
 
-    <dimen name="live_view_layout_margin">0dp</dimen>
-    <dimen name="indicator_layout_margin">0dp</dimen>
+    <dimen name="live_view_layout_margin">2dp</dimen>
+    <dimen name="indicator_layout_margin">8dp</dimen>
 </resources>
