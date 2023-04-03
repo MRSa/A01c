@@ -33,15 +33,12 @@ import jp.sfjp.gokigen.a01c.utils.GestureParser
  * メインのActivity
  *
  */
-class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
-    ICameraStatusReceiver, IDialogDismissedNotifier, IWifiConnection
+class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier, IWifiConnection
 {
     private lateinit var preferences: PreferenceAccessWrapper
     private var liveView: CameraLiveImageView? = null
     private var glView: GokigenGLView? = null
-
     private var powerManager: PowerManager? = null
-
     private var gestureParser: GestureParser? = null
     private var currentCoordinator: ICameraController? = null
     private var olyAirCoordinator: ICameraController? = null
@@ -61,6 +58,10 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
     {
         Log.v(TAG, "onCreate()")
         super.onCreate(savedInstanceState)
+
+        ///////// SHOW SPLASH SCREEN /////////
+        //installSplashScreen()
+
 
         //  画面全体の設定
         setContentView(R.layout.activity_main)
@@ -112,20 +113,30 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
     /**
      *
      */
-    override fun onResume() {
+    override fun onResume()
+    {
         super.onResume()
         Log.v(TAG, "onResume()")
-        if (wifiConnection != null) {
-            // ネットワークを要求する！
-            wifiConnection?.requestNetwork()
-            wifiConnection?.startWatchWifiStatus()
+        try
+        {
+            if (wifiConnection != null)
+            {
+                // ネットワークを要求する！
+                wifiConnection?.requestNetwork()
+                wifiConnection?.startWatchWifiStatus()
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
         }
     }
 
     /**
      *
      */
-    override fun onPause() {
+    override fun onPause()
+    {
         super.onPause()
         Log.v(TAG, "onPause()")
     }
@@ -134,7 +145,8 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
      *
      *
      */
-    public override fun onStart() {
+    public override fun onStart()
+    {
         super.onStart()
         Log.v(TAG, "onStart()")
     }
@@ -143,7 +155,8 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
      *
      *
      */
-    public override fun onStop() {
+    public override fun onStop()
+    {
         super.onStop()
         Log.v(TAG, "onStop()")
         exitApplication()
@@ -195,7 +208,11 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
             liveView?.setOnTouchListener(listener)
             messageDrawer = liveView?.messageDrawer
             messageDrawer?.setLevelGauge(currentCoordinator?.levelGauge)
-        } catch (e: Exception) {
+
+
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -204,9 +221,12 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
      * ボタンアイコンの初期設定
      *
      */
-    private fun setupInitialButtonIcons() {
-        try {
-            if (currentCoordinator != null) {
+    private fun setupInitialButtonIcons()
+    {
+        try
+        {
+            if (currentCoordinator != null)
+            {
                 val resId: Int
                 val preferences = PreferenceManager.getDefaultSharedPreferences(this)
                 resId = if (preferences.getBoolean(
@@ -222,7 +242,9 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
                 }
                 setButtonDrawable(IShowInformation.BUTTON_1, resId)
             }
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -233,17 +255,24 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
      */
     private fun launchWifiSettingScreen(): Boolean
     {
-        Log.v(TAG, "launchWifiSettingScreen()")
-        try {
-            // Wifi 設定画面を表示する... (SONY Smart Watch 3では開かないけど...)
-            startActivity(Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"))
+        Log.v(TAG, "launchWifiSettingScreen() : ACTION_WIFI_SETTINGS")
+        try
+        {
+            // Wifi 設定画面を表示する
+            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+
             return true
-        } catch (ex: Exception) {
-            try {
-                Log.v(TAG, "launchWifiSettingScreen() : ACTION_WIFI_SETTINGS")
-                startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+        }
+        catch (ex: Exception)
+        {
+            try
+            {
+                Log.v(TAG, "launchWifiSettingScreen() : ADD_NETWORK_SETTINGS")
+                startActivity(Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"))
                 return true
-            } catch (e: Exception) {
+            }
+            catch (e: Exception)
+            {
                 Log.v(
                     TAG,
                     "android.content.ActivityNotFoundException... " + "com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"
@@ -552,7 +581,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
         }
     }
 
-    /**s
+    /**
      * メッセージの表示
      *
      * @param area    表示エリア (AREA_1 ～ AREA_6, AREA_C)
@@ -563,10 +592,23 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
     {
         var id = 0
         when (area) {
-            IShowInformation.AREA_1 -> id = R.id.text_1
-            IShowInformation.AREA_2 -> id = R.id.text_2
-            IShowInformation.AREA_3 -> id = R.id.text_3
-            IShowInformation.AREA_4 -> id = R.id.text_4
+            IShowInformation.AREA_1 -> {
+                id = R.id.text_1
+                setMessage(IShowInformation.AREA_1_2, color, message)
+            }
+            IShowInformation.AREA_2 -> {
+                id = R.id.text_2
+                setMessage(IShowInformation.AREA_1_2, color, message)
+            }
+            IShowInformation.AREA_3 -> {
+                id = R.id.text_3
+                setMessage(IShowInformation.AREA_3_2, color, message)
+            }
+            IShowInformation.AREA_4 -> {
+                id = R.id.text_4
+                setMessage(IShowInformation.AREA_4_2, color, message)
+                setMessage(IShowInformation.AREA_5_2, color, message)
+            }
             IShowInformation.AREA_1_2 -> id = R.id.text_11
             IShowInformation.AREA_2_2 -> id = R.id.text_12
             IShowInformation.AREA_3_2 -> id = R.id.text_13
@@ -575,6 +617,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation,
             IShowInformation.AREA_NONE -> {}
             else -> {}
         }
+
         if (messageDrawer != null)
         {
             if (area == IShowInformation.AREA_C)

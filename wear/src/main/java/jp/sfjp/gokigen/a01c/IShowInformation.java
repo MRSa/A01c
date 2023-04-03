@@ -27,6 +27,7 @@ public interface IShowInformation
     int AREA_3_2 = 24;
     int AREA_4_2 = 25;
     int AREA_5_2 = 26;
+    int AREA_CLOCK = 20;
 
     int BUTTON_1 = 1;
     int BUTTON_2 = 2;
