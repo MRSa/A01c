@@ -598,7 +598,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             }
             IShowInformation.AREA_2 -> {
                 id = R.id.text_2
-                setMessage(IShowInformation.AREA_1_2, color, message)
+                setMessage(IShowInformation.AREA_2_2, color, message)
             }
             IShowInformation.AREA_3 -> {
                 id = R.id.text_3
