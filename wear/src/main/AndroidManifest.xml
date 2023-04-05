@@ -20,12 +20,11 @@
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.A01Splash">
-        <!-- android:theme="@style/Theme.AppCompat"> -->
-        <!--android:theme="@android:style/Theme.DeviceDefault"-->
         <uses-library android:name="com.google.android.wearable" android:required="false" />
         <meta-data android:name="com.google.android.wearable.standalone" android:value="true" />
         <activity
             android:name=".MainActivity"
+            android:label="@string/app_name2"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +32,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="androidx.wear.activity.ConfirmationActivity">
+            android:name="androidx.wear.activity.ConfirmationActivity"
+            android:label="@string/confirmation">
         </activity>
     </application>
 </manifest>
