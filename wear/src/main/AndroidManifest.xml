@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:theme="@style/Theme.AppCompat">
+        android:theme="@style/Theme.A01Splash">
+        <!-- android:theme="@style/Theme.AppCompat"> -->
         <!--android:theme="@android:style/Theme.DeviceDefault"-->
         <uses-library android:name="com.google.android.wearable" android:required="false" />
         <meta-data android:name="com.google.android.wearable.standalone" android:value="true" />

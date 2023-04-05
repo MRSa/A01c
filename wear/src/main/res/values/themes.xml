@@ -1,0 +1,11 @@
+<resources>
+    <!-- <style name="Theme.A01Splash" parent="Theme.SplashScreen"> -->
+    <!-- <style name="Theme.A01Splash" parent="@android:style/Theme.DeviceDefault"> -->
+    <style name="Theme.A01Splash" parent="@style/Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_color</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/background_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_background</item>
+        <item name="windowSplashScreenAnimationDuration">150</item>
+        <item name="postSplashScreenTheme">@style/Theme.AppCompat</item>
+    </style>
+</resources>
