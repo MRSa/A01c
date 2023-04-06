@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
@@ -18,6 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.InputDeviceCompat
+import androidx.core.view.MotionEventCompat
+import androidx.core.view.ViewConfigurationCompat
+import androidx.core.widget.NestedScrollView
 import androidx.preference.PreferenceManager
 import jp.sfjp.gokigen.a01c.IShowInformation.operation
 import jp.sfjp.gokigen.a01c.liveview.*
@@ -29,6 +34,7 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor
 import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController
 import jp.sfjp.gokigen.a01c.utils.GestureParser
+import kotlin.math.roundToInt
 
 /**
  * メインのActivity
@@ -253,6 +259,28 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         {
             e.printStackTrace()
         }
+    }
+
+    override fun onGenericMotionEvent(ev: MotionEvent?): Boolean
+    {
+        try
+        {
+            if ((ev?.action == MotionEvent.ACTION_SCROLL)&& (ev.isFromSource(InputDeviceCompat.SOURCE_ROTARY_ENCODER)))
+            {
+                // ロータリー入力でスクロールする
+                // Log.v(TAG, "Rotary Encoder Input")
+                val view = findViewById<NestedScrollView>(R.id.main_screen)
+                val delta = -ev.getAxisValue(MotionEventCompat.AXIS_SCROLL) *
+                        ViewConfigurationCompat.getScaledVerticalScrollFactor(ViewConfiguration.get(this), this)
+                view.scrollBy(0, delta.roundToInt())
+                return (true)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (super.onGenericMotionEvent(ev))
     }
 
     /**
@@ -780,6 +808,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
     {
         return (packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS))
     }
+
 
     /**
      * タッチイベントをフックする
