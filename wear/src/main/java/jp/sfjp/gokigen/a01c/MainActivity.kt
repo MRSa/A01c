@@ -1,6 +1,7 @@
 package jp.sfjp.gokigen.a01c
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -166,6 +167,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
      * ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
      *
      */
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupActionListener()
     {
         try
@@ -207,7 +209,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             }
             liveView?.setOnTouchListener(listener)
             messageDrawer = liveView?.messageDrawer
-            messageDrawer?.setLevelGauge(currentCoordinator?.levelGauge)
+            messageDrawer?.levelGauge = currentCoordinator?.levelGauge
 
 
         }
@@ -408,7 +410,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
             if (powerManager?.isInteractive != true)
             {
-                Log.v(TAG, "not interactive, keep liveview.")
+                Log.v(TAG, "not interactive, keep live view.")
                 return
             }
 

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/OSDN_repositories.A01c.iml" filepath="$PROJECT_DIR$/.idea/modules/OSDN_repositories.A01c.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OSDN_repositories.A01c.app.main.iml" />
