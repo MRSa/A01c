@@ -24,14 +24,18 @@
         <meta-data android:name="com.google.android.wearable.standalone" android:value="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:taskAffinity=""
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="androidx.wear.activity.ConfirmationActivity">
+            android:name="androidx.wear.activity.ConfirmationActivity"
+            android:taskAffinity=""
+            >
         </activity>
     </application>
 </manifest>
