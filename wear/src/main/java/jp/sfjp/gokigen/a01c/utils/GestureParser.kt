@@ -38,7 +38,7 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
     }
 
     // GestureDetector.OnGestureListener
-    override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean
+    override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean
     {
         //Log.v(TAG, " Gesture onScroll")
         imageView.moveView(distanceX, distanceY)
@@ -52,8 +52,9 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
         imageView.resetView()
     }
 
+
     // GestureDetector.OnGestureListener
-    override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean
+    override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean
     {
         //Log.v(TAG, " Gesture onFling")
         return (false)
