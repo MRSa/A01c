@@ -1,6 +1,7 @@
 package jp.sfjp.gokigen.a01c
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,7 +11,6 @@ import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
@@ -18,11 +18,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.InputDeviceCompat
-import androidx.core.view.MotionEventCompat
-import androidx.core.view.ViewConfigurationCompat
-import androidx.core.widget.NestedScrollView
 import androidx.preference.PreferenceManager
 import jp.sfjp.gokigen.a01c.IShowInformation.operation
 import jp.sfjp.gokigen.a01c.liveview.*
@@ -34,7 +29,6 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor
 import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController
 import jp.sfjp.gokigen.a01c.utils.GestureParser
-import kotlin.math.roundToInt
 
 /**
  * メインのActivity
@@ -65,15 +59,10 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
     {
         Log.v(TAG, "onCreate()")
         super.onCreate(savedInstanceState)
-        try
-        {
-            ///////// SHOW SPLASH SCREEN /////////
-            installSplashScreen()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
+
+        ///////// SHOW SPLASH SCREEN /////////
+        //installSplashScreen()
+
 
         //  画面全体の設定
         setContentView(R.layout.activity_main)
@@ -103,8 +92,8 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         {
             if (allPermissionsGranted())
             {
-                wifiConnection = WifiConnection(this, this)
-                wifiConnection?.requestNetwork()
+                wifiConnection = WifiConnection(this.applicationContext, this)
+                wifiConnection?.startWatchWifiStatus()
             }
             else
             {
@@ -118,8 +107,30 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         }
     }
 
+/*
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+*/
+    private fun allPermissionsGranted() : Boolean
+    {
+        var result = true
+        for (param in REQUIRED_PERMISSIONS)
+        {
+            if (ContextCompat.checkSelfPermission(baseContext, param) != PackageManager.PERMISSION_GRANTED)
+            {
+                if ((param == Manifest.permission.NEARBY_WIFI_DEVICES)&&(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU))
+                {
+                    // NEARBY_WIFI_DEVICESが TIRAMISUより小さい場合は、権限付与の判断を除外 (SDK: 33より下はエラーになるため)
+                }
+                else
+                {
+                    Log.v(TAG, " Permission: $param : ${Build.VERSION.SDK_INT}")
+                    result = false
+                }
+            }
+        }
+        return (result)
     }
 
     /**
@@ -133,8 +144,6 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         {
             if (wifiConnection != null)
             {
-                // ネットワークを要求する！
-                wifiConnection?.requestNetwork()
                 wifiConnection?.startWatchWifiStatus()
             }
         }
@@ -178,6 +187,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
      * ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
      *
      */
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupActionListener()
     {
         try
@@ -219,7 +229,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             }
             liveView?.setOnTouchListener(listener)
             messageDrawer = liveView?.messageDrawer
-            messageDrawer?.setLevelGauge(currentCoordinator?.levelGauge)
+            messageDrawer?.levelGauge = currentCoordinator?.levelGauge
 
 
         }
@@ -261,28 +271,6 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         }
     }
 
-    override fun onGenericMotionEvent(ev: MotionEvent?): Boolean
-    {
-        try
-        {
-            if ((ev?.action == MotionEvent.ACTION_SCROLL)&& (ev.isFromSource(InputDeviceCompat.SOURCE_ROTARY_ENCODER)))
-            {
-                // ロータリー入力でスクロールする
-                // Log.v(TAG, "Rotary Encoder Input")
-                val view = findViewById<NestedScrollView>(R.id.main_screen)
-                val delta = -ev.getAxisValue(MotionEventCompat.AXIS_SCROLL) *
-                        ViewConfigurationCompat.getScaledVerticalScrollFactor(ViewConfiguration.get(this), this)
-                view.scrollBy(0, delta.roundToInt())
-                return (true)
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (super.onGenericMotionEvent(ev))
-    }
-
     /**
      * Intentを使ってWiFi設定画面を開く
      *
@@ -297,7 +285,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
 
             return true
         }
-        catch (ex: Exception)
+        catch (_: Exception)
         {
             try
             {
@@ -305,7 +293,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
                 startActivity(Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"))
                 return true
             }
-            catch (e: Exception)
+            catch (_: Exception)
             {
                 Log.v(
                     TAG,
@@ -321,7 +309,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
                     )
                     startActivity(intent)
                     return true
-                } catch (ex2: Exception) {
+                } catch (_: Exception) {
                     try {
                         // Wifi 設定画面を表示する...普通のAndroidの場合
                         startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
@@ -442,7 +430,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
             if (powerManager?.isInteractive != true)
             {
-                Log.v(TAG, "not interactive, keep liveview.")
+                Log.v(TAG, "not interactive, keep live view.")
                 return
             }
 
@@ -809,7 +797,6 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         return (packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS))
     }
 
-
     /**
      * タッチイベントをフックする
      *
@@ -1064,14 +1051,27 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
 
     override fun onConnectedToWifi()
     {
-        try
-        {
-            Log.v(TAG, "onConnectedToWifi()")
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
+        Log.v(TAG, "onConnectedToWifi()")
+    }
+
+    override fun onNetworkAvailable()
+    {
+        Log.v(TAG, "onNetworkAvailable()")
+    }
+
+    override fun onNetworkLost()
+    {
+        Log.v(TAG, "onNetworkLost()")
+    }
+
+    override fun onNetworkConnectionTimeout()
+    {
+        Log.v(TAG, "onNetworkConnectionTimeout()")
+    }
+
+    override fun onError(message: String?)
+    {
+        Log.v(TAG, "onNetworkConnectionTimeout() $message")
     }
 
     companion object
@@ -1079,15 +1079,29 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         private val TAG = MainActivity::class.java.simpleName
         //const val REQUEST_NEED_PERMISSIONS = 1010
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.VIBRATE,
-            Manifest.permission.WAKE_LOCK,
-            Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.CHANGE_WIFI_STATE,
-            Manifest.permission.CHANGE_NETWORK_STATE,
-            Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
-        )
+        private val REQUIRED_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(
+                Manifest.permission.VIBRATE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.CHANGE_NETWORK_STATE,
+                Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+                Manifest.permission.NEARBY_WIFI_DEVICES
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.VIBRATE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.CHANGE_NETWORK_STATE,
+                Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+            )
+        }
     }
 }
