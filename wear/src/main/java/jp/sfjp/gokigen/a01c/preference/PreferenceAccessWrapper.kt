@@ -1,9 +1,9 @@
 package jp.sfjp.gokigen.a01c.preference
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceManager
+import androidx.core.content.edit
 
 class PreferenceAccessWrapper(private val context : Context) : PreferenceDataStore()
 {
@@ -68,9 +68,9 @@ class PreferenceAccessWrapper(private val context : Context) : PreferenceDataSto
     {
         try
         {
-            val editor : SharedPreferences.Editor = preferences.edit()
-            editor.putString(key, value)
-            editor.apply()
+            preferences.edit {
+                putString(key, value)
+            }
         }
         catch (e : Exception)
         {
@@ -82,9 +82,9 @@ class PreferenceAccessWrapper(private val context : Context) : PreferenceDataSto
     {
         try
         {
-            val editor : SharedPreferences.Editor = preferences.edit()
-            editor.putBoolean(key, value)
-            editor.apply()
+            preferences.edit {
+                putBoolean(key, value)
+            }
         }
         catch (e : Exception)
         {

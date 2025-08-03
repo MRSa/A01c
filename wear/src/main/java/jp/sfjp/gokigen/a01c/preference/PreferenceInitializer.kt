@@ -1,8 +1,8 @@
 package jp.sfjp.gokigen.a01c.preference
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import androidx.core.content.edit
 
 class PreferenceInitializer
 {
@@ -24,19 +24,17 @@ class PreferenceInitializer
         {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context) ?: return
             val items : Map<String, *> = preferences.all
-            val editor : SharedPreferences.Editor = preferences.edit()
-            if (!items.containsKey(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD))
-            {
-                editor.putString(
+            preferences.edit {
+                if (!items.containsKey(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD)) {
+                    putString(
                         IPreferenceCameraPropertyAccessor.CONNECTION_METHOD,
                         IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE
-                )
+                    )
+                }
+                if (!items.containsKey(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW)) {
+                    putBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false)
+                }
             }
-            if (!items.containsKey(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW))
-            {
-                editor.putBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false)
-            }
-            editor.apply()
         }
         catch (e : Exception)
         {
