@@ -21,7 +21,7 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
     override fun onDown(e: MotionEvent): Boolean
     {
         //Log.v(TAG, " Gesture onDown")
-        return (false)
+        return false
     }
 
     // GestureDetector.OnGestureListener
@@ -34,7 +34,7 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
     override fun onSingleTapUp(e: MotionEvent): Boolean
     {
         //Log.v(TAG, " Gesture onSingleTapUp")
-        return (false)
+        return false
     }
 
     // GestureDetector.OnGestureListener
@@ -42,7 +42,7 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
     {
         //Log.v(TAG, " Gesture onScroll")
         imageView.moveView(distanceX, distanceY)
-        return (false)
+        return false
     }
 
     // GestureDetector.OnGestureListener
@@ -56,7 +56,7 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
     override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean
     {
         //Log.v(TAG, " Gesture onFling")
-        return (false)
+        return false
     }
 
     // ScaleGestureDetector.OnScaleGestureListener
@@ -66,20 +66,20 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
         try
         {
             imageView.setScaleFactor(detector.scaleFactor)
-            return (true)
+            return true
         }
         catch (e : Exception)
         {
             e.printStackTrace()
         }
-        return (false)
+        return false
     }
 
     // ScaleGestureDetector.OnScaleGestureListener
     override fun onScaleBegin(detector: ScaleGestureDetector): Boolean
     {
         //Log.v(TAG, " Gesture onScaleBegin")
-        return (true)
+        return true
     }
 
     // ScaleGestureDetector.OnScaleGestureListener
