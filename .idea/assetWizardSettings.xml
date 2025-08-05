@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Android/android-sdk/icons/material/materialicons/looks_4/baseline_looks_4_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Android/android-sdk/icons/material/materialicons/linked_camera/baseline_linked_camera_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,7 +29,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="eeeeee" />
-                            <entry key="outputName" value="baseline_looks_4_gray_24" />
+                            <entry key="outputName" value="ic_linked_camera_24" />
                             <entry key="sourceFile" value="C:\WORK\OSDN_repositories\A01c" />
                           </map>
                         </option>
