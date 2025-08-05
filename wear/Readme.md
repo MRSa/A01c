@@ -12,3 +12,4 @@ AirA01bベースで開発しています。
 - 1.0.0 Google Play 公開版
 - 1.5.0 WearOS3 対応版
 - 1.5.1 WearOS6 対応版
+- 
