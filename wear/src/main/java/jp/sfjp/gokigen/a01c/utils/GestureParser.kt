@@ -52,7 +52,6 @@ class GestureParser(context : Context, private val imageView : ILiveViewRefreshe
         imageView.resetView()
     }
 
-
     // GestureDetector.OnGestureListener
     override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean
     {

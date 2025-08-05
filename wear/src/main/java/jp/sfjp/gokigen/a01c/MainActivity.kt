@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
 import jp.sfjp.gokigen.a01c.IShowInformation.operation
 import jp.sfjp.gokigen.a01c.liveview.*
@@ -61,8 +62,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
         super.onCreate(savedInstanceState)
 
         ///////// SHOW SPLASH SCREEN /////////
-        //installSplashScreen()
-
+        installSplashScreen()
 
         //  画面全体の設定
         setContentView(R.layout.activity_main)

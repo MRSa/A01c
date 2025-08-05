@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">A01c</string>
     <string name="app_name2">A01c</string>
+    <string name="confirmation">Confirmation</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World</string>
     <string name="clock_dummy">00:00</string>
