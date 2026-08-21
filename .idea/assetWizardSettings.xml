@@ -79,8 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\WORK\OSDN_repositories\A01c\wear\src\main\res\drawable\a01c_icon_base.xml" />
-                                                <entry key="scalingPercent" value="46" />
+                                                <entry key="imagePath" value="C:\WORK\OSDN_repositories\A01c\wear\src\main\res\drawable\a01c_icon.xml" />
+                                                <entry key="scalingPercent" value="57" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -369,7 +369,7 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="eeeeee" />
-                            <entry key="outputName" value="a01c_icon_base" />
+                            <entry key="outputName" value="a01c_icon" />
                             <entry key="sourceFile" value="C:\Users\MRSa\Pictures\a01c_icon.svg" />
                           </map>
                         </option>
