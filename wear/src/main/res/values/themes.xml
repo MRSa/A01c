@@ -6,6 +6,7 @@
         <item name="windowSplashScreenIconBackgroundColor">@color/background_color</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_background</item>
         <item name="windowSplashScreenAnimationDuration">150</item>
-        <item name="postSplashScreenTheme">@style/Theme.AppCompat</item>
+        <!-- <item name="postSplashScreenTheme">@style/Theme.AppCompat</item> -->
+        <item name="postSplashScreenTheme">@style/Theme.AppCompat.NoActionBar</item>
     </style>
 </resources>

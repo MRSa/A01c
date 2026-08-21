@@ -16,14 +16,17 @@ import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import jp.sfjp.gokigen.a01c.IShowInformation.operation
@@ -39,14 +42,13 @@ import jp.sfjp.gokigen.a01c.utils.GestureParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 class MainActivity : AppCompatActivity(),
     IChangeScene,
     IShowInformation,
     ICameraStatusReceiver,
     IDialogDismissedNotifier,
-    IWifiConnection {
-
+    IWifiConnection
+{
     private lateinit var preferences: PreferenceAccessWrapper
     private var liveView: CameraLiveImageView? = null
     private var glView: GokigenGLView? = null
@@ -70,11 +72,32 @@ class MainActivity : AppCompatActivity(),
         // スプラッシュ画面の表示 (super.onCreate より前に呼び出し)
         installSplashScreen()
 
+        // Edge-to-Edge を有効化 (super.onCreate より前を推奨)
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        supportActionBar?.hide()
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
+        val mainScreen = findViewById<View>(R.id.main_screen)
+        mainScreen?.let { view ->
+            ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+                // ステータスバーを非表示にするため、top は 0 に固定（あるいは左右・下のみ適用）
+                v.setPadding(
+                    systemBars.left,
+                    0, // top を 0 にして上部の余白を詰める
+                    systemBars.right,
+                    systemBars.bottom
+                )
+                insets
+            }
+            view.keepScreenOn = true
+        }
 
         runCatching {
             if (!hasGps()) {
