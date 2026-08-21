@@ -1,104 +1,94 @@
-package jp.sfjp.gokigen.a01c;
+package jp.sfjp.gokigen.a01c
 
-import android.view.MotionEvent;
+import android.view.MotionEvent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceDataStore
+import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl
+import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode
+import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge
+import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties
+import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceDataStore;
+interface ICameraController {
+    /** 接続終了(ライブビュースタート前の準備)  */
+    fun connectFinished()
 
-import jp.sfjp.gokigen.a01c.liveview.CameraLiveViewListenerImpl;
-import jp.sfjp.gokigen.a01c.liveview.ILiveImageStatusNotify;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.ICameraRunMode;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.ILevelGauge;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.IZoomLensHolder;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ILoadSaveCameraProperties;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.property.IOlyCameraPropertyProvider;
-import jp.sfjp.gokigen.a01c.olycamerawrapper.property.ICameraPropertyLoadSaveOperations;
+    /** ライブビュー関係  */
+    fun setLiveViewListener(listener: CameraLiveViewListenerImpl)
+    fun changeLiveViewSize(size: String?)
+    fun startLiveView()
+    fun stopLiveView()
 
-/**
- *
- *
- */
-public interface ICameraController
-{
-    /** 接続終了(ライブビュースタート前の準備) **/
-    void connectFinished();
+    /** 撮影モードの更新   */
+    fun updateTakeMode()
 
-    /** ライブビュー関係 **/
-    void setLiveViewListener(@NonNull CameraLiveViewListenerImpl listener);
-    void changeLiveViewSize(String size);
-    void startLiveView();
-    void stopLiveView();
+    /** オートフォーカス機能の実行  */
+    fun driveAutoFocus(event: MotionEvent?): Boolean
+    fun unlockAutoFocus()
 
-    /** 撮影モードの更新  **/
-    void updateTakeMode();
+    /** ポイントがオートフォーカス可能なエリアかどうかチェックする  */
+    fun isContainsAutoFocusPoint(event: MotionEvent?): Boolean // trueならオートフォーカス可能
 
-    /** オートフォーカス機能の実行 **/
-    boolean driveAutoFocus(MotionEvent event);
-    void unlockAutoFocus();
+    /** シングル撮影機能の実行  */
+    fun singleShot()
 
-    /** ポイントがオートフォーカス可能なエリアかどうかチェックする **/
-    boolean isContainsAutoFocusPoint(MotionEvent event);  // trueならオートフォーカス可能
+    /** ムービー撮影機能の実行(開始・終了)  */
+    fun movieControl()
 
-    /** シングル撮影機能の実行 **/
-    void singleShot();
+    /** ブラケット撮影(開始・終了)  */
+    fun bracketingControl()
 
-    /** ムービー撮影機能の実行(開始・終了) **/
-    void movieControl();
+    /** インターバル＆ブラケッティング撮影の実行  */
+    fun bracketingShot(bracketingStyle: Int, bracketingCount: Int, durationSeconds: Int)
 
-    /** ブラケット撮影(開始・終了) **/
-    void bracketingControl();
-
-    /** インターバル＆ブラケッティング撮影の実行 **/
-    void bracketingShot(int bracketingStyle, int bracketingCount, int durationSeconds);
-
-    /** 撮影確認画像の設定 **/
-    void setRecViewMode(boolean isRecViewMode);
+    /** 撮影確認画像の設定  */
+    fun setRecViewMode(isRecViewMode: Boolean)
 
 
-    /** AE Lockの設定・解除、 AF/MFの切替え **/
-    void toggleAutoExposure();
-    void toggleManualFocus();
+    /** AE Lockの設定・解除、 AF/MFの切替え  */
+    fun toggleAutoExposure()
+    fun toggleManualFocus()
 
-    /** カメラの状態取得 **/
-    boolean isManualFocus();
-    boolean isAFLock();
-    boolean isAELock();
+    /** カメラの状態取得  */
+    fun isManualFocus(): Boolean
+    fun isAFLock(): Boolean
+    fun isAELock(): Boolean
 
-    ///** カメラの状態変化リスナの設定 **/
-    //void setCameraStatusListener(OLYCameraStatusListener listener);
-
-    /** カメラ状態の表示をすべて更新する **/
-    void updateStatusAll();
-
+    /** カメラ状態の表示をすべて更新する  */
+    fun updateStatusAll()
 
     // ステータス監視のタスクを取得する
-    @Nullable ICameraStatusWatcher getStatusWatcher();
-
-    ///** カメラの状態サマリ(のテキスト情報)を取得する **/
-    //String getCameraStatusSummary(ICameraStatusSummary decoder);
+    fun getStatusWatcher(): ICameraStatusWatcher?
 
     // カメラプロパティアクセスインタフェース
-    IOlyCameraPropertyProvider getCameraPropertyProvider();
+    fun getCameraPropertyProvider(): IOlyCameraPropertyProvider
 
     // カメラプロパティのロード・セーブインタフェース（読み込み中/保存中のダイアログ表示機能付き）
-    ICameraPropertyLoadSaveOperations getCameraPropertyLoadSaveOperations();
+    fun getCameraPropertyLoadSaveOperations(): ICameraPropertyLoadSaveOperations?
 
     // カメラプロパティのロード・セーブインタフェース
-    ILoadSaveCameraProperties getLoadSaveCameraProperties();
+    fun getLoadSaveCameraProperties(): ILoadSaveCameraProperties
 
     // カメラの動作モード変更インタフェース
-    ICameraRunMode getChangeRunModeExecutor();
+    fun getChangeRunModeExecutor(): ICameraRunMode
 
-    ICameraConnection getConnectionInterface();
+    fun getConnectionInterface(): ICameraConnection?
 
-    /** ズームレンズの状態ホルダを応答 **/
-    IZoomLensHolder getZoomLensHolder();
+    /** ズームレンズの状態ホルダを応答  */
+    fun getZoomLensHolder(): IZoomLensHolder?
 
     // デジタル水準器のホルダーを取得する
-    ILevelGauge getLevelGauge();
+    fun getLevelGauge(): ILevelGauge
 
     // 機能の処理を行うクラスを取得する
-    @NonNull ICameraFeatureDispatcher getFeatureDispatcher(@NonNull AppCompatActivity context, @NonNull IShowInformation statusDrawer, @NonNull ICameraController camera, @NonNull PreferenceDataStore preferenceAccessWrapper, @NonNull ILiveImageStatusNotify liveImageView);
+    fun getFeatureDispatcher(
+        context: AppCompatActivity,
+        statusDrawer: IShowInformation,
+        camera: ICameraController,
+        preferenceAccessWrapper: PreferenceDataStore,
+        liveImageView: ILiveImageStatusNotify
+    ): ICameraFeatureDispatcher
 }
