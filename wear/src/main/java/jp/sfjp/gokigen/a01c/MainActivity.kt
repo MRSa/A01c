@@ -6,7 +6,12 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.PowerManager
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
@@ -19,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import jp.sfjp.gokigen.a01c.IShowInformation.operation
 import jp.sfjp.gokigen.a01c.liveview.*
@@ -30,13 +36,17 @@ import jp.sfjp.gokigen.a01c.preference.IPreferenceCameraPropertyAccessor
 import jp.sfjp.gokigen.a01c.preference.PreferenceAccessWrapper
 import jp.sfjp.gokigen.a01c.thetacamerawrapper.ThetaCameraController
 import jp.sfjp.gokigen.a01c.utils.GestureParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-/**
- * メインのActivity
- *
- */
-class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICameraStatusReceiver, IDialogDismissedNotifier, IWifiConnection
-{
+
+class MainActivity : AppCompatActivity(),
+    IChangeScene,
+    IShowInformation,
+    ICameraStatusReceiver,
+    IDialogDismissedNotifier,
+    IWifiConnection {
+
     private lateinit var preferences: PreferenceAccessWrapper
     private var liveView: CameraLiveImageView? = null
     private var glView: GokigenGLView? = null
@@ -53,505 +63,305 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
     private var liveViewListener: CameraLiveViewListenerImpl? = null
     private var enableGlView = false
 
-    /**
-     *
-     */
     override fun onCreate(savedInstanceState: Bundle?)
     {
         Log.v(TAG, "onCreate()")
-        super.onCreate(savedInstanceState)
 
-        ///////// SHOW SPLASH SCREEN /////////
+        // スプラッシュ画面の表示 (super.onCreate より前に呼び出し)
         installSplashScreen()
 
-        //  画面全体の設定
+        super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        try
-        {
-            if (!hasGps())
-            {
-                // GPS機能が搭載されていない場合...ログに出力する
+        runCatching {
+            if (!hasGps()) {
                 Log.d(TAG, " ----- This hardware doesn't have GPS.")
             }
-            // パワーマネージャをつかまえる
-            powerManager = getSystemService(POWER_SERVICE) as PowerManager
+            powerManager = getSystemService(POWER_SERVICE) as? PowerManager
 
             setupCameraCoordinator()
             setupInitialButtonIcons()
             setupActionListener()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "Error in setup", e)
         }
 
-        try
-        {
-            if (allPermissionsGranted())
-            {
-                wifiConnection = WifiConnection(this.applicationContext, this)
-                wifiConnection?.startWatchWifiStatus()
-            }
-            else
-            {
+        runCatching {
+            if (allPermissionsGranted()) {
+                wifiConnection = WifiConnection(applicationContext, this).apply {
+                    startWatchWifiStatus()
+                }
+            } else {
                 Log.v(TAG, ">>> Request Permissions...")
                 ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
             }
-        }
-        catch (ex: Exception)
-        {
-            ex.printStackTrace()
+        }.onFailure { ex ->
+            Log.e(TAG, "Error in permission check", ex)
         }
     }
 
-/*
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
-*/
-    private fun allPermissionsGranted() : Boolean
-    {
-        var result = true
-        for (param in REQUIRED_PERMISSIONS)
-        {
-            if (ContextCompat.checkSelfPermission(baseContext, param) != PackageManager.PERMISSION_GRANTED)
-            {
-                if ((param == Manifest.permission.NEARBY_WIFI_DEVICES)&&(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU))
-                {
-                    // NEARBY_WIFI_DEVICESが TIRAMISUより小さい場合は、権限付与の判断を除外 (SDK: 33より下はエラーになるため)
-                }
-                else
-                {
-                    Log.v(TAG, " Permission: $param : ${Build.VERSION.SDK_INT}")
-                    result = false
-                }
-            }
+    private fun allPermissionsGranted(): Boolean {
+        return REQUIRED_PERMISSIONS.all { permission ->
+            ContextCompat.checkSelfPermission(baseContext, permission) == PackageManager.PERMISSION_GRANTED
         }
-        return (result)
     }
 
-    /**
-     *
-     */
-    override fun onResume()
-    {
+    override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume()")
-        try
-        {
-            if (wifiConnection != null)
-            {
-                wifiConnection?.startWatchWifiStatus()
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        runCatching {
+            wifiConnection?.startWatchWifiStatus()
+        }.onFailure { e ->
+            Log.e(TAG, "onResume error", e)
         }
     }
 
-    /**
-     *
-     */
-    override fun onPause()
-    {
+    override fun onPause() {
         super.onPause()
         Log.v(TAG, "onPause()")
     }
 
-    /**
-     *
-     *
-     */
-    public override fun onStart()
-    {
+    override fun onStart() {
         super.onStart()
         Log.v(TAG, "onStart()")
     }
 
-    /**
-     *
-     *
-     */
-    public override fun onStop()
-    {
+    override fun onStop() {
         super.onStop()
         Log.v(TAG, "onStop()")
+
+        // パワーマネージャを確認し、interactive modeではない場合はライブビューやカメラ電源を維持
+        if (powerManager?.isInteractive != true) {
+            Log.v(TAG, "not interactive, keep live view.")
+            return
+        }
+
+        runCatching {
+            currentCoordinator?.stopLiveView()
+            currentCoordinator?.getStatusWatcher()?.stopStatusWatch()
+        }.onFailure { e ->
+            Log.v(TAG, " onStop error: ${e.localizedMessage}")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.v(TAG, "onDestroy()")
         exitApplication()
     }
 
-    /**
-     * ボタンが押された、画面がタッチされた、、は、リスナクラスで処理するよう紐づける
-     *
-     */
     @SuppressLint("ClickableViewAccessibility")
-    private fun setupActionListener()
-    {
-        try
-        {
+    private fun setupActionListener() {
+        runCatching {
             Log.v(TAG, "setupActionListener()")
-            val btn1 = findViewById<ImageButton>(R.id.btn_1)
-            btn1.setOnClickListener(listener)
-            btn1.setOnLongClickListener(listener)
-            val btn2 = findViewById<ImageButton>(R.id.btn_2)
-            btn2.setOnClickListener(listener)
-            btn2.setOnLongClickListener(listener)
-            val btn3 = findViewById<ImageButton>(R.id.btn_3)
-            btn3.setOnClickListener(listener)
-            btn3.setOnLongClickListener(listener)
-            val btn4 = findViewById<ImageButton>(R.id.btn_4)
-            btn4.setOnClickListener(listener)
-            btn4.setOnLongClickListener(listener)
-            val btn5 = findViewById<ImageButton>(R.id.btn_5)
-            btn5.setOnClickListener(listener)
-            btn5.setOnLongClickListener(listener)
-            val btn6 = findViewById<ImageButton>(R.id.btn_6)
-            btn6.setOnClickListener(listener)
-            btn6.setOnLongClickListener(listener)
-            val textArea1 = findViewById<ImageButton>(R.id.btn_021)
-            textArea1.setOnClickListener(listener)
-            textArea1.setOnLongClickListener(listener)
-            val textArea2 = findViewById<ImageButton>(R.id.btn_022)
-            textArea2.setOnClickListener(listener)
-            textArea2.setOnLongClickListener(listener)
-            val textArea3 = findViewById<ImageButton>(R.id.btn_023)
-            textArea3.setOnClickListener(listener)
-            textArea3.setOnLongClickListener(listener)
-            val textArea4 = findViewById<ImageButton>(R.id.btn_024)
-            textArea4.setOnClickListener(listener)
-            textArea4.setOnLongClickListener(listener)
-            if (liveView == null)
-            {
+            val btnIds = intArrayOf(
+                R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4, R.id.btn_5, R.id.btn_6,
+                R.id.btn_021, R.id.btn_022, R.id.btn_023, R.id.btn_024
+            )
+            for (id in btnIds) {
+                findViewById<ImageButton>(id)?.apply {
+                    setOnClickListener(listener)
+                    setOnLongClickListener(listener)
+                }
+            }
+
+            if (liveView == null) {
                 liveView = findViewById(R.id.liveview)
             }
-            liveView?.setOnTouchListener(listener)
-            messageDrawer = liveView?.messageDrawer
-            messageDrawer?.levelGauge = currentCoordinator?.levelGauge
-
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+            liveView?.apply {
+                setOnTouchListener(listener)
+                this@MainActivity.messageDrawer = this.messageDrawer?.also { drawer ->
+                    drawer.levelGauge = currentCoordinator?.getLevelGauge()
+                }
+            }
+        }.onFailure { e ->
+            Log.e(TAG, "setupActionListener error", e)
         }
     }
 
-    /**
-     * ボタンアイコンの初期設定
-     *
-     */
-    private fun setupInitialButtonIcons()
-    {
-        try
-        {
-            if (currentCoordinator != null)
-            {
-                val resId: Int
-                val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-                resId = if (preferences.getBoolean(
-                        IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS,
-                        true
-                    )
-                ) {
-                    // ボタンをGrid OFFアイコンにする
-                    R.drawable.btn_ic_grid_off
-                } else {
-                    // ボタンをGrid ONアイコンにする
-                    R.drawable.btn_ic_grid_on
-                }
+    private fun setupInitialButtonIcons() {
+        runCatching {
+            if (currentCoordinator != null) {
+                val defaultPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+                val showGrid = defaultPrefs.getBoolean(
+                    IPreferenceCameraPropertyAccessor.SHOW_GRID_STATUS,
+                    true
+                )
+                val resId = if (showGrid) R.drawable.btn_ic_grid_off else R.drawable.btn_ic_grid_on
                 setButtonDrawable(IShowInformation.BUTTON_1, resId)
             }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "setupInitialButtonIcons error", e)
         }
     }
 
-    /**
-     * Intentを使ってWiFi設定画面を開く
-     *
-     */
-    private fun launchWifiSettingScreen(): Boolean
-    {
-        Log.v(TAG, "launchWifiSettingScreen() : ACTION_WIFI_SETTINGS")
-        try
-        {
-            // Wifi 設定画面を表示する
-            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-
-            return true
-        }
-        catch (_: Exception)
-        {
-            try
-            {
-                Log.v(TAG, "launchWifiSettingScreen() : ADD_NETWORK_SETTINGS")
-                startActivity(Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"))
-                return true
+    private fun launchWifiSettingScreen(): Boolean {
+        val intents = listOf(
+            Intent(Settings.ACTION_WIFI_SETTINGS),
+            Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"),
+            Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS").apply {
+                setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.wifi.WifiSettingsActivity")
+            },
+            Intent("android.intent.action.MAIN").apply {
+                setClassName("com.google.android.apps.wearable.settings", "com.google.android.clockwork.settings.MainSettingsActivity")
             }
-            catch (_: Exception)
-            {
-                Log.v(
-                    TAG,
-                    "android.content.ActivityNotFoundException... " + "com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS"
-                )
-                try {
-                    // SONY Smart Watch 3で開く場合のIntent...
-                    val intent =
-                        Intent("com.google.android.clockwork.settings.connectivity.wifi.ADD_NETWORK_SETTINGS")
-                    intent.setClassName(
-                        "com.google.android.apps.wearable.settings",
-                        "com.google.android.clockwork.settings.wifi.WifiSettingsActivity"
-                    )
-                    startActivity(intent)
-                    return true
-                } catch (_: Exception) {
-                    try {
-                        // Wifi 設定画面を表示する...普通のAndroidの場合
-                        startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-                        return true
-                    } catch (ee: Exception) {
-                        ee.printStackTrace()
-                        try {
-                            // LG G Watch Rで開く場合のIntent...
-                            val intent = Intent("android.intent.action.MAIN")
-                            intent.setClassName(
-                                "com.google.android.apps.wearable.settings",
-                                "com.google.android.clockwork.settings.MainSettingsActivity"
-                            )
-                            startActivity(intent)
-                            return true
-                        } catch (ex3: ActivityNotFoundException) {
-                            ex3.printStackTrace()
-                        }
-                    }
-                }
+        )
+
+        for (intent in intents) {
+            try {
+                startActivity(intent)
+                return true
+            } catch (_: ActivityNotFoundException) {
+                // 次の Intent を試行
             }
         }
         return false
     }
 
-    /**
-     * Olympus Cameraクラスとのやりとりをするクラスを準備する
-     * （カメラとの接続も、ここでスレッドを起こして開始する）
-     */
-    private fun setupCameraCoordinator()
-    {
-        try
-        {
-            preferences = PreferenceAccessWrapper(this)
-            preferences.initialize()
+    private fun setupCameraCoordinator() {
+        runCatching {
+            preferences = PreferenceAccessWrapper(this).apply { initialize() }
             val connectionMethod = preferences.getString(
                 IPreferenceCameraPropertyAccessor.CONNECTION_METHOD,
                 IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE
             )
-            if (liveView == null)
-            {
-                liveView = findViewById(R.id.liveview)
-                liveView?.visibility = View.VISIBLE
-            }
-            if (liveView != null)
-            {
-                liveViewListener = CameraLiveViewListenerImpl(liveView!!)
-            }
-            if (glView == null)
-            {
-                glView = findViewById(R.id.glview)
-            }
-            if (glView != null)
-            {
-                if (gestureParser == null)
-                {
-                    gestureParser = GestureParser(applicationContext, glView!!)
+
+            val lv = liveView ?: findViewById<CameraLiveImageView>(R.id.liveview)?.also { liveView = it }
+            lv?.visibility = View.VISIBLE
+            lv?.let { liveViewListener = CameraLiveViewListenerImpl(it) }
+
+            val gv = glView ?: findViewById<GokigenGLView>(R.id.glview)?.also { glView = it }
+            gv?.let { view ->
+                if (gestureParser == null) {
+                    gestureParser = GestureParser(applicationContext, view)
                 }
                 enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false)
-                if (enableGlView && connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA))
-                {
-                    // GL VIEW に切り替える
-                    glView?.setImageProvider(liveViewListener!!)
-                    glView?.visibility = View.VISIBLE
-                    liveView?.visibility = View.GONE
+                if (enableGlView && connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) {
+                    liveViewListener?.let { view.setImageProvider(it) }
+                    view.visibility = View.VISIBLE
+                    lv?.visibility = View.GONE
                 }
             }
+
             olyAirCoordinator = OlyCameraCoordinator(this, liveView, this, this)
             thetaCoordinator = ThetaCameraController(this, this, this)
-            currentCoordinator =
-                if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) thetaCoordinator else olyAirCoordinator
-            currentCoordinator?.setLiveViewListener(liveViewListener!!)
-            listener = CameraLiveViewOnTouchListener(
-                this, currentCoordinator?.getFeatureDispatcher(
-                    this, this,
-                    currentCoordinator!!,
-                    preferences,
-                    liveView!!
-                ), this
+
+            val coordinator = if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) {
+                thetaCoordinator
+            } else {
+                olyAirCoordinator
+            }
+            currentCoordinator = coordinator
+
+            liveViewListener?.let { coordinator?.setLiveViewListener(it) }
+
+            val lvNonNull = lv ?: return@runCatching
+            val dispatcher = coordinator?.getFeatureDispatcher(
+                this,
+                this,
+                coordinator,
+                preferences,
+                lvNonNull
             )
+            listener = CameraLiveViewOnTouchListener(this, dispatcher!!, this)
             selectionDialog = FavoriteSettingSelectionDialog(
                 this,
-                currentCoordinator?.cameraPropertyLoadSaveOperations,
+                coordinator.getCameraPropertyLoadSaveOperations(),
                 this
             )
             connectToCamera()
-        } catch (e: Exception) {
-            e.printStackTrace()
+
+        }.onFailure { e ->
+            Log.e(TAG, "setupCameraCoordinator error", e)
         }
     }
 
-    /**
-     * カメラと接続する
-     *
-     */
-    private fun connectToCamera()
-    {
-        val thread = Thread { currentCoordinator?.connectionInterface?.connect() }
-        try
-        {
-            thread.start()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+    private fun connectToCamera() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            currentCoordinator?.getConnectionInterface()?.connect()
         }
     }
 
-    /**
-     * カメラの電源をOFFいして、アプリを抜ける処理
-     *
-     */
-    override fun exitApplication()
-    {
-        try {
+    override fun exitApplication() {
+        runCatching {
             Log.v(TAG, "exitApplication()")
 
-            // パワーマネージャを確認し、interactive modeではない場合は、ライブビューも止めず、カメラの電源も切らない
-            if (powerManager?.isInteractive != true)
-            {
+            if (powerManager?.isInteractive != true) {
                 Log.v(TAG, "not interactive, keep live view.")
                 return
             }
 
-            // ライブビューを停止させる
             currentCoordinator?.stopLiveView()
+            currentCoordinator?.getStatusWatcher()?.stopStatusWatch()
 
-            // ステータス監視を止める
-            val watcher = currentCoordinator?.statusWatcher
-            watcher?.stopStatusWatch()
-
-            //  パラメータを確認し、カメラの電源を切る
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-                    IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT,
-                    true
-                )
-            ) {
+            val disconnectOnExit = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                IPreferenceCameraPropertyAccessor.EXIT_APPLICATION_WITH_DISCONNECT,
+                true
+            )
+            if (disconnectOnExit) {
                 Log.v(TAG, "Shutdown camera...")
-
-                // カメラの電源をOFFにする
-                currentCoordinator?.connectionInterface?.disconnect(true)
+                currentCoordinator?.getConnectionInterface()?.disconnect(true)
             }
-            //finish();
-            //finishAndRemoveTask();
-            //android.os.Process.killProcess(android.os.Process.myPid());
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "exitApplication error", e)
         }
     }
 
-    /**
-     * 接続機能を確認する
-     */
-    override fun checkConnectionFeature(id: Int, btnId: Int): Boolean
-    {
-        var ret = false
-        if (id == 0)
-        {
-            // Wifi 設定画面を開く
-            ret = launchWifiSettingScreen()
-        } else if (id == 1) {
-            // 接続の変更を確認する
-            changeConnectionMethod()
+    override fun checkConnectionFeature(id: Int, btnId: Int): Boolean {
+        return when (id) {
+            0 -> launchWifiSettingScreen()
+            1 -> {
+                changeConnectionMethod()
+                true
+            }
+            else -> false
         }
-        return ret
     }
 
-    /**
-     * 画面をタッチした場所を受信する
-     *
-     * @param posX  X座標位置 (0.0f - 1.0f)
-     * @param posY  Y座標位置 (0.0f - 1.0f)
-     * @return true / false
-     */
-    override fun touchedPosition(posX: Float, posY: Float): Boolean
-    {
+    override fun touchedPosition(posX: Float, posY: Float): Boolean {
         Log.v(TAG, "touchedPosition ($posX, $posY)")
-        return (liveView?.touchedPosition(posX, posY) ?: false)
+        return liveView?.touchedPosition(posX, posY) ?: false
     }
 
-    /**
-     * 接続状態を見る or 再接続する
-     */
-    override fun showConnectionStatus(): Boolean
-    {
-        try
-        {
+    override fun showConnectionStatus(): Boolean {
+        return runCatching {
             if (listener?.isEnabledOperation == operation.ONLY_CONNECT && cameraDisconnectedHappened) {
-                // カメラが切断されたとき、再接続を指示する
                 connectToCamera()
                 cameraDisconnectedHappened = false
-                return true
+                true
+            } else {
+                false
             }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return false
+        }.getOrDefault(false)
     }
 
-    /**
-     *
-     */
-    override fun onStatusNotify(message: String)
-    {
+    override fun onStatusNotify(message: String) {
         setMessage(IShowInformation.AREA_C, Color.WHITE, message)
     }
 
-    /**
-     *
-     */
-    override fun onCameraConnected()
-    {
+    override fun onCameraConnected() {
         Log.v(TAG, "onCameraConnected()")
-        try
-        {
-            // ライブビューの開始 ＆ タッチ/ボタンの操作を可能にする
-            currentCoordinator?.connectFinished()
-            currentCoordinator?.startLiveView()
-            currentCoordinator?.setRecViewMode(false)
-            listener!!.setEnableOperation(operation.ENABLE)
+        runCatching {
+            currentCoordinator?.apply {
+                connectFinished()
+                startLiveView()
+                setRecViewMode(false)
+                updateStatusAll()
+                getStatusWatcher()?.startStatusWatch()
+            }
+            listener?.setEnableOperation(operation.ENABLE)
             setMessage(IShowInformation.AREA_C, Color.WHITE, "")
-            currentCoordinator?.updateStatusAll()
-            val watcher = currentCoordinator?.statusWatcher
-            watcher?.startStatusWatch()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "onCameraConnected error", e)
         }
     }
 
-    /**
-     * カメラとの接続が切れたとき...何もしない
-     *
-     */
-    override fun onCameraDisconnected()
-    {
+    override fun onCameraDisconnected() {
         Log.v(TAG, "onCameraDisconnected()")
-        try
-        {
+        runCatching {
             setMessage(
                 IShowInformation.AREA_C,
                 Color.YELLOW,
@@ -559,59 +369,34 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             )
             listener?.setEnableOperation(operation.ONLY_CONNECT)
             cameraDisconnectedHappened = true
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "onCameraDisconnected error", e)
         }
     }
 
-    /**
-     * カメラと接続失敗
-     */
-    override fun onCameraConnectError(message: String)
-    {
-        Log.v(TAG, "onCameraOccursException()")
-        try
-        {
+    override fun onCameraConnectError(message: String) {
+        Log.v(TAG, "onCameraConnectError()")
+        runCatching {
             setMessage(IShowInformation.AREA_C, Color.YELLOW, message)
             listener?.setEnableOperation(operation.ONLY_CONNECT)
             cameraDisconnectedHappened = true
-        }
-        catch (ee: Exception)
-        {
-            ee.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "onCameraConnectError error", e)
         }
     }
 
-    /**
-     * カメラに例外発生
-     */
-    override fun onCameraOccursException(message: String, e: Exception)
-    {
-        Log.v(TAG, "onCameraOccursException()")
-        try
-        {
+    override fun onCameraOccursException(message: String, e: Exception) {
+        Log.v(TAG, "onCameraOccursException(): $message", e)
+        runCatching {
             setMessage(IShowInformation.AREA_C, Color.YELLOW, message)
             listener?.setEnableOperation(operation.ONLY_CONNECT)
             cameraDisconnectedHappened = true
-        }
-        catch (ee: Exception)
-        {
-            e.printStackTrace()
-            ee.printStackTrace()
+        }.onFailure { ee ->
+            Log.e(TAG, "onCameraOccursException fallback error", ee)
         }
     }
 
-    /**
-     * メッセージの表示
-     *
-     * @param area    表示エリア (AREA_1 ～ AREA_6, AREA_C)
-     * @param color　 表示色
-     * @param message 表示するメッセージ
-     */
-    override fun setMessage(area: Int, color: Int, message: String)
-    {
+    override fun setMessage(area: Int, color: Int, message: String) {
         var id = 0
         when (area) {
             IShowInformation.AREA_1 -> {
@@ -636,130 +421,41 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             IShowInformation.AREA_3_2 -> id = R.id.text_13
             IShowInformation.AREA_4_2 -> id = R.id.text_14
             IShowInformation.AREA_5_2 -> id = R.id.text_15
-            IShowInformation.AREA_NONE -> {}
-            else -> {}
         }
 
-        if (messageDrawer != null)
-        {
-            if (area == IShowInformation.AREA_C)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.CENTER,
-                    color,
-                    IMessageDrawer.SIZE_LARGE,
-                    message
-                )
+        if (messageDrawer != null) {
+            val drawerArea = when (area) {
+                IShowInformation.AREA_C -> IMessageDrawer.MessageArea.CENTER
+                IShowInformation.AREA_5 -> IMessageDrawer.MessageArea.UPLEFT
+                IShowInformation.AREA_6 -> IMessageDrawer.MessageArea.LOWLEFT
+                IShowInformation.AREA_7 -> IMessageDrawer.MessageArea.UPRIGHT
+                IShowInformation.AREA_8 -> IMessageDrawer.MessageArea.LOWRIGHT
+                IShowInformation.AREA_9 -> IMessageDrawer.MessageArea.UPCENTER
+                IShowInformation.AREA_A -> IMessageDrawer.MessageArea.LOWCENTER
+                IShowInformation.AREA_B -> IMessageDrawer.MessageArea.CENTERLEFT
+                IShowInformation.AREA_D -> IMessageDrawer.MessageArea.CENTERRIGHT
+                else -> null
+            }
+            if (drawerArea != null) {
+                val size = if (area == IShowInformation.AREA_C) IMessageDrawer.SIZE_LARGE else IMessageDrawer.SIZE_STD
+                messageDrawer?.setMessageToShow(drawerArea, color, size, message)
                 return
             }
-            if (area == IShowInformation.AREA_5)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.UPLEFT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_6)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.LOWLEFT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_7)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.UPRIGHT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_8)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.LOWRIGHT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_9)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.UPCENTER,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_A)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.LOWCENTER,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_B)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.CENTERLEFT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (area == IShowInformation.AREA_D)
-            {
-                messageDrawer?.setMessageToShow(
-                    IMessageDrawer.MessageArea.CENTERRIGHT,
-                    color,
-                    IMessageDrawer.SIZE_STD,
-                    message
-                )
-                return
-            }
-            if (id == 0)
-            {
-                // 描画エリアが不定の場合...
-                return
-            }
+            if (id == 0) return
         }
+
         val areaId = id
         runOnUiThread {
-            val textArea = findViewById<TextView>(areaId)
-            if (textArea != null)
-            {
-                textArea.setTextColor(color)
-                textArea.text = message
-                textArea.invalidate()
+            findViewById<TextView>(areaId)?.apply {
+                setTextColor(color)
+                text = message
+                invalidate()
             }
         }
     }
 
-    /**
-     * ボタンの表示イメージを変更する
-     *
-     * @param button  ボタンの場所
-     * @param labelId 変更する内容
-     */
-    override fun setButtonDrawable(button: Int, labelId: Int)
-    {
-        val id = when (button)
-        {
+    override fun setButtonDrawable(button: Int, labelId: Int) {
+        val id = when (button) {
             IShowInformation.BUTTON_1 -> R.id.btn_1
             IShowInformation.BUTTON_2 -> R.id.btn_2
             IShowInformation.BUTTON_3 -> R.id.btn_3
@@ -771,271 +467,179 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
             else -> R.id.btn_6
         }
         runOnUiThread {
-            try
-            {
-                val btn = findViewById<ImageButton>(id)
-                val drawTarget = ContextCompat.getDrawable(applicationContext, labelId)
-                if (btn != null)
-                {
-                    btn.setImageDrawable(drawTarget)
-                    btn.invalidate()
+            runCatching {
+                findViewById<ImageButton>(id)?.apply {
+                    setImageDrawable(ContextCompat.getDrawable(applicationContext, labelId))
+                    invalidate()
                 }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
+            }.onFailure { e ->
+                Log.e(TAG, "setButtonDrawable error", e)
             }
         }
     }
 
-    /**
-     *
-     * @return true GPS搭載, false GPS非搭載
-     */
-    private fun hasGps(): Boolean
-    {
-        return (packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS))
+    private fun hasGps(): Boolean {
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
     }
 
-    /**
-     * タッチイベントをフックする
-     *
-     *
-     */
-    override fun dispatchTouchEvent(event: MotionEvent): Boolean
-    {
-        //Log.v(TAG, " dispatchTouchEvent() ");
-        if (enableGlView)
-        {
-            //Log.v(TAG, " onTouch() ");
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (enableGlView) {
             gestureParser?.onTouch(event)
         }
-        return (super.dispatchTouchEvent(event))
+        return super.dispatchTouchEvent(event)
     }
 
-    override fun vibrate(vibratePattern: Int)
-    {
-        try
-        {
-            // バイブレータをつかまえる
-            val vibrator  = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            {
-                val vibratorManager =  this.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                vibratorManager.defaultVibrator
-            }
-            else
-            {
+    override fun vibrate(vibratePattern: Int) {
+        runCatching {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                (getSystemService(VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+            } else {
                 @Suppress("DEPRECATION")
-                getSystemService(VIBRATOR_SERVICE) as Vibrator
-            }
-            if (!vibrator.hasVibrator())
-            {
-                Log.v(TAG, " not have Vibrator...")
-                return
-            }
-            @Suppress("DEPRECATION") val thread = Thread {
-                try
-                {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    {
-                        vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
-                    }
-                    else
-                    {
-                        when (vibratePattern)
-                        {
-                            IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT -> vibrator.vibrate(30)
-                            IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE -> vibrator.vibrate(80)
-                            IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG ->  vibrator.vibrate(150)
-                            IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG ->  vibrator.vibrate(300)
-                            IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE -> {
-                                val pattern = longArrayOf(10, 35, 30, 35, 0)
-                                vibrator.vibrate(pattern, -1)
-                            }
-                            else -> { }
-                        }
+                getSystemService(VIBRATOR_SERVICE) as? Vibrator
+            } ?: return
+
+            if (!vibrator.hasVibrator()) return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val duration = when (vibratePattern) {
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT -> 30L
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE -> 80L
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG -> 150L
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG -> 300L
+                    else -> 30L
+                }
+                if (vibratePattern == IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE) {
+                    val pattern = longArrayOf(10, 35, 30, 35)
+                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+                } else {
+                    vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                when (vibratePattern) {
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_SHORT -> vibrator.vibrate(30)
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_MIDDLE -> vibrator.vibrate(80)
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_LONG -> vibrator.vibrate(150)
+                    IShowInformation.VIBRATE_PATTERN_SIMPLE_LONGLONG -> vibrator.vibrate(300)
+                    IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE -> {
+                        val pattern = longArrayOf(10, 35, 30, 35)
+                        vibrator.vibrate(pattern, -1)
                     }
                 }
-                catch (e : Exception)
-                {
-                    e.printStackTrace()
-                }
             }
-            thread.start()
-        }
-        catch (e: java.lang.Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "vibrate error", e)
         }
     }
 
-    override fun setEnabledOperation(operation: operation)
-    {
+    override fun setEnabledOperation(operation: operation) {
         listener?.setEnableOperation(operation)
     }
 
-    /**
-     * 「お気に入り設定」表示画面を開く
-     *
-     */
-    override fun showFavoriteSettingsDialog()
-    {
-        if ((liveView != null)&&(listener != null)&&(listener!!.isEnabledOperation != operation.ONLY_CONNECT))
-        {
+    override fun showFavoriteSettingsDialog() {
+        if (liveView != null && listener != null && listener?.isEnabledOperation != operation.ONLY_CONNECT) {
             listener?.setEnableOperation(operation.ENABLE_ONLY_TOUCHED_POSITION)
             liveView?.showDialog(selectionDialog)
         }
     }
 
-    override fun showToast(rscId: Int, appendMessage: String, duration: Int)
-    {
-        try
-        {
-            runOnUiThread {
-                try
-                {
-                    val message = if (rscId != 0) getString(rscId) + appendMessage else appendMessage
-                    Toast.makeText(applicationContext, message, duration).show()
-                }
-                catch (e: Exception)
-                {
-                    e.printStackTrace()
-                }
+    override fun showToast(rscId: Int, appendMessage: String, duration: Int) {
+        runOnUiThread {
+            runCatching {
+                val message = if (rscId != 0) getString(rscId) + appendMessage else appendMessage
+                Toast.makeText(applicationContext, message, duration).show()
+            }.onFailure { e ->
+                Log.e(TAG, "showToast error", e)
             }
         }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+    }
+
+    override fun invalidate() {
+        runOnUiThread {
+            runCatching { liveView?.invalidate() }
         }
     }
 
-    override fun invalidate()
-    {
-        try
-        {
-            runOnUiThread { liveView?.invalidate() }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    /**
-     * 「お気に入り設定」表示画面を閉じる
-     *
-     */
-    override fun dialogDismissed(isExecuted: Boolean)
-    {
-        try
-        {
-            if ((liveView != null) && (listener != null))
-            {
+    override fun dialogDismissed(isExecuted: Boolean) {
+        runCatching {
+            if (liveView != null && listener != null) {
                 liveView?.hideDialog()
                 listener?.setEnableOperation(operation.ENABLE)
             }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "dialogDismissed error", e)
         }
     }
 
-    private fun updateConnectionMethodMessage()
-    {
-        try
-        {
+    private fun updateConnectionMethodMessage() {
+        runCatching {
             val connectionMethod = preferences.getString(
                 IPreferenceCameraPropertyAccessor.CONNECTION_METHOD,
                 IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE
             )
-            val methodId = if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) R.string.connection_method_theta else R.string.connection_method_opc
+            val methodId = if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) {
+                R.string.connection_method_theta
+            } else {
+                R.string.connection_method_opc
+            }
             setMessage(IShowInformation.AREA_7, Color.MAGENTA, getString(methodId))
-            liveView?.setupInitialBackgroundImage(this)
-            liveView?.visibility = View.VISIBLE
-            liveView?.invalidate()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+            liveView?.apply {
+                setupInitialBackgroundImage(this@MainActivity)
+                visibility = View.VISIBLE
+                invalidate()
+            }
+        }.onFailure { e ->
+            Log.e(TAG, "updateConnectionMethodMessage error", e)
         }
     }
 
-    private fun updateConnectionMethod(parameter: String, method: ICameraController?)
-    {
-        try
-        {
+    private fun updateConnectionMethod(parameter: String, method: ICameraController?) {
+        runCatching {
             currentCoordinator = method
             preferences.putString(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD, parameter)
             vibrate(IShowInformation.VIBRATE_PATTERN_SHORT_DOUBLE)
             enableGlView = preferences.getBoolean(IPreferenceCameraPropertyAccessor.THETA_GL_VIEW, false)
-            if ((enableGlView)&&(parameter.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)))
-            {
-                if (glView == null)
-                {
-                    // GL VIEW に切り替える
-                    glView = findViewById(R.id.glview)
-                }
-                if (glView != null)
-                {
-                    // GL VIEW に切り替える
-                    gestureParser = GestureParser(applicationContext, glView!!)
-                    glView?.setImageProvider(liveViewListener!!)
-                    glView?.visibility = View.VISIBLE
+
+            if (enableGlView && parameter.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) {
+                val gv = glView ?: findViewById<GokigenGLView>(R.id.glview)?.also { glView = it }
+                gv?.let { view ->
+                    gestureParser = GestureParser(applicationContext, view)
+                    liveViewListener?.let { view.setImageProvider(it) }
+                    view.visibility = View.VISIBLE
                     liveView?.visibility = View.GONE
                 }
-            }
-            else
-            {
-                if (liveView == null)
-                {
+            } else {
+                if (liveView == null) {
                     liveView = findViewById(R.id.liveview)
                 }
-                if (liveView != null)
-                {
-                    glView?.visibility = View.GONE
-                    liveView?.visibility = View.VISIBLE
-                }
+                glView?.visibility = View.GONE
+                liveView?.visibility = View.VISIBLE
             }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+        }.onFailure { e ->
+            Log.e(TAG, "updateConnectionMethod error", e)
         }
     }
 
-    /**
-     * 接続方式を変更するか確認する (OPC ⇔ THETA)
-     *
-     */
     private fun changeConnectionMethod() {
-        val activity: AppCompatActivity = this
         runOnUiThread {
-            try {
-                var titleId = R.string.change_title_from_opc_to_theta
-                var messageId = R.string.change_message_from_opc_to_theta
-                var method = false
+            runCatching {
                 val connectionMethod = preferences.getString(
                     IPreferenceCameraPropertyAccessor.CONNECTION_METHOD,
                     IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_DEFAULT_VALUE
                 )
-                if (connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)) {
-                    titleId = R.string.change_title_from_theta_to_opc
-                    messageId = R.string.change_message_from_theta_to_opc
-                    method = true
-                }
-                val isTheta = method
-                val confirmation = ConfirmationDialog(activity)
-                confirmation.show(titleId, messageId) {
+                val isTheta = connectionMethod.contains(IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA)
+
+                val titleId = if (isTheta) R.string.change_title_from_theta_to_opc else R.string.change_title_from_opc_to_theta
+                val messageId = if (isTheta) R.string.change_message_from_theta_to_opc else R.string.change_message_from_opc_to_theta
+
+                ConfirmationDialog(this).show(titleId, messageId) {
                     Log.v(TAG, " --- CONFIRMED! --- (theta:$isTheta)")
                     if (isTheta) {
-                        // 接続方式を OPC に切り替える
                         updateConnectionMethod(
                             IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_OPC,
                             olyAirCoordinator
                         )
                     } else {
-                        // 接続方式を Theta に切り替える
                         updateConnectionMethod(
                             IPreferenceCameraPropertyAccessor.CONNECTION_METHOD_THETA,
                             thetaCoordinator
@@ -1043,44 +647,50 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
                     }
                     updateConnectionMethodMessage()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }.onFailure { e ->
+                Log.e(TAG, "changeConnectionMethod error", e)
             }
         }
     }
 
-    override fun onConnectedToWifi()
-    {
+    override fun onConnectedToWifi() {
         Log.v(TAG, "onConnectedToWifi()")
     }
 
-    override fun onNetworkAvailable()
-    {
+    override fun onNetworkAvailable() {
         Log.v(TAG, "onNetworkAvailable()")
     }
 
-    override fun onNetworkLost()
-    {
+    override fun onNetworkLost() {
         Log.v(TAG, "onNetworkLost()")
     }
 
-    override fun onNetworkConnectionTimeout()
-    {
+    override fun onNetworkConnectionTimeout() {
         Log.v(TAG, "onNetworkConnectionTimeout()")
     }
 
-    override fun onError(message: String?)
-    {
-        Log.v(TAG, "onNetworkConnectionTimeout() $message")
+    override fun onError(message: String?) {
+        Log.v(TAG, "onError(): $message")
     }
 
-    companion object
-    {
+    companion object {
         private val TAG = MainActivity::class.java.simpleName
-        //const val REQUEST_NEED_PERMISSIONS = 1010
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(
+
+        private val REQUIRED_PERMISSIONS = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN -> arrayOf(
+                Manifest.permission.VIBRATE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.CHANGE_NETWORK_STATE,
+                Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+                Manifest.permission.NEARBY_WIFI_DEVICES,
+                Manifest.permission.ACCESS_LOCAL_NETWORK
+            )
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(
                 Manifest.permission.VIBRATE,
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.INTERNET,
@@ -1091,8 +701,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
                 Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
                 Manifest.permission.NEARBY_WIFI_DEVICES
             )
-        } else {
-            arrayOf(
+            else -> arrayOf(
                 Manifest.permission.VIBRATE,
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.INTERNET,
@@ -1100,7 +709,7 @@ class MainActivity : AppCompatActivity(), IChangeScene, IShowInformation, ICamer
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.CHANGE_NETWORK_STATE,
-                Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+                Manifest.permission.CHANGE_WIFI_MULTICAST_STATE
             )
         }
     }
